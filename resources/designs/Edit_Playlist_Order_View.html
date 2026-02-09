@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Playlist Editor Desktop View</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3c83f6",
+                        "primary-dark": "#2563eb",
+                        "background-dark": "#020617", "surface-dark": "#0f172a", "border-dark": "#1e293b",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "sans": ["Inter", "sans-serif"],
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #020617;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+
+        .drag-glow {
+            box-shadow: 0 0 15px rgba(60, 131, 246, 0.3);
+        }
+    </style>
+</head>
+
+<body class="bg-background-dark min-h-screen text-slate-100 font-display flex flex-col overflow-hidden">
+    <header class="h-16 bg-surface-dark border-b border-border-dark flex items-center px-6 shrink-0 z-20">
+        <div class="flex items-center gap-2 text-sm text-gray-400">
+            <a class="hover:text-white transition-colors" href="#">Playlists</a>
+            <span class="material-symbols-outlined text-base">chevron_right</span>
+            <span class="text-white font-medium">Morning Cafe Loop</span>
+        </div>
+        <div class="ml-auto flex items-center gap-4">
+            <div
+                class="flex items-center text-xs text-gray-400 bg-border-dark/50 px-3 py-1.5 rounded-full border border-border-dark">
+                <span class="w-2 h-2 rounded-full bg-green-500 mr-2"></span>
+                Total Duration: 03:45
+            </div>
+            <button class="p-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-full transition-colors">
+                <span class="material-symbols-outlined">settings</span>
+            </button>
+        </div>
+    </header>
+    <main class="flex-1 flex overflow-hidden">
+        <section class="w-[70%] flex flex-col border-r border-border-dark bg-background-dark relative">
+            <div class="p-6 pb-2 shrink-0 flex items-end justify-between">
+                <h2 class="text-xl font-semibold text-white">Playlist Content</h2>
+                <div class="text-sm text-gray-400">12 Items</div>
+            </div>
+            <div class="flex-1 overflow-y-auto p-6 space-y-3 custom-scrollbar">
+                <div
+                    class="group flex items-center bg-[#1e293b] border border-primary/50 rounded-lg p-3 select-none drag-glow ring-1 ring-primary/30 relative z-10">
+                    <div class="cursor-grab text-gray-500 hover:text-white mr-4">
+                        <span class="material-symbols-outlined">drag_indicator</span>
+                    </div>
+                    <div class="text-primary font-bold w-8 text-lg">#1</div>
+                    <div
+                        class="w-24 h-14 bg-black rounded overflow-hidden mr-4 relative shrink-0 border border-white/10">
+                        <img alt="Thumbnail" class="w-full h-full object-cover opacity-80"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiAsPros2uM2XZBzdTi2xxB-WarO1ZxjQQy_L9FvgmiUHZhtHZnEvPSX1t-N3sNKwazRy8RJtWTYnimyjXzbvUDFkkg7B7t-o3LMm-yz4kLheziB5JTiqpfEE8-3VIYfEF8FquKFi9uLjQ5YeJ9Brsg2dVmyHhJAM3XNqbMFmeVhjb6xjjbgL051WTHbAPSFYWI7XyJOeFvAtwbDYGOShda1apD3CxUObkt0k6RcMpcFfW97Rbwa2d1j0PyEE8SwZmgalVZU36KIQm" />
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-white/80 text-xl">play_circle</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-sm font-medium text-white truncate">Promo_Winter_Sale_Main.mp4</h3>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span
+                                class="text-xs text-blue-400 bg-blue-400/10 px-1.5 py-0.5 rounded border border-blue-400/20">Video</span>
+                            <span class="text-xs text-gray-500">1920x1080</span>
+                        </div>
+                    </div>
+                    <div class="text-sm font-mono text-gray-400 mr-6">15s</div>
+                    <button class="text-gray-500 hover:text-red-400 p-2 rounded hover:bg-red-500/10 transition-colors">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+                </div>
+                <div
+                    class="group flex items-center bg-surface-dark border border-border-dark hover:border-gray-600 rounded-lg p-3 transition-colors">
+                    <div class="cursor-grab text-gray-600 group-hover:text-gray-400 mr-4">
+                        <span class="material-symbols-outlined">drag_indicator</span>
+                    </div>
+                    <div class="text-gray-500 font-medium w-8 text-sm">#2</div>
+                    <div
+                        class="w-24 h-14 bg-black rounded overflow-hidden mr-4 relative shrink-0 border border-white/5">
+                        <img alt="Thumbnail" class="w-full h-full object-cover opacity-60"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkQqo3z5jJ9rsvMaYlG85Cr4z4tT3F-MM4o2AZ0iZIk881_ytV7QnLdUea_uC8hivzzrTLbked51BpaB8d4c31jOArGxpY5q8o6CEtecs8I0I4nN-Fs8keSob9YuDMhOqDz_fkMX4qJjmPfBieZP_ons4UNkZK7D9d5zY5448n0rkIOYvHcu51crVPv0-yVpVEYuLLPGE8oMIUG_4HpS-wN4Jsxvd_RYiflHlrHqps7WF0KgsI8Zdumy3CFxO04rPq7RJExLGMxsOm" />
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-sm font-medium text-gray-200 truncate">Menu_Breakfast_Special.jpg</h3>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span
+                                class="text-xs text-purple-400 bg-purple-400/10 px-1.5 py-0.5 rounded border border-purple-400/20">Image</span>
+                            <span class="text-xs text-gray-500">1080x1920</span>
+                        </div>
+                    </div>
+                    <div class="text-sm font-mono text-gray-500 mr-6">10s</div>
+                    <button
+                        class="text-gray-600 hover:text-red-400 p-2 rounded hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+                </div>
+                <div
+                    class="group flex items-center bg-surface-dark border border-border-dark hover:border-gray-600 rounded-lg p-3 transition-colors">
+                    <div class="cursor-grab text-gray-600 group-hover:text-gray-400 mr-4">
+                        <span class="material-symbols-outlined">drag_indicator</span>
+                    </div>
+                    <div class="text-gray-500 font-medium w-8 text-sm">#3</div>
+                    <div
+                        class="w-24 h-14 bg-black rounded overflow-hidden mr-4 relative shrink-0 border border-white/5">
+                        <img alt="Thumbnail" class="w-full h-full object-cover opacity-60"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBswqF7WNRhPjZGVzVEnX6D5eCUue728fUGk2bCKohDoGDGB8p-o5eLLaspy7dPpeDYg1f_3lPz4MqV3nwzgboHiPSef-_t94xdhjtEfnHGvnFmqYvHeFpz6itL0d3QI8zutzLIbjalvFXRwd0E0fSu4y8z0eXe1evILyPmF_UFrfV57Mq_TIvm9JBFCdGTm9WwabkwU1U4GObuvNNudC_bMtkXU4QYqqpwSeD2thaLP6jdLlhejCZZ4vCWm-Wjy6DgX6ob89QlttYb" />
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-white/80 text-xl">play_circle</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-sm font-medium text-gray-200 truncate">Coffee_Roasting_BRoll.mp4</h3>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span
+                                class="text-xs text-blue-400 bg-blue-400/10 px-1.5 py-0.5 rounded border border-blue-400/20">Video</span>
+                        </div>
+                    </div>
+                    <div class="text-sm font-mono text-gray-500 mr-6">30s</div>
+                    <button
+                        class="text-gray-600 hover:text-red-400 p-2 rounded hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+                </div>
+                <div
+                    class="group flex items-center bg-surface-dark border border-border-dark hover:border-gray-600 rounded-lg p-3 transition-colors">
+                    <div class="cursor-grab text-gray-600 group-hover:text-gray-400 mr-4">
+                        <span class="material-symbols-outlined">drag_indicator</span>
+                    </div>
+                    <div class="text-gray-500 font-medium w-8 text-sm">#4</div>
+                    <div
+                        class="w-24 h-14 bg-black rounded overflow-hidden mr-4 relative shrink-0 border border-white/5">
+                        <img alt="Thumbnail" class="w-full h-full object-cover opacity-60"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuMEjrnQC_B6KKW5LxWmW5aPYSa8bfrk1QWePbQA2py1sFzVqk9OLId9I_-VLWIv9p1TiHE8LvJOlHoDnYYe8m2xXJxaTl4ZA4CwSfrA-wPG-yoxvWSPA4kYYqVGD9OXuMkDNEGgCWYwN0vt9Oi9lBnOAT8G-L2vT7oE_RHWwZ1LGPWXeEDmS-9pimdgVgkQywfFI_cFjFOFXhjs5lqWeThhEoGguONeNLT3sunFI4Q4Ekf2wZiie9tbyGUbc6YQxp6Xc-IWXbal3K" />
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-sm font-medium text-gray-200 truncate">Healthy_Salad_Promo.jpg</h3>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span
+                                class="text-xs text-purple-400 bg-purple-400/10 px-1.5 py-0.5 rounded border border-purple-400/20">Image</span>
+                        </div>
+                    </div>
+                    <div class="text-sm font-mono text-gray-500 mr-6">10s</div>
+                    <button
+                        class="text-gray-600 hover:text-red-400 p-2 rounded hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+                </div>
+                <div
+                    class="group flex items-center bg-surface-dark border border-border-dark hover:border-gray-600 rounded-lg p-3 transition-colors">
+                    <div class="cursor-grab text-gray-600 group-hover:text-gray-400 mr-4">
+                        <span class="material-symbols-outlined">drag_indicator</span>
+                    </div>
+                    <div class="text-gray-500 font-medium w-8 text-sm">#5</div>
+                    <div
+                        class="w-24 h-14 bg-black rounded overflow-hidden mr-4 relative shrink-0 border border-white/5">
+                        <div class="w-full h-full bg-slate-800 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-slate-600">image</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-sm font-medium text-gray-200 truncate">Generic_Divider_Slide.png</h3>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span
+                                class="text-xs text-purple-400 bg-purple-400/10 px-1.5 py-0.5 rounded border border-purple-400/20">Image</span>
+                        </div>
+                    </div>
+                    <div class="text-sm font-mono text-gray-500 mr-6">05s</div>
+                    <button
+                        class="text-gray-600 hover:text-red-400 p-2 rounded hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+                </div>
+                <div
+                    class="group flex items-center bg-surface-dark border border-border-dark hover:border-gray-600 rounded-lg p-3 transition-colors">
+                    <div class="cursor-grab text-gray-600 group-hover:text-gray-400 mr-4">
+                        <span class="material-symbols-outlined">drag_indicator</span>
+                    </div>
+                    <div class="text-gray-500 font-medium w-8 text-sm">#6</div>
+                    <div
+                        class="w-24 h-14 bg-black rounded overflow-hidden mr-4 relative shrink-0 border border-white/5">
+                        <img alt="Thumbnail" class="w-full h-full object-cover opacity-60"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8Hx_z7J56KVCtqMNfj3OJV5OAIzBK_gG3eEo0Qv-QlSsjVRTrB2VDBYSGFLJgrrERpoG9WDIIw4PHG7GRVfXlaNL-GcbaQTgVfZClc9alWKBQLKtVQC8g3CqvPgOCnP541YGYvN69gJvKZawFgvUFHe0Pcw6ZeAjemEWjf_4eFH2RWTcROqYrtSwdoLYdNsDXnCjemrmopqo3_l5mG7BsjsRWwpqKMRvC_Nx1VXSJjD7ky6R0ahOYeAt9P7qmSJzTLTP5wnfgsYaH" />
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-white/80 text-xl">play_circle</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-sm font-medium text-gray-200 truncate">Latte_Art_Demo_Slow.mp4</h3>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span
+                                class="text-xs text-blue-400 bg-blue-400/10 px-1.5 py-0.5 rounded border border-blue-400/20">Video</span>
+                        </div>
+                    </div>
+                    <div class="text-sm font-mono text-gray-500 mr-6">25s</div>
+                    <button
+                        class="text-gray-600 hover:text-red-400 p-2 rounded hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+                </div>
+                <div
+                    class="group flex items-center bg-surface-dark border border-border-dark hover:border-gray-600 rounded-lg p-3 transition-colors">
+                    <div class="cursor-grab text-gray-600 group-hover:text-gray-400 mr-4">
+                        <span class="material-symbols-outlined">drag_indicator</span>
+                    </div>
+                    <div class="text-gray-500 font-medium w-8 text-sm">#7</div>
+                    <div
+                        class="w-24 h-14 bg-black rounded overflow-hidden mr-4 relative shrink-0 border border-white/5">
+                        <img alt="Thumbnail" class="w-full h-full object-cover opacity-60"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCiTcnBzqE7Kv9KJdZvHBtNIDbea7hQxAmqgplcF0OF1yGS3U1dxXD__2NECBM4SvK5Iv9o4OUfgVMNqy_2wj2mRstKqw3MEQZk6zU2mQJoxFqoCb6DbH_2sqf_ughdDvY-kdhiTElNW3qFnSnZ7TdFTBtCK4Cgeoa-IaqKsw7zfvfj8UUu0eCX7KbE9CxKV6DON4qRRq80jd3lLPSZzvSQFvDFj7RsR3PkI3Mkhvs8qQDLRHDiNORSWEiG-L0bQ_j680YDogu5dww2" />
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-sm font-medium text-gray-200 truncate">New_Arrival_Beans.jpg</h3>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span
+                                class="text-xs text-purple-400 bg-purple-400/10 px-1.5 py-0.5 rounded border border-purple-400/20">Image</span>
+                        </div>
+                    </div>
+                    <div class="text-sm font-mono text-gray-500 mr-6">10s</div>
+                    <button
+                        class="text-gray-600 hover:text-red-400 p-2 rounded hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+                </div>
+                <div
+                    class="group flex items-center bg-surface-dark border border-border-dark hover:border-gray-600 rounded-lg p-3 transition-colors">
+                    <div class="cursor-grab text-gray-600 group-hover:text-gray-400 mr-4">
+                        <span class="material-symbols-outlined">drag_indicator</span>
+                    </div>
+                    <div class="text-gray-500 font-medium w-8 text-sm">#8</div>
+                    <div
+                        class="w-24 h-14 bg-black rounded overflow-hidden mr-4 relative shrink-0 border border-white/5">
+                        <img alt="Thumbnail" class="w-full h-full object-cover opacity-60"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtm0gH3VB7UjBagbrmhWaWeE5Z4cBU_IZyyY2P7KEhy8n6NqXa6dSkIRNhnBXp3LhuBCj5KLA4fNW054Sap8t6MQRZKRuHsCnDXUSO_Hl54NfBxmOpJ_t5tMbraTv1Q0TX-RZRN8-HbuxVw5MPN-kCm0YvNJ_aF61YPU9LKim0N8dMs_LZ4Np96KqPFk9lZc93kL3tWlImAsfnaw7XqYN2BWJIbp-sZ3AbwDy7T8bZAMAkXt8qtrGVQFC0FuYkhpcZ0Zw0CDJBXZYe" />
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-white/80 text-xl">play_circle</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-sm font-medium text-gray-200 truncate">Atmosphere_Clip_Loop.mp4</h3>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span
+                                class="text-xs text-blue-400 bg-blue-400/10 px-1.5 py-0.5 rounded border border-blue-400/20">Video</span>
+                        </div>
+                    </div>
+                    <div class="text-sm font-mono text-gray-500 mr-6">60s</div>
+                    <button
+                        class="text-gray-600 hover:text-red-400 p-2 rounded hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+                </div>
+                <div
+                    class="group flex items-center bg-surface-dark border border-border-dark hover:border-gray-600 rounded-lg p-3 transition-colors">
+                    <div class="cursor-grab text-gray-600 group-hover:text-gray-400 mr-4">
+                        <span class="material-symbols-outlined">drag_indicator</span>
+                    </div>
+                    <div class="text-gray-500 font-medium w-8 text-sm">#9</div>
+                    <div
+                        class="w-24 h-14 bg-black rounded overflow-hidden mr-4 relative shrink-0 border border-white/5">
+                        <img alt="Thumbnail" class="w-full h-full object-cover opacity-60"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAn8lb3V1gkUQeFt9hCLJk0rw6rOWZigh22vXWrngBMypzIFGieWlrQCOV4LOhfoHYJDpJgMd5geDVY-Uix45V6j6dq7X95xICEemOs4QWS6uPaP1x_Lb-VhBpMl12ys105NBgVLLVR_M1lm92bIFaOM7jZDT2Kkmlw1KLh993QzJK6C5Bodi0XlRLw90NP-IpkBKwU6mH14xnH7K87kAMZcqT0rnzhmmACO7E4HKUW_9ZxhZvOPKHyxPNfNKCmDWI_FV1LPA-7fRQq" />
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-sm font-medium text-gray-200 truncate">Closing_Hours_Info.png</h3>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span
+                                class="text-xs text-purple-400 bg-purple-400/10 px-1.5 py-0.5 rounded border border-purple-400/20">Image</span>
+                        </div>
+                    </div>
+                    <div class="text-sm font-mono text-gray-500 mr-6">10s</div>
+                    <button
+                        class="text-gray-600 hover:text-red-400 p-2 rounded hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+                </div>
+                <div
+                    class="group flex items-center bg-surface-dark border border-border-dark hover:border-gray-600 rounded-lg p-3 transition-colors">
+                    <div class="cursor-grab text-gray-600 group-hover:text-gray-400 mr-4">
+                        <span class="material-symbols-outlined">drag_indicator</span>
+                    </div>
+                    <div class="text-gray-500 font-medium w-8 text-sm">#10</div>
+                    <div
+                        class="w-24 h-14 bg-black rounded overflow-hidden mr-4 relative shrink-0 border border-white/5">
+                        <div class="w-full h-full bg-slate-800 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-slate-600">image</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-sm font-medium text-gray-200 truncate">Generic_Divider_Slide_2.png</h3>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span
+                                class="text-xs text-purple-400 bg-purple-400/10 px-1.5 py-0.5 rounded border border-purple-400/20">Image</span>
+                        </div>
+                    </div>
+                    <div class="text-sm font-mono text-gray-500 mr-6">05s</div>
+                    <button
+                        class="text-gray-600 hover:text-red-400 p-2 rounded hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+                </div>
+                <div
+                    class="group flex items-center bg-surface-dark border border-border-dark hover:border-gray-600 rounded-lg p-3 transition-colors">
+                    <div class="cursor-grab text-gray-600 group-hover:text-gray-400 mr-4">
+                        <span class="material-symbols-outlined">drag_indicator</span>
+                    </div>
+                    <div class="text-gray-500 font-medium w-8 text-sm">#11</div>
+                    <div
+                        class="w-24 h-14 bg-black rounded overflow-hidden mr-4 relative shrink-0 border border-white/5">
+                        <img alt="Thumbnail" class="w-full h-full object-cover opacity-60"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtxFhnJeqm14yp8LJ5OraYvsAJpMh_BEuvP-lrOE1Eas9-YQMvsDBf0w7r6TWiBf8XR1koqo7of34WBlut4s528CfEueERSLZX3UBBk6x9UxWo3GMUPAPbVxFg_MhSivxyWXfuaIzZvZXax4YkmcoBjCC12rz-2B6Jx-1c5M7vmDg8Tsj860hLhPLmVRz_0TgCHJ3-gNgOrIWuwHsguCYi7YAEbHOO4BnYC8fFJcxEyiHLRitrKjXGGYMWsgphP3VT3JZleabWM6Ry" />
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-white/80 text-xl">play_circle</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-sm font-medium text-gray-200 truncate">Community_News_Update.mp4</h3>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span
+                                class="text-xs text-blue-400 bg-blue-400/10 px-1.5 py-0.5 rounded border border-blue-400/20">Video</span>
+                        </div>
+                    </div>
+                    <div class="text-sm font-mono text-gray-500 mr-6">45s</div>
+                    <button
+                        class="text-gray-600 hover:text-red-400 p-2 rounded hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+                </div>
+                <div
+                    class="group flex items-center bg-surface-dark border border-border-dark hover:border-gray-600 rounded-lg p-3 transition-colors">
+                    <div class="cursor-grab text-gray-600 group-hover:text-gray-400 mr-4">
+                        <span class="material-symbols-outlined">drag_indicator</span>
+                    </div>
+                    <div class="text-gray-500 font-medium w-8 text-sm">#12</div>
+                    <div
+                        class="w-24 h-14 bg-black rounded overflow-hidden mr-4 relative shrink-0 border border-white/5">
+                        <img alt="Thumbnail" class="w-full h-full object-cover opacity-60"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-Wko22H-E_Vx9EOvo4rXshE7LxpnEmfYy32-Gq73NOYTGfQkZkd9mzYUgDPVL2inJEmSvYcqTcpYkGWUICJ5sP4dYqtupXPBph-T3dnZMtI5LCAR0oMp522hMzgZnHr8cEmPnx97YXNvhg4z4zKFFNYnWS9bbU_NAH8ovcLLWJjNUoL96krr8QJ-H_B59Bk4wlQKDfr7IWAqFW-QkSZwRpG92WfYst59BkxkXjaG5hXDM3hj28IVsrMSwSk_Kyzz1YlyTJGe61elz" />
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-sm font-medium text-gray-200 truncate">Feedback_QR_Code.jpg</h3>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span
+                                class="text-xs text-purple-400 bg-purple-400/10 px-1.5 py-0.5 rounded border border-purple-400/20">Image</span>
+                        </div>
+                    </div>
+                    <div class="text-sm font-mono text-gray-500 mr-6">20s</div>
+                    <button
+                        class="text-gray-600 hover:text-red-400 p-2 rounded hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+                </div>
+                <div class="h-16"></div>
+            </div>
+            <div
+                class="absolute bottom-0 left-0 right-0 p-4 bg-surface-dark/95 backdrop-blur-md border-t border-border-dark flex items-center justify-between z-20">
+                <button class="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors">Discard
+                    Changes</button>
+                <button
+                    class="px-6 py-2 bg-primary hover:bg-primary-dark text-white text-sm font-medium rounded shadow-[0_0_15px_rgba(59,130,246,0.5)] transition-all">Save
+                    Playlist</button>
+            </div>
+        </section>
+        <aside class="w-[30%] bg-[#0b1120] flex flex-col h-full border-l border-border-dark">
+            <div class="p-4 border-b border-border-dark bg-surface-dark/50">
+                <h2 class="text-lg font-semibold text-white mb-4">Add Content</h2>
+                <div class="relative mb-4">
+                    <span class="material-symbols-outlined absolute left-3 top-2.5 text-gray-500 text-lg">search</span>
+                    <input
+                        class="w-full bg-[#1e293b] text-sm text-white border-none rounded-lg pl-10 pr-4 py-2 focus:ring-1 focus:ring-primary placeholder-gray-500"
+                        placeholder="Search library..." type="text" />
+                </div>
+                <div class="flex space-x-1 bg-[#1e293b] p-1 rounded-lg">
+                    <button class="flex-1 py-1 text-xs font-medium text-white bg-primary rounded shadow-sm">All</button>
+                    <button
+                        class="flex-1 py-1 text-xs font-medium text-gray-400 hover:text-white transition-colors">Images</button>
+                    <button
+                        class="flex-1 py-1 text-xs font-medium text-gray-400 hover:text-white transition-colors">Videos</button>
+                </div>
+            </div>
+            <div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                <div class="grid grid-cols-2 gap-3">
+                    <div
+                        class="group relative aspect-square bg-[#1e293b] rounded-lg border border-border-dark overflow-hidden hover:border-gray-500 transition-colors">
+                        <img alt="Content"
+                            class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBehukeqzjzA3vn_9FGb8x9NuPV39TclL-6IghSlxymbPAY_lybJ6jXQ1hg_5hNDKig3HCIP7njM0fjjG9aWwLX5mOm365xDRNa5TZkxbYHKnBNsPOnZERsesD-2yu35NxmQbFwytBYwkA08O-agMayAay-nG5TKdnTAY1l9O6Pq6IvoJChbZJKNRik8cPjE7eeig-QsYjEevIbUqiYl2v9IoaHfVaNh2atGgaBVmuLn3ba9UE_CA-odHXLX-sJXlai5X74-9kIRXE5" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-100"></div>
+                        <div class="absolute top-2 left-2 bg-black/50 backdrop-blur rounded px-1.5 py-0.5">
+                            <span class="text-[10px] text-white font-medium uppercase tracking-wider">IMG</span>
+                        </div>
+                        <div class="absolute bottom-2 left-2 right-2">
+                            <p class="text-xs text-white truncate font-medium">Summer_Promo.jpg</p>
+                        </div>
+                        <button
+                            class="absolute top-2 right-2 w-7 h-7 bg-primary rounded-full flex items-center justify-center text-white shadow-lg opacity-0 group-hover:opacity-100 transition-all transform scale-90 hover:scale-100">
+                            <span class="material-symbols-outlined text-lg">add</span>
+                        </button>
+                    </div>
+                    <div
+                        class="group relative aspect-square bg-[#1e293b] rounded-lg border border-border-dark overflow-hidden hover:border-gray-500 transition-colors">
+                        <img alt="Content"
+                            class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuALKLaYxxs9Ioe2sjNToxrfEhIkfOQLYmgi1nZ43Xzd4dIOoo790pnbmv_PMSMSZQRplYhNbBRYK8TEYGCL9oJS1h3qDFxJzjjrEFsGZ9UHNAjdo-LcE4_MNmk1dFdprHizWxPQ2KkXiQLw5xPXHjEtGOXlEA-MqHvMUHBnaZsgBsYp-Du1jM43TLJGMofGhKgi1FNXxfRU_O02xJImIo3YE_gvSuXp385b70yd8qxIy9Adg0OqQFbB5vCHs5k9yIlLrVPfFoM26cjZ" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-100"></div>
+                        <div class="absolute top-2 left-2 bg-black/50 backdrop-blur rounded px-1.5 py-0.5">
+                            <span class="text-[10px] text-white font-medium uppercase tracking-wider">VID</span>
+                        </div>
+                        <div class="absolute bottom-2 left-2 right-2">
+                            <p class="text-xs text-white truncate font-medium">Happy_Hour_Loop.mp4</p>
+                        </div>
+                        <button
+                            class="absolute top-2 right-2 w-7 h-7 bg-primary rounded-full flex items-center justify-center text-white shadow-lg opacity-0 group-hover:opacity-100 transition-all transform scale-90 hover:scale-100">
+                            <span class="material-symbols-outlined text-lg">add</span>
+                        </button>
+                    </div>
+                    <div
+                        class="group relative aspect-square bg-[#1e293b] rounded-lg border border-border-dark overflow-hidden hover:border-gray-500 transition-colors">
+                        <div class="w-full h-full flex items-center justify-center bg-slate-800">
+                            <span class="material-symbols-outlined text-4xl text-slate-600">movie</span>
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-100"></div>
+                        <div class="absolute top-2 left-2 bg-black/50 backdrop-blur rounded px-1.5 py-0.5">
+                            <span class="text-[10px] text-white font-medium uppercase tracking-wider">VID</span>
+                        </div>
+                        <div class="absolute bottom-2 left-2 right-2">
+                            <p class="text-xs text-white truncate font-medium">Background_Motion.mp4</p>
+                        </div>
+                        <button
+                            class="absolute top-2 right-2 w-7 h-7 bg-primary rounded-full flex items-center justify-center text-white shadow-lg opacity-0 group-hover:opacity-100 transition-all transform scale-90 hover:scale-100">
+                            <span class="material-symbols-outlined text-lg">add</span>
+                        </button>
+                    </div>
+                    <div
+                        class="group relative aspect-square bg-[#1e293b] rounded-lg border border-border-dark overflow-hidden hover:border-gray-500 transition-colors">
+                        <img alt="Content"
+                            class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxZcENqrVx0z7GlpzOzfE6-MvYuPq9mJ37luM8SnLwYw_WjPMROquQZZXVu-LrUoEuKbitVd_Lem5QrVOId8dk4zVilGqGusluuLyBXQ-pG8d28oyDSBuhCqzoCz2uYsB9y6A_3z3M4a1sfZ3xsxmC1zA0GJIBlqTEuJo13I3V22SfxJ_BVixNCXeUONFFyMupn8aISQaZF3D0B0KenGF7unv38EdvECT0PQr05zT_B1O5QHyjjAhiLUk4al4lBFygaRBad-m1fJ79" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-100"></div>
+                        <div class="absolute top-2 left-2 bg-black/50 backdrop-blur rounded px-1.5 py-0.5">
+                            <span class="text-[10px] text-white font-medium uppercase tracking-wider">IMG</span>
+                        </div>
+                        <div class="absolute bottom-2 left-2 right-2">
+                            <p class="text-xs text-white truncate font-medium">Text_Overlay_Base.png</p>
+                        </div>
+                        <button
+                            class="absolute top-2 right-2 w-7 h-7 bg-primary rounded-full flex items-center justify-center text-white shadow-lg opacity-0 group-hover:opacity-100 transition-all transform scale-90 hover:scale-100">
+                            <span class="material-symbols-outlined text-lg">add</span>
+                        </button>
+                    </div>
+                    <div
+                        class="group relative aspect-square bg-[#1e293b] rounded-lg border border-border-dark overflow-hidden hover:border-gray-500 transition-colors">
+                        <img alt="Content"
+                            class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAUhm_WhZM1vNOiXHqrZhcUAZUyTbfdSCdngPOlH7aIuZslhm3La6vsLW31tFTelmqfW5n3RAu6qr5zragKP5cWGCH64tvXX5E16kF1zD_BQRq-5_gZwuOzTLSnePmoEcMQjjbNC0Ryt4TUY4ikCWG4cUrkwFwcQ_7tHnHxefCsjx4hBTxp3E2ASesdEmr79MHrvhlV3JEw7nZZ8ucvW0urOV8qRTUCheZfrVaJn5C69z0GXoeFE06ZEywt2NLT9Y-jzQ6knOm6t5N" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-100"></div>
+                        <div class="absolute top-2 left-2 bg-black/50 backdrop-blur rounded px-1.5 py-0.5">
+                            <span class="text-[10px] text-white font-medium uppercase tracking-wider">IMG</span>
+                        </div>
+                        <div class="absolute bottom-2 left-2 right-2">
+                            <p class="text-xs text-white truncate font-medium">Holiday_Spirits.jpg</p>
+                        </div>
+                        <button
+                            class="absolute top-2 right-2 w-7 h-7 bg-primary rounded-full flex items-center justify-center text-white shadow-lg opacity-0 group-hover:opacity-100 transition-all transform scale-90 hover:scale-100">
+                            <span class="material-symbols-outlined text-lg">add</span>
+                        </button>
+                    </div>
+                    <div
+                        class="group relative aspect-square bg-[#1e293b] rounded-lg border border-border-dark overflow-hidden hover:border-gray-500 transition-colors">
+                        <img alt="Content"
+                            class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPqn4M8wQaCEW7Mp5ZZVwlZmvbXSeWURan0quGpYhnl83L5897Z-XQ__i0mRV94IkOVagGetBNOVKIFZojsRQRfQgVDsWuumZ5UmNi9ux4LLd1UIXS2oex2_uoHcJIlTZkZz6ujnuDAZ806UIlslY8LOACeiDlMdSkNnMFMvSoCoccSQQOIbh3BOxf-y1N7G2MalpFGF0A7SvJihKCkqCgbB5-O0YKDOB8Nj-XAcHv1xhBIwJ4zUqMSXu_V9Y49quBTNCTjNLafzjA" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-100"></div>
+                        <div class="absolute top-2 left-2 bg-black/50 backdrop-blur rounded px-1.5 py-0.5">
+                            <span class="text-[10px] text-white font-medium uppercase tracking-wider">IMG</span>
+                        </div>
+                        <div class="absolute bottom-2 left-2 right-2">
+                            <p class="text-xs text-white truncate font-medium">Event_Poster_V2.png</p>
+                        </div>
+                        <button
+                            class="absolute top-2 right-2 w-7 h-7 bg-primary rounded-full flex items-center justify-center text-white shadow-lg opacity-0 group-hover:opacity-100 transition-all transform scale-90 hover:scale-100">
+                            <span class="material-symbols-outlined text-lg">add</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+</body>
+
+</html>

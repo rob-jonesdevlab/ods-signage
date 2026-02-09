@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Editor Mobile Content Browser</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2563eb",
+                        "primary-dark": "#1d4ed8",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#020617", "surface-dark": "#1e293b", "surface-darker": "#0f172a", "border-dark": "#334155",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "sans": ["Inter", "sans-serif"],
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+
+<body class="bg-background-dark text-slate-200 font-display overflow-hidden">
+    <div aria-hidden="true"
+        class="relative w-full h-screen flex flex-col p-4 opacity-30 pointer-events-none select-none blur-[2px]">
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex flex-col">
+                <h1 class="text-xl font-bold text-white">Summer Campaign 2024</h1>
+                <p class="text-slate-400 text-sm">Main Store Display • 4 Items • 02:45</p>
+            </div>
+            <div class="flex gap-2">
+                <button
+                    class="bg-primary px-4 py-2 rounded-lg text-white text-sm font-medium shadow-lg shadow-blue-500/20">Publish</button>
+            </div>
+        </div>
+        <div class="flex flex-col gap-3">
+            <div class="bg-surface-dark border border-border-dark p-3 rounded-lg flex items-center gap-4">
+                <div class="w-8 flex flex-col items-center justify-center text-slate-500 font-medium">1</div>
+                <div class="w-20 h-12 bg-slate-700 rounded overflow-hidden relative">
+                    <div class="absolute inset-0 bg-cover bg-center"
+                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCTrPN8wt9MIpkADObDqUx7gbopEByK3cKbALjFbv36ASgAaEp3yDo_rccmrHANhfrB_H56_pclPVtpVKeSJpnM9vn7gC4dDMZRGLgHC8KcKgw4bKqACzp8YHqDcibeYfPH5n2rSo7vvugdSG-5vq8f8RSrGBpdTM73gBPvus0YwCf_T-UZ6YfhrWv19clNSAkA-omzp5OzkiKnU6WPM0Y9oPdyb5pvzsWVVYjjg1HUmB5ARrKNfpuabhZIY-wfLUXYTsT14h3fs1cO');">
+                    </div>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-sm font-semibold text-white truncate">Winter Sale Intro</h3>
+                    <p class="text-xs text-slate-400">Video • 00:15</p>
+                </div>
+                <div class="text-slate-500">
+                    <span class="material-symbols-outlined text-lg">drag_handle</span>
+                </div>
+            </div>
+            <div class="bg-surface-dark border border-border-dark p-3 rounded-lg flex items-center gap-4">
+                <div class="w-8 flex flex-col items-center justify-center text-slate-500 font-medium">2</div>
+                <div class="w-20 h-12 bg-slate-700 rounded overflow-hidden relative">
+                    <div class="absolute inset-0 bg-cover bg-center bg-blue-900"></div>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-sm font-semibold text-white truncate">Product Showcase A</h3>
+                    <p class="text-xs text-slate-400">Image • 00:10</p>
+                </div>
+                <div class="text-slate-500">
+                    <span class="material-symbols-outlined text-lg">drag_handle</span>
+                </div>
+            </div>
+            <div class="bg-surface-dark border border-border-dark p-3 rounded-lg flex items-center gap-4">
+                <div class="w-8 flex flex-col items-center justify-center text-slate-500 font-medium">3</div>
+                <div class="w-20 h-12 bg-slate-700 rounded overflow-hidden relative">
+                    <div class="absolute inset-0 bg-cover bg-center bg-emerald-900"></div>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-sm font-semibold text-white truncate">Special Offer Graphic</h3>
+                    <p class="text-xs text-slate-400">Image • 00:10</p>
+                </div>
+                <div class="text-slate-500">
+                    <span class="material-symbols-outlined text-lg">drag_handle</span>
+                </div>
+            </div>
+            <div
+                class="border-2 border-dashed border-border-dark p-4 rounded-lg flex items-center justify-center text-slate-500 gap-2">
+                <span class="material-symbols-outlined">add</span> Add Content
+            </div>
+        </div>
+    </div>
+    <div
+        class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-md p-0 sm:p-4">
+        <div
+            class="relative w-full max-w-lg bg-surface-darker/90 backdrop-blur-xl border-t sm:border border-border-dark rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col h-[85vh] sm:h-[80vh] overflow-hidden ring-1 ring-white/10">
+            <div class="flex flex-col gap-4 p-5 border-b border-border-dark bg-surface-darker/50">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">add_circle</span>
+                        Add Content
+                    </h2>
+                    <button
+                        class="text-slate-400 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+                <div class="flex gap-3">
+                    <div class="relative flex-1 group">
+                        <span
+                            class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">
+                            <span class="material-symbols-outlined text-[20px]">search</span>
+                        </span>
+                        <input
+                            class="w-full bg-surface-dark border border-slate-700 text-sm rounded-lg pl-10 pr-4 py-2.5 text-white placeholder-slate-500 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                            placeholder="Search library..." type="text" />
+                    </div>
+                    <button
+                        class="bg-surface-dark border border-slate-700 hover:bg-slate-700 text-slate-300 p-2.5 rounded-lg transition-colors">
+                        <span class="material-symbols-outlined text-[20px]">tune</span>
+                    </button>
+                </div>
+                <div class="flex gap-6 text-sm font-medium border-b border-white/5 -mb-5 px-1">
+                    <button class="pb-4 text-primary border-b-2 border-primary">All Media</button>
+                    <button class="pb-4 text-slate-400 hover:text-white transition-colors">Videos</button>
+                    <button class="pb-4 text-slate-400 hover:text-white transition-colors">Images</button>
+                    <button class="pb-4 text-slate-400 hover:text-white transition-colors">Widgets</button>
+                </div>
+            </div>
+            <div class="flex-1 overflow-y-auto p-4 custom-scrollbar bg-surface-darker/30">
+                <div class="flex items-center justify-between mb-3 px-1">
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Recent Uploads</span>
+                    <span class="text-xs text-primary cursor-pointer hover:underline">View All</span>
+                </div>
+                <div class="grid grid-cols-2 gap-3 pb-20">
+                    <div
+                        class="group relative bg-surface-dark border border-slate-700 rounded-lg overflow-hidden hover:border-primary/50 transition-all cursor-pointer">
+                        <div class="aspect-video relative bg-black">
+                            <div class="absolute inset-0 bg-cover bg-center opacity-80 group-hover:opacity-100 transition-opacity"
+                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCTrPN8wt9MIpkADObDqUx7gbopEByK3cKbALjFbv36ASgAaEp3yDo_rccmrHANhfrB_H56_pclPVtpVKeSJpnM9vn7gC4dDMZRGLgHC8KcKgw4bKqACzp8YHqDcibeYfPH5n2rSo7vvugdSG-5vq8f8RSrGBpdTM73gBPvus0YwCf_T-UZ6YfhrWv19clNSAkA-omzp5OzkiKnU6WPM0Y9oPdyb5pvzsWVVYjjg1HUmB5ARrKNfpuabhZIY-wfLUXYTsT14h3fs1cO');">
+                            </div>
+                            <div
+                                class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20">
+                                <div class="bg-white/20 backdrop-blur-sm rounded-full p-2 text-white">
+                                    <span class="material-symbols-outlined text-2xl fill-1">play_arrow</span>
+                                </div>
+                            </div>
+                            <span
+                                class="absolute bottom-1 right-1 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded font-medium">0:15</span>
+                            <div class="absolute top-2 right-2">
+                                <button
+                                    class="bg-primary hover:bg-primary-dark text-white p-1.5 rounded-full shadow-lg transform active:scale-95 transition-all flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-sm">add</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-3">
+                            <h3 class="text-sm font-medium text-white truncate mb-1">Promo_Winter_Sale.mp4</h3>
+                            <div class="flex justify-between items-center text-[11px] text-slate-400">
+                                <span>12.4 MB</span>
+                                <span class="flex items-center gap-1"><span
+                                        class="material-symbols-outlined text-[12px]">videocam</span> Video</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="group relative bg-surface-dark border border-slate-700 rounded-lg overflow-hidden hover:border-primary/50 transition-all cursor-pointer">
+                        <div class="aspect-video relative bg-slate-800">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-br from-indigo-900 to-purple-800 opacity-80 group-hover:opacity-100 transition-opacity">
+                            </div>
+                            <div class="absolute top-2 right-2">
+                                <button
+                                    class="bg-white/10 hover:bg-primary text-white p-1.5 rounded-full backdrop-blur-sm border border-white/10 hover:border-transparent transition-all flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-sm">add</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-3">
+                            <h3 class="text-sm font-medium text-white truncate mb-1">New_Arrivals_Banner.jpg</h3>
+                            <div class="flex justify-between items-center text-[11px] text-slate-400">
+                                <span>2.1 MB</span>
+                                <span class="flex items-center gap-1"><span
+                                        class="material-symbols-outlined text-[12px]">image</span> Image</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="group relative bg-surface-dark border border-slate-700 rounded-lg overflow-hidden hover:border-primary/50 transition-all cursor-pointer">
+                        <div class="aspect-video relative bg-slate-800">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-tr from-emerald-900 to-teal-800 opacity-80 group-hover:opacity-100 transition-opacity">
+                            </div>
+                            <div class="absolute top-2 right-2">
+                                <button
+                                    class="bg-white/10 hover:bg-primary text-white p-1.5 rounded-full backdrop-blur-sm border border-white/10 hover:border-transparent transition-all flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-sm">add</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-3">
+                            <h3 class="text-sm font-medium text-white truncate mb-1">Eco_Friendly_Label.png</h3>
+                            <div class="flex justify-between items-center text-[11px] text-slate-400">
+                                <span>0.8 MB</span>
+                                <span class="flex items-center gap-1"><span
+                                        class="material-symbols-outlined text-[12px]">image</span> Image</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="group relative bg-surface-dark border border-slate-700 rounded-lg overflow-hidden hover:border-primary/50 transition-all cursor-pointer">
+                        <div class="aspect-video relative bg-black">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-bl from-orange-900 to-red-900 opacity-80 group-hover:opacity-100 transition-opacity">
+                            </div>
+                            <span
+                                class="absolute bottom-1 right-1 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded font-medium">0:30</span>
+                            <div class="absolute top-2 right-2">
+                                <button
+                                    class="bg-white/10 hover:bg-primary text-white p-1.5 rounded-full backdrop-blur-sm border border-white/10 hover:border-transparent transition-all flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-sm">add</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-3">
+                            <h3 class="text-sm font-medium text-white truncate mb-1">Holiday_Greeting.mp4</h3>
+                            <div class="flex justify-between items-center text-[11px] text-slate-400">
+                                <span>45.2 MB</span>
+                                <span class="flex items-center gap-1"><span
+                                        class="material-symbols-outlined text-[12px]">videocam</span> Video</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="group relative bg-surface-dark border border-slate-700 rounded-lg overflow-hidden hover:border-primary/50 transition-all cursor-pointer">
+                        <div class="aspect-video relative bg-slate-800">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-br from-blue-900 to-slate-800 opacity-80 group-hover:opacity-100 transition-opacity">
+                            </div>
+                            <div class="absolute top-2 right-2">
+                                <button
+                                    class="bg-white/10 hover:bg-primary text-white p-1.5 rounded-full backdrop-blur-sm border border-white/10 hover:border-transparent transition-all flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-sm">add</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-3">
+                            <h3 class="text-sm font-medium text-white truncate mb-1">Corporate_Logo_White.svg</h3>
+                            <div class="flex justify-between items-center text-[11px] text-slate-400">
+                                <span>0.1 MB</span>
+                                <span class="flex items-center gap-1"><span
+                                        class="material-symbols-outlined text-[12px]">image</span> Vector</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="group relative bg-surface-dark border border-slate-700 rounded-lg overflow-hidden hover:border-primary/50 transition-all cursor-pointer">
+                        <div class="aspect-video relative bg-slate-800">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-br from-pink-900 to-rose-800 opacity-80 group-hover:opacity-100 transition-opacity">
+                            </div>
+                            <div class="absolute top-2 right-2">
+                                <button
+                                    class="bg-white/10 hover:bg-primary text-white p-1.5 rounded-full backdrop-blur-sm border border-white/10 hover:border-transparent transition-all flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-sm">add</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-3">
+                            <h3 class="text-sm font-medium text-white truncate mb-1">Valentines_Special.jpg</h3>
+                            <div class="flex justify-between items-center text-[11px] text-slate-400">
+                                <span>3.5 MB</span>
+                                <span class="flex items-center gap-1"><span
+                                        class="material-symbols-outlined text-[12px]">image</span> Image</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 border-t border-border-dark bg-surface-darker flex items-center justify-between">
+                <div class="text-xs text-slate-400">
+                    Showing <span class="text-white font-medium">6</span> of <span
+                        class="text-white font-medium">128</span> items
+                </div>
+                <div class="flex gap-3">
+                    <button
+                        class="text-sm text-slate-300 hover:text-white font-medium px-4 py-2 rounded hover:bg-slate-800 transition-colors">Cancel</button>
+                    <button
+                        class="text-sm bg-primary hover:bg-primary-dark text-white font-medium px-4 py-2 rounded shadow-lg shadow-blue-500/20 transition-all flex items-center gap-2">
+                        Upload
+                        <span class="material-symbols-outlined text-base">upload</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

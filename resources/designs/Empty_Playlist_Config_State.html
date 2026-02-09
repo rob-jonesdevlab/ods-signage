@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Playlist Editor - Empty State</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3c83f6",
+                        "primary-dark": "#2563eb",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101722",
+                        "surface-dark": "#1f2937",
+                        "surface-darker": "#111827",
+                        "border-dark": "#374151",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "sans": ["Inter", "sans-serif"],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #111827;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4b5563;
+        }
+
+        .cursor-blink {
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-background-dark text-white font-display h-screen flex flex-col overflow-hidden">
+    <header
+        class="h-16 border-b border-border-dark bg-surface-darker flex items-center justify-between px-6 shrink-0 z-20">
+        <div class="flex items-center gap-4 w-1/3">
+            <button class="text-gray-400 hover:text-white transition-colors">
+                <span class="material-symbols-outlined">arrow_back</span>
+            </button>
+            <div class="h-6 w-px bg-gray-700"></div>
+            <div class="flex items-center gap-2 text-gray-400 text-sm">
+                <span class="material-symbols-outlined text-[18px]">folder</span>
+                <span>Campaigns</span>
+                <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                <span>Summer 2024</span>
+            </div>
+        </div>
+        <div class="flex-1 flex justify-center">
+            <div class="relative group">
+                <input autofocus=""
+                    class="bg-transparent text-center text-lg font-semibold text-white border-0 border-b-2 border-primary focus:ring-0 focus:border-primary p-1 w-64 selection:bg-primary/30 outline-none"
+                    type="text" value="New Playlist Name" />
+                <span
+                    class="absolute right-0 top-1/2 -translate-y-1/2 h-5 w-[2px] bg-primary cursor-blink pointer-events-none hidden"></span>
+            </div>
+        </div>
+        <div class="flex items-center justify-end gap-4 w-1/3">
+            <div class="flex items-center gap-2 text-xs font-medium text-gray-400 animate-pulse">
+                <span class="material-symbols-outlined text-[16px] animate-spin">sync</span>
+                <span>Saving...</span>
+            </div>
+            <div class="h-6 w-px bg-gray-700 mx-2"></div>
+            <button
+                class="bg-surface-dark hover:bg-gray-700 text-white px-3 py-1.5 rounded border border-border-dark text-sm font-medium transition-colors">
+                Preview
+            </button>
+            <button
+                class="bg-primary hover:bg-primary-dark text-white px-4 py-1.5 rounded text-sm font-medium shadow-lg shadow-primary/20 transition-colors">
+                Publish
+            </button>
+        </div>
+    </header>
+    <main class="flex-1 flex overflow-hidden">
+        <section class="flex-1 flex flex-col min-w-0 bg-background-dark relative">
+            <div class="h-12 border-b border-border-dark bg-surface-dark/50 flex items-center justify-between px-4">
+                <div class="flex items-center gap-2">
+                    <button class="p-1.5 text-gray-400 hover:text-white hover:bg-white/5 rounded transition-colors"
+                        title="Settings">
+                        <span class="material-symbols-outlined text-[20px]">settings</span>
+                    </button>
+                    <button class="p-1.5 text-gray-400 hover:text-white hover:bg-white/5 rounded transition-colors"
+                        title="Layout">
+                        <span class="material-symbols-outlined text-[20px]">grid_view</span>
+                    </button>
+                </div>
+                <div class="text-xs text-gray-500 font-mono">Total Duration: 00:00</div>
+            </div>
+            <div class="flex-1 p-8 overflow-y-auto">
+                <div
+                    class="h-full w-full border-2 border-dashed border-gray-700 hover:border-primary/50 bg-surface-dark/20 hover:bg-surface-dark/40 rounded-xl transition-all flex flex-col items-center justify-center gap-6 group">
+                    <div
+                        class="w-20 h-20 rounded-full bg-surface-dark border border-gray-700 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xl">
+                        <span
+                            class="material-symbols-outlined text-4xl text-gray-500 group-hover:text-primary transition-colors">playlist_add</span>
+                    </div>
+                    <div class="text-center space-y-2 max-w-sm">
+                        <h3 class="text-xl font-semibold text-white">No content yet</h3>
+                        <p class="text-gray-400">Drag items here from the library or select from your computer to get
+                            started.</p>
+                    </div>
+                    <div class="flex items-center gap-3 mt-2">
+                        <button
+                            class="px-4 py-2 bg-surface-dark hover:bg-gray-700 border border-border-dark rounded-lg text-sm text-white font-medium transition-colors flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[18px]">upload_file</span>
+                            Upload Files
+                        </button>
+                        <span class="text-gray-600 text-sm">or</span>
+                        <button
+                            class="px-4 py-2 text-primary hover:text-primary-dark font-medium text-sm flex items-center gap-1 group/btn">
+                            add from the browser
+                            <span
+                                class="material-symbols-outlined text-[16px] group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="h-16 border-t border-border-dark bg-surface-darker flex items-center justify-center">
+                <p class="text-xs text-gray-600">Timeline will appear here when content is added</p>
+            </div>
+        </section>
+        <aside class="w-96 border-l border-border-dark bg-surface-dark flex flex-col shrink-0 z-10">
+            <div class="p-4 border-b border-border-dark">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-sm font-semibold text-white uppercase tracking-wider">Media Library</h2>
+                    <button class="text-primary hover:text-primary-dark text-xs font-medium">View All</button>
+                </div>
+                <div class="relative">
+                    <span
+                        class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 material-symbols-outlined text-[18px]">search</span>
+                    <input
+                        class="w-full bg-background-dark border border-border-dark rounded-lg py-2 pl-9 pr-4 text-sm text-gray-300 placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                        placeholder="Search media..." type="text" />
+                </div>
+                <div class="flex gap-2 mt-3 overflow-x-auto pb-1 no-scrollbar">
+                    <button
+                        class="px-3 py-1 bg-primary/20 text-primary border border-primary/30 rounded-full text-xs font-medium whitespace-nowrap">All
+                        Media</button>
+                    <button
+                        class="px-3 py-1 bg-background-dark text-gray-400 border border-border-dark hover:border-gray-500 rounded-full text-xs font-medium whitespace-nowrap transition-colors">Videos</button>
+                    <button
+                        class="px-3 py-1 bg-background-dark text-gray-400 border border-border-dark hover:border-gray-500 rounded-full text-xs font-medium whitespace-nowrap transition-colors">Images</button>
+                    <button
+                        class="px-3 py-1 bg-background-dark text-gray-400 border border-border-dark hover:border-gray-500 rounded-full text-xs font-medium whitespace-nowrap transition-colors">Widgets</button>
+                </div>
+            </div>
+            <div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                <div class="grid grid-cols-2 gap-3">
+                    <div
+                        class="group relative aspect-square bg-background-dark rounded-lg border border-border-dark overflow-hidden cursor-grab active:cursor-grabbing hover:border-gray-500 transition-colors">
+                        <img alt="Store Front"
+                            class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_OHLHHH_aszMBgCRsgo_xYRaNcmNn08A6WE_8eXBLGOCJW9U_aOO-Qne0L3nR2QyOOb2w53yDPhojPVGUjCUNyjjrrar4nDItdNFvVYe1TSZtoU0QmQ5_Ad_BA2R3JdvWqc4f8a8I91NxTnyxxjQOVxtnCApQ7jeF1fO91OHgZohI_7__PKxYsuFAyUAqt4GEMgHDntVe0hJkdMS_0bqUwhVvc4HSPL1a86swxiTTwND4CEyz_wqUHRqss6aW00Qmi19Vi2jqpPnQ" />
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-2">
+                            <p class="text-xs font-medium text-white truncate">Store_Front_v2.jpg</p>
+                            <p class="text-[10px] text-gray-400">Image • 2.4MB</p>
+                        </div>
+                        <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
+                                class="bg-black/50 hover:bg-primary text-white p-1 rounded backdrop-blur-sm transition-colors">
+                                <span class="material-symbols-outlined text-[16px]">add</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div
+                        class="group relative aspect-square bg-background-dark rounded-lg border border-border-dark overflow-hidden cursor-grab active:cursor-grabbing hover:border-gray-500 transition-colors">
+                        <img alt="Mountain Promo"
+                            class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsS_58GXBxI3ofsSRTth1hvI1m-oAA97HoHZb7nVVV7sdVy5Dp6ZCYuWhno15rF7r8CypP8NfkPpjka-1vnwCsse6jYfUDkbXcCoXNykwAQmpcIRoOQUv5ck7qnr4VY1IlZkLgITqube_Bod0YDX-GjHQXnpr_erl9t6USRWhAe71KTF6kSUd2_GnPKosQN-G2yIHETHyaL3j9HnlzDpEWxtt5MYi_4dtxROaLvWvT2e1oGE6V3pFZOGwLRGXLp0a4n1pNo_O6iSQv" />
+                        <div class="absolute top-2 left-2 bg-black/60 rounded px-1.5 py-0.5 backdrop-blur-sm">
+                            <span class="material-symbols-outlined text-[12px] text-white">videocam</span>
+                        </div>
+                        <div
+                            class="absolute bottom-2 right-2 bg-black/80 text-[10px] text-white px-1 rounded opacity-100 group-hover:opacity-0 transition-opacity">
+                            0:45</div>
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-2">
+                            <p class="text-xs font-medium text-white truncate">Winter_Promo.mp4</p>
+                            <p class="text-[10px] text-gray-400">Video • 00:45</p>
+                        </div>
+                        <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
+                                class="bg-black/50 hover:bg-primary text-white p-1 rounded backdrop-blur-sm transition-colors">
+                                <span class="material-symbols-outlined text-[16px]">add</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div
+                        class="group relative aspect-square bg-background-dark rounded-lg border border-border-dark overflow-hidden cursor-grab active:cursor-grabbing hover:border-gray-500 transition-colors">
+                        <div class="w-full h-full flex items-center justify-center bg-gray-800">
+                            <span class="material-symbols-outlined text-4xl text-gray-600">cloud</span>
+                        </div>
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-2">
+                            <p class="text-xs font-medium text-white truncate">Weather_Widget</p>
+                            <p class="text-[10px] text-gray-400">App • HTML5</p>
+                        </div>
+                        <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
+                                class="bg-black/50 hover:bg-primary text-white p-1 rounded backdrop-blur-sm transition-colors">
+                                <span class="material-symbols-outlined text-[16px]">add</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div
+                        class="group relative aspect-square bg-background-dark rounded-lg border border-border-dark overflow-hidden cursor-grab active:cursor-grabbing hover:border-gray-500 transition-colors">
+                        <img alt="Sale Banner"
+                            class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuADuI8EpCCtp_H4vg0wKOjEvbJJo3bVQTxngF5cusM7rhYL3Xz8BHfvDH_KERXWQo27ceAExzEWs0fE6acowGggXRwaoM0WUhmj-zRXoM3ZMZVnXUmTpBqGmSKrpaN570BgAms_WXVpSDgP7eBimwDJC0JxAyx5xSlwxP8Sm9bxiBFRaAq7_hots-4ug4ZPOZOItiPDMBh9TNyZMCnmnloJ2whxYlR8h63Y2iXCyRgfayn-XCltkrErNF2ermiIa0q50KiXs_ceO2sa" />
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-2">
+                            <p class="text-xs font-medium text-white truncate">Sale_Banner_Red.png</p>
+                            <p class="text-[10px] text-gray-400">Image • 1.1MB</p>
+                        </div>
+                        <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
+                                class="bg-black/50 hover:bg-primary text-white p-1 rounded backdrop-blur-sm transition-colors">
+                                <span class="material-symbols-outlined text-[16px]">add</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div
+                        class="group relative aspect-square bg-background-dark rounded-lg border border-border-dark overflow-hidden cursor-grab active:cursor-grabbing hover:border-gray-500 transition-colors">
+                        <img alt="Abstract Background"
+                            class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDeIywhXC5XczvbLXS59D5EKstsOdXvlJeE2QHtBSt6dSELJeleiIuFnKUBkz6GPNt5Yj-lZyEQ3d8kn3iTV1cpLw5Uh2YkXGQtl5_eNZiVN6qPDaYWqnBr66l7cErrhexdxpfYgAFLZMMmptBF9GO-BQQ2M2BnFyb1-03EIdnolB_SqY2OVB58gHcR_u63q3AJM2zKnw-5p0M_gYcMionfemDbVvw_k-9p94lSuhctiR86pcs2-F22dPUNaYwjsVBmUs4ABiVPP92Z" />
+                        <div class="absolute top-2 left-2 bg-black/60 rounded px-1.5 py-0.5 backdrop-blur-sm">
+                            <span class="material-symbols-outlined text-[12px] text-white">videocam</span>
+                        </div>
+                        <div
+                            class="absolute bottom-2 right-2 bg-black/80 text-[10px] text-white px-1 rounded opacity-100 group-hover:opacity-0 transition-opacity">
+                            0:15</div>
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-2">
+                            <p class="text-xs font-medium text-white truncate">Background_Loop_Blue.mp4</p>
+                            <p class="text-[10px] text-gray-400">Video • 00:15</p>
+                        </div>
+                        <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
+                                class="bg-black/50 hover:bg-primary text-white p-1 rounded backdrop-blur-sm transition-colors">
+                                <span class="material-symbols-outlined text-[16px]">add</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div
+                        class="group relative aspect-square bg-background-dark rounded-lg border border-border-dark overflow-hidden cursor-grab active:cursor-grabbing hover:border-gray-500 transition-colors">
+                        <img alt="Logo"
+                            class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6p_PsSBz_3wGy9n64K58FGCqocAly0i2MlJouuOnNb0plNMU8p8lPAqUADtaw0CHdGaeUucmLbLlo6PNDyFQrUb2AM0PEkDde85shuz52L03Xh9nGHuxAK_DPlnUDu9s__dealpkIalrC7HWw7vxbciwvMO8S3y0aUS6DD0r49Pgw3w3GsJ5BKT-UjBnUDAlebOFSGF4YHZ_-Dac1sIZB_skiOtw96DIXsTF4-QhyaJEnPlTQGhfAgU3Zl2vh4ZpUviI6K7Ejn-Ze" />
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-2">
+                            <p class="text-xs font-medium text-white truncate">Logo_White.svg</p>
+                            <p class="text-[10px] text-gray-400">Vector • 45KB</p>
+                        </div>
+                        <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
+                                class="bg-black/50 hover:bg-primary text-white p-1 rounded backdrop-blur-sm transition-colors">
+                                <span class="material-symbols-outlined text-[16px]">add</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 text-center">
+                    <button class="text-xs text-gray-500 hover:text-white transition-colors">Load more
+                        assets...</button>
+                </div>
+            </div>
+            <div class="p-4 border-t border-border-dark bg-surface-darker">
+                <div
+                    class="border border-dashed border-gray-700 rounded-lg p-3 text-center cursor-pointer hover:border-primary hover:bg-surface-dark transition-all">
+                    <p class="text-xs text-gray-400">Drop local files here to upload</p>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+</body>
+
+</html>

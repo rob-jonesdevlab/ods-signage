@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Media Preview Modal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Material Symbols -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Theme Configuration -->
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3c83f6",
+                        "primary-dark": "#2563eb",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101722",
+                        "surface-dark": "#1f2937",
+                        "border-dark": "#374151",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "sans": ["Inter", "sans-serif"],
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Custom scrollbar for better aesthetic in dark mode */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #111827;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4b5563;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark min-h-screen text-slate-900 dark:text-white font-display overflow-hidden">
+    <!-- Main Background (Simulating the content library underneath) -->
+    <div aria-hidden="true"
+        class="relative w-full h-screen flex flex-col p-8 opacity-20 blur-sm pointer-events-none select-none">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold text-white">Content Library</h1>
+            <button class="bg-primary px-4 py-2 rounded text-white text-sm font-medium">Upload New</button>
+        </div>
+        <div class="grid grid-cols-4 gap-6">
+            <!-- Simulated Background Cards -->
+            <div class="bg-surface-dark border border-border-dark rounded-lg aspect-video"></div>
+            <div class="bg-surface-dark border border-border-dark rounded-lg aspect-video"></div>
+            <div class="bg-surface-dark border border-border-dark rounded-lg aspect-video"></div>
+            <div class="bg-surface-dark border border-border-dark rounded-lg aspect-video"></div>
+            <div class="bg-surface-dark border border-border-dark rounded-lg aspect-video"></div>
+            <div class="bg-surface-dark border border-border-dark rounded-lg aspect-video"></div>
+            <div class="bg-surface-dark border border-border-dark rounded-lg aspect-video"></div>
+            <div class="bg-surface-dark border border-border-dark rounded-lg aspect-video"></div>
+        </div>
+    </div>
+    <!-- Modal Backdrop -->
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto">
+        <!-- Modal Container -->
+        <div
+            class="relative w-full max-w-4xl bg-[#1f2937] border border-[#374151] rounded-xl shadow-2xl flex flex-col max-h-[95vh]">
+            <!-- Header -->
+            <div class="flex items-start justify-between p-6 border-b border-[#374151]">
+                <div class="flex flex-col gap-1">
+                    <h2 class="text-2xl font-semibold text-white tracking-tight">Winter Sale Promo 2023</h2>
+                    <p class="text-gray-400 text-sm">Detailed preview</p>
+                </div>
+                <button
+                    class="text-gray-400 hover:text-white transition-colors rounded-lg p-2 hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-primary/50">
+                    <span class="material-symbols-outlined text-2xl">close</span>
+                </button>
+            </div>
+            <!-- Content Area (Scrollable if needed on small screens) -->
+            <div class="flex-1 overflow-y-auto custom-scrollbar">
+                <!-- Video Player Section -->
+                <div class="p-6 pb-0">
+                    <div class="relative w-full aspect-video bg-black rounded-lg overflow-hidden group shadow-lg border border-[#374151]"
+                        data-alt="High-resolution promotional video preview showing winter sale graphics">
+                        <!-- Video Thumbnail / Placeholder -->
+                        <div class="absolute inset-0 bg-cover bg-center"
+                            data-alt="Abstract winter sale promotional graphic background"
+                            style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCTrPN8wt9MIpkADObDqUx7gbopEByK3cKbALjFbv36ASgAaEp3yDo_rccmrHANhfrB_H56_pclPVtpVKeSJpnM9vn7gC4dDMZRGLgHC8KcKgw4bKqACzp8YHqDcibeYfPH5n2rSo7vvugdSG-5vq8f8RSrGBpdTM73gBPvus0YwCf_T-UZ6YfhrWv19clNSAkA-omzp5OzkiKnU6WPM0Y9oPdyb5pvzsWVVYjjg1HUmB5ARrKNfpuabhZIY-wfLUXYTsT14h3fs1cO'); opacity: 0.8;">
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30"></div>
+                        <!-- Big Play Button (Center) -->
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <button
+                                class="flex items-center justify-center w-16 h-16 rounded-full bg-white/20 hover:bg-primary backdrop-blur-md text-white transition-all transform hover:scale-110 shadow-xl group-hover:bg-primary">
+                                <span class="material-symbols-outlined text-4xl fill-1">play_arrow</span>
+                            </button>
+                        </div>
+                        <!-- Controls Bar (Bottom) -->
+                        <div
+                            class="absolute bottom-0 left-0 right-0 px-4 py-3 bg-gradient-to-t from-black/90 to-transparent">
+                            <!-- Progress Bar -->
+                            <div
+                                class="group/progress relative h-1 bg-white/30 rounded-full cursor-pointer mb-3 hover:h-2 transition-all">
+                                <div class="absolute h-full w-1/3 bg-primary rounded-full"></div>
+                                <div
+                                    class="absolute h-4 w-4 bg-white rounded-full shadow top-1/2 -translate-y-1/2 left-1/3 scale-0 group-hover/progress:scale-100 transition-transform">
+                                </div>
+                            </div>
+                            <!-- Control Icons -->
+                            <div class="flex items-center justify-between text-white">
+                                <div class="flex items-center gap-4">
+                                    <button class="hover:text-primary transition-colors">
+                                        <span class="material-symbols-outlined fill-1">pause</span>
+                                    </button>
+                                    <div class="flex items-center gap-2 group/volume relative">
+                                        <button class="hover:text-primary transition-colors">
+                                            <span class="material-symbols-outlined">volume_up</span>
+                                        </button>
+                                        <div
+                                            class="w-20 h-1 bg-white/30 rounded-full cursor-pointer hidden group-hover/volume:block">
+                                            <div class="w-2/3 h-full bg-white rounded-full"></div>
+                                        </div>
+                                    </div>
+                                    <div class="text-xs font-medium tabular-nums tracking-wide opacity-90">
+                                        <span class="text-white">0:15</span> <span class="text-gray-400 mx-1">/</span>
+                                        <span class="text-gray-400">0:45</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <button class="hover:text-primary transition-colors">
+                                        <span class="material-symbols-outlined">settings</span>
+                                    </button>
+                                    <button class="hover:text-primary transition-colors">
+                                        <span class="material-symbols-outlined">fullscreen</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Metadata Grid -->
+                <div class="p-6">
+                    <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4 px-2">File Metadata
+                    </h3>
+                    <div
+                        class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-0 bg-[#18202F] rounded-lg border border-[#374151] overflow-hidden">
+                        <!-- Item 1 -->
+                        <div
+                            class="flex flex-col sm:flex-row sm:justify-between sm:items-center py-4 px-6 border-b border-[#374151] md:border-r">
+                            <span class="text-gray-400 text-sm">Type</span>
+                            <div class="flex items-center gap-2 mt-1 sm:mt-0">
+                                <span class="material-symbols-outlined text-base text-primary">videocam</span>
+                                <span class="text-white text-sm font-medium">Video (MP4)</span>
+                            </div>
+                        </div>
+                        <!-- Item 2 -->
+                        <div
+                            class="flex flex-col sm:flex-row sm:justify-between sm:items-center py-4 px-6 border-b border-[#374151]">
+                            <span class="text-gray-400 text-sm">Duration</span>
+                            <span class="text-white text-sm font-medium mt-1 sm:mt-0">00:15</span>
+                        </div>
+                        <!-- Item 3 -->
+                        <div
+                            class="flex flex-col sm:flex-row sm:justify-between sm:items-center py-4 px-6 border-b border-[#374151] md:border-r">
+                            <span class="text-gray-400 text-sm">Size</span>
+                            <span class="text-white text-sm font-medium mt-1 sm:mt-0">12.4 MB</span>
+                        </div>
+                        <!-- Item 4 -->
+                        <div
+                            class="flex flex-col sm:flex-row sm:justify-between sm:items-center py-4 px-6 border-b border-[#374151]">
+                            <span class="text-gray-400 text-sm">Uploaded</span>
+                            <span class="text-white text-sm font-medium mt-1 sm:mt-0">Oct 24, 2023</span>
+                        </div>
+                        <!-- Item 5 -->
+                        <div
+                            class="flex flex-col sm:flex-row sm:justify-between sm:items-center py-4 px-6 border-b border-[#374151] md:border-b-0 md:border-r">
+                            <span class="text-gray-400 text-sm">Filename</span>
+                            <span class="text-white text-sm font-medium truncate max-w-[200px] mt-1 sm:mt-0"
+                                title="promo_winter_sale.mp4">promo_winter_sale.mp4</span>
+                        </div>
+                        <!-- Item 6 -->
+                        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center py-4 px-6">
+                            <span class="text-gray-400 text-sm">Resolution</span>
+                            <span class="text-white text-sm font-medium mt-1 sm:mt-0">1920x1080</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Footer Actions -->
+            <div
+                class="flex flex-col-reverse sm:flex-row items-center justify-between p-6 bg-[#18202F]/50 border-t border-[#374151] rounded-b-xl gap-4">
+                <button
+                    class="flex items-center justify-center gap-2 px-5 h-10 w-full sm:w-auto rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 transition-all text-sm font-semibold">
+                    <span class="material-symbols-outlined text-[20px]">delete</span>
+                    <span>Delete Media</span>
+                </button>
+                <div class="flex items-center gap-3 w-full sm:w-auto">
+                    <button
+                        class="px-5 h-10 w-full sm:w-auto rounded-lg text-gray-300 bg-[#374151] hover:bg-[#4b5563] border border-transparent transition-all text-sm font-medium shadow-sm">
+                        Close
+                    </button>
+                    <button
+                        class="px-5 h-10 w-full sm:w-auto rounded-lg text-white bg-primary hover:bg-primary-dark border border-transparent transition-all text-sm font-medium shadow-lg shadow-primary/20">
+                        Edit Details
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>ODS Cloud Executive Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "slate-950": "#020617",
+                        "primary": "#3b82f6",
+                        "primary-light": "#60a5fa",
+                        "primary-dark": "#2563eb",
+                        "glass": "rgba(255, 255, 255, 0.05)",
+                        "glass-border": "rgba(255, 255, 255, 0.1)",
+                        "glass-hover": "rgba(255, 255, 255, 0.1)",
+                    },
+                    fontFamily: {
+                        "sans": ["Inter", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #020617;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-950 text-white min-h-screen flex flex-col antialiased selection:bg-primary selection:text-white">
+    <header class="sticky top-0 z-50 w-full border-b border-slate-800 bg-slate-950/80 backdrop-blur-md">
+        <div class="px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-8">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="size-8 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+                        <span class="material-symbols-outlined text-white text-lg">bolt</span>
+                    </div>
+                    <span class="text-lg font-bold tracking-tight text-white">ODS <span
+                            class="text-slate-400 font-medium">Cloud</span></span>
+                </div>
+                <nav class="hidden md:flex items-center gap-1">
+                    <a class="px-4 py-2 text-sm font-medium text-blue-400 bg-blue-500/10 rounded-lg transition-colors border border-blue-500/20"
+                        href="#">
+                        Dashboard
+                    </a>
+                    <a class="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800"
+                        href="#">
+                        Players
+                    </a>
+                    <a class="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800"
+                        href="#">
+                        Content
+                    </a>
+                    <a class="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800"
+                        href="#">
+                        Reports
+                    </a>
+                </nav>
+            </div>
+            <div class="flex items-center gap-5">
+                <div
+                    class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/5 border border-emerald-500/20">
+                    <span class="relative flex h-2 w-2">
+                        <span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    <span class="text-xs font-semibold text-emerald-500 uppercase tracking-wider">Online</span>
+                </div>
+                <div class="h-6 w-px bg-slate-800"></div>
+                <button class="text-slate-400 hover:text-white transition-colors relative">
+                    <span class="material-symbols-outlined text-[20px]">notifications</span>
+                    <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border border-slate-950"></span>
+                </button>
+                <div class="flex items-center gap-3 cursor-pointer group">
+                    <div
+                        class="h-9 w-9 rounded-full bg-gradient-to-tr from-slate-700 to-slate-600 border border-slate-700 overflow-hidden ring-offset-2 ring-offset-slate-950 group-hover:ring-2 ring-blue-500 transition-all">
+                        <img alt="User Avatar" class="h-full w-full object-cover"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnbAUKRWg7cwB2oRH-qRJ3qzts2BP1vgmPX8zwROd6lNo0G_LdXBYJOS92DB4QjbI9_PSEBS86_0OQ0EIXh8s7Ipbpl5htYQHs8wygw50ELBsWYBb48mbrnOMnvhIWPBSQaGm6O9pMXE2IUMXQq-wPC3qdG8NpSjX4axBmTX69zkzHjfDNY5qXQIB6JVxgkvsBMtrW8MScf1NySXfDHkQv7rlv8W14WT1ukKzZl_2Zlwj-soz_RExvuppzdWZRGzXgYLg3TsQ-W570" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="flex-1 w-full max-w-[1600px] mx-auto p-6 md:p-8 flex flex-col gap-8">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-white">Welcome back, Alex</h1>
+                <p class="text-slate-400 mt-1 text-sm md:text-base">Here's what's happening with your digital signage
+                    network today.</p>
+            </div>
+            <div class="flex flex-wrap gap-3">
+                <button
+                    class="flex items-center gap-2 px-4 py-2.5 bg-slate-800/50 hover:bg-slate-800 text-white rounded-xl text-sm font-medium transition-all border border-slate-700 backdrop-blur-sm shadow-sm hover:shadow-md hover:border-slate-600">
+                    <span class="material-symbols-outlined text-[18px] text-emerald-400">playlist_add</span>
+                    New Playlist
+                </button>
+                <button
+                    class="flex items-center gap-2 px-4 py-2.5 bg-slate-800/50 hover:bg-slate-800 text-white rounded-xl text-sm font-medium transition-all border border-slate-700 backdrop-blur-sm shadow-sm hover:shadow-md hover:border-slate-600">
+                    <span class="material-symbols-outlined text-[18px] text-blue-400">cloud_upload</span>
+                    Upload
+                </button>
+                <button
+                    class="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-sm font-medium transition-all shadow-lg shadow-blue-500/20 border border-blue-500">
+                    <span class="material-symbols-outlined text-[18px]">add_to_queue</span>
+                    Add Player
+                </button>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+            <div
+                class="glass-card p-6 rounded-2xl relative overflow-hidden group hover:border-blue-500/30 transition-colors">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <span class="material-symbols-outlined text-6xl text-blue-500">monitor</span>
+                </div>
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-2 bg-blue-500/10 rounded-lg border border-blue-500/20 text-blue-400">
+                        <span class="material-symbols-outlined text-xl">monitor</span>
+                    </div>
+                    <div
+                        class="flex items-center text-xs font-medium text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-md border border-emerald-500/20">
+                        <span class="material-symbols-outlined text-sm mr-0.5">trending_up</span>
+                        +3
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <p class="text-sm font-medium text-slate-400">Active Players</p>
+                    <h3 class="text-3xl font-bold text-white mt-1">24<span
+                            class="text-lg text-slate-500 font-normal ml-1">/ 26</span></h3>
+                </div>
+                <div class="flex items-end gap-1 h-8 mt-4">
+                    <div class="w-1/6 bg-blue-900/40 h-[40%] rounded-sm"></div>
+                    <div class="w-1/6 bg-blue-900/40 h-[60%] rounded-sm"></div>
+                    <div class="w-1/6 bg-blue-900/40 h-[50%] rounded-sm"></div>
+                    <div class="w-1/6 bg-blue-900/40 h-[80%] rounded-sm"></div>
+                    <div class="w-1/6 bg-blue-800/60 h-[70%] rounded-sm"></div>
+                    <div class="w-1/6 bg-blue-500 h-[90%] rounded-sm shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
+                </div>
+            </div>
+            <div
+                class="glass-card p-6 rounded-2xl relative overflow-hidden group hover:border-purple-500/30 transition-colors">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <span class="material-symbols-outlined text-6xl text-purple-500">perm_media</span>
+                </div>
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-2 bg-purple-500/10 rounded-lg border border-purple-500/20 text-purple-400">
+                        <span class="material-symbols-outlined text-xl">perm_media</span>
+                    </div>
+                    <div class="text-xs font-medium text-slate-400">
+                        75% Used
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <p class="text-sm font-medium text-slate-400">Total Content</p>
+                    <h3 class="text-3xl font-bold text-white mt-1">1,240</h3>
+                </div>
+                <div class="mt-5">
+                    <div class="flex justify-between text-xs text-slate-500 mb-1">
+                        <span>Storage</span>
+                        <span>15GB / 20GB</span>
+                    </div>
+                    <div class="w-full bg-slate-800 rounded-full h-2">
+                        <div class="bg-gradient-to-r from-purple-600 to-indigo-500 h-2 rounded-full shadow-[0_0_10px_rgba(147,51,234,0.3)]"
+                            style="width: 75%"></div>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="glass-card p-6 rounded-2xl relative overflow-hidden group hover:border-orange-500/30 transition-colors">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-2 bg-orange-500/10 rounded-lg border border-orange-500/20 text-orange-400">
+                        <span class="material-symbols-outlined text-xl">featured_play_list</span>
+                    </div>
+                </div>
+                <div class="flex justify-between items-end">
+                    <div class="mb-2">
+                        <p class="text-sm font-medium text-slate-400">Active Playlists</p>
+                        <h3 class="text-3xl font-bold text-white mt-1">18</h3>
+                        <p class="text-xs text-slate-500 mt-1">4 scheduled for later</p>
+                    </div>
+                    <div class="relative size-12 mr-2">
+                        <svg class="size-full -rotate-90" viewBox="0 0 36 36">
+                            <path class="text-slate-800"
+                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                fill="none" stroke="currentColor" stroke-width="4"></path>
+                            <path class="text-orange-500"
+                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                fill="none" stroke="currentColor" stroke-dasharray="75, 100" stroke-linecap="round"
+                                stroke-width="4"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="glass-card p-6 rounded-2xl relative overflow-hidden group hover:border-emerald-500/30 transition-colors">
+                <div
+                    class="absolute -bottom-6 -right-6 w-24 h-24 bg-emerald-500/20 rounded-full blur-2xl group-hover:bg-emerald-500/30 transition-colors">
+                </div>
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-2 bg-emerald-500/10 rounded-lg border border-emerald-500/20 text-emerald-400">
+                        <span class="material-symbols-outlined text-xl">check_circle</span>
+                    </div>
+                    <div class="p-1 bg-emerald-500/20 rounded-full">
+                        <span class="material-symbols-outlined text-emerald-400 text-sm">check</span>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <p class="text-sm font-medium text-slate-400">Network Uptime</p>
+                    <h3 class="text-3xl font-bold text-white mt-1">99.8%</h3>
+                </div>
+                <p class="text-xs text-emerald-400 mt-4 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm">verified</span>
+                    System is healthy
+                </p>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
+            <div class="lg:col-span-3 glass-card rounded-2xl p-6 border border-slate-800">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-lg font-semibold text-white">Recent Activity</h2>
+                    <button class="text-xs font-medium text-blue-400 hover:text-blue-300">View All</button>
+                </div>
+                <div class="relative pl-4 border-l border-slate-800 space-y-8">
+                    <div class="relative pl-6">
+                        <div
+                            class="absolute -left-[21px] top-1 h-2.5 w-2.5 rounded-full bg-blue-500 ring-4 ring-slate-900/50">
+                        </div>
+                        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1">
+                            <div>
+                                <p class="text-sm font-medium text-white">New Playlist deployed to <span
+                                        class="text-blue-400">Lobby Screens</span></p>
+                                <p class="text-xs text-slate-500 mt-1">Successfully synced with 4 players.</p>
+                            </div>
+                            <span class="text-xs text-slate-500 whitespace-nowrap">2 min ago</span>
+                        </div>
+                    </div>
+                    <div class="relative pl-6">
+                        <div
+                            class="absolute -left-[21px] top-1 h-2.5 w-2.5 rounded-full bg-purple-500 ring-4 ring-slate-900/50">
+                        </div>
+                        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1">
+                            <div>
+                                <p class="text-sm font-medium text-white">Content Upload: <span
+                                        class="text-slate-300">Summer_Promo_v2.mp4</span></p>
+                                <p class="text-xs text-slate-500 mt-1">Uploaded by Sarah J. • 45MB</p>
+                            </div>
+                            <span class="text-xs text-slate-500 whitespace-nowrap">1 hr ago</span>
+                        </div>
+                    </div>
+                    <div class="relative pl-6">
+                        <div
+                            class="absolute -left-[21px] top-1 h-2.5 w-2.5 rounded-full bg-orange-500 ring-4 ring-slate-900/50">
+                        </div>
+                        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1">
+                            <div>
+                                <p class="text-sm font-medium text-white">Player Offline Alert: <span
+                                        class="text-orange-400">Cafeteria_Screen_02</span></p>
+                                <p class="text-xs text-slate-500 mt-1">Connectivity lost. Automatic retry scheduled.</p>
+                            </div>
+                            <span class="text-xs text-slate-500 whitespace-nowrap">3 hrs ago</span>
+                        </div>
+                    </div>
+                    <div class="relative pl-6">
+                        <div
+                            class="absolute -left-[21px] top-1 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-4 ring-slate-900/50">
+                        </div>
+                        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1">
+                            <div>
+                                <p class="text-sm font-medium text-white">System Update Completed</p>
+                                <p class="text-xs text-slate-500 mt-1">All players updated to Firmware v3.4.1</p>
+                            </div>
+                            <span class="text-xs text-slate-500 whitespace-nowrap">Yesterday</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="lg:col-span-2 flex flex-col gap-6">
+                <div class="glass-card rounded-2xl p-6 border border-slate-800 flex-1 flex flex-col">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-semibold text-white">Performance</h2>
+                        <select
+                            class="bg-slate-900 border border-slate-700 text-xs text-slate-300 rounded-lg px-2 py-1 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                            <option>Last 24h</option>
+                            <option>Last 7d</option>
+                            <option>Last 30d</option>
+                        </select>
+                    </div>
+                    <div class="relative flex-1 min-h-[160px] w-full flex items-end justify-between gap-1 pt-8 px-2">
+                        <div class="absolute inset-0 flex flex-col justify-between pointer-events-none pb-6">
+                            <div class="border-t border-slate-800 w-full h-0"></div>
+                            <div class="border-t border-slate-800/50 w-full h-0"></div>
+                            <div class="border-t border-slate-800/50 w-full h-0"></div>
+                            <div class="border-t border-slate-800/50 w-full h-0"></div>
+                        </div>
+                        <div class="w-full h-full flex items-end gap-1 z-10">
+                            <div class="flex-1 bg-blue-500/20 rounded-t-sm h-[30%]"></div>
+                            <div class="flex-1 bg-blue-500/30 rounded-t-sm h-[35%]"></div>
+                            <div class="flex-1 bg-blue-500/40 rounded-t-sm h-[45%]"></div>
+                            <div class="flex-1 bg-blue-500/50 rounded-t-sm h-[40%]"></div>
+                            <div class="flex-1 bg-blue-500/40 rounded-t-sm h-[55%]"></div>
+                            <div class="flex-1 bg-blue-500/30 rounded-t-sm h-[65%]"></div>
+                            <div class="flex-1 bg-blue-500/40 rounded-t-sm h-[75%]"></div>
+                            <div class="flex-1 bg-blue-500/60 rounded-t-sm h-[80%]"></div>
+                            <div class="flex-1 bg-blue-500/80 rounded-t-sm h-[70%]"></div>
+                            <div class="flex-1 bg-blue-500 rounded-t-sm h-[85%] relative group cursor-pointer">
+                                <div
+                                    class="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded border border-slate-700 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">
+                                    98.5% Engagement
+                                </div>
+                            </div>
+                            <div class="flex-1 bg-blue-500/70 rounded-t-sm h-[75%]"></div>
+                            <div class="flex-1 bg-blue-500/50 rounded-t-sm h-[60%]"></div>
+                            <div class="flex-1 bg-blue-500/40 rounded-t-sm h-[65%]"></div>
+                            <div class="flex-1 bg-blue-500/30 rounded-t-sm h-[50%]"></div>
+                            <div class="flex-1 bg-blue-500/20 rounded-t-sm h-[40%]"></div>
+                        </div>
+                    </div>
+                    <div class="flex justify-between text-[10px] text-slate-500 mt-2 px-1">
+                        <span>00:00</span>
+                        <span>06:00</span>
+                        <span>12:00</span>
+                        <span>18:00</span>
+                        <span>Now</span>
+                    </div>
+                </div>
+                <div class="glass-card rounded-2xl p-6 border border-slate-800">
+                    <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">System Health</h2>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="p-1.5 rounded-md bg-emerald-500/10 text-emerald-500">
+                                    <span class="material-symbols-outlined text-lg">database</span>
+                                </div>
+                                <span class="text-sm text-white">Database Latency</span>
+                            </div>
+                            <span class="text-sm font-medium text-emerald-400">12ms</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="p-1.5 rounded-md bg-blue-500/10 text-blue-500">
+                                    <span class="material-symbols-outlined text-lg">cloud_queue</span>
+                                </div>
+                                <span class="text-sm text-white">API Response</span>
+                            </div>
+                            <span class="text-sm font-medium text-blue-400">45ms</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="p-1.5 rounded-md bg-purple-500/10 text-purple-500">
+                                    <span class="material-symbols-outlined text-lg">memory</span>
+                                </div>
+                                <span class="text-sm text-white">Server Load</span>
+                            </div>
+                            <span class="text-sm font-medium text-purple-400">24%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+</body>
+
+</html>

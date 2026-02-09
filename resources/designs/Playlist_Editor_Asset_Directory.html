@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Playlist Editor - Asset Directory Architecture</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3c83f6",
+                        "primary-dark": "#2563eb",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#0f172a",
+                        "surface-dark": "#1e293b",
+                        "surface-darker": "#0f172a",
+                        "border-dark": "#334155",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "sans": ["Inter", "sans-serif"],
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+
+<body class="bg-background-dark text-white font-display h-screen flex flex-col overflow-hidden">
+    <!-- Header with Preview/Publish Buttons -->
+    <header class="h-16 bg-surface-darker border-b border-border-dark flex items-center px-6 shrink-0 z-20">
+        <div class="flex items-center gap-2 text-sm text-gray-400">
+            <button class="hover:text-white transition-colors">
+                <span class="material-symbols-outlined">arrow_back</span>
+            </button>
+            <span class="material-symbols-outlined text-base">chevron_right</span>
+            <span class="text-white font-medium">Morning Cafe Loop</span>
+        </div>
+        <div class="ml-auto flex items-center gap-4">
+            <div class="flex items-center text-xs font-mono text-gray-400">
+                Total Duration: 01:05
+            </div>
+            <div class="h-6 w-px bg-gray-700"></div>
+            <button
+                class="bg-surface-dark hover:bg-gray-700 text-white px-3 py-1.5 rounded border border-border-dark text-sm font-medium transition-colors">
+                Preview
+            </button>
+            <button
+                class="bg-primary hover:bg-primary-dark text-white px-4 py-1.5 rounded text-sm font-medium shadow-lg shadow-primary/20 transition-colors">
+                Publish
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content: 70/30 Split -->
+    <main class="flex-1 flex overflow-hidden">
+        <!-- Left: Playlist Content (70%) -->
+        <section class="w-[70%] flex flex-col border-r border-border-dark bg-background-dark relative">
+            <div class="h-12 border-b border-border-dark bg-surface-dark/50 flex items-center justify-between px-4">
+                <h2 class="text-sm font-semibold text-white uppercase tracking-wider">Playlist Content</h2>
+                <div class="text-xs text-gray-500">3 items</div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-4">
+                <!-- Playlist Item 1 -->
+                <div
+                    class="group bg-slate-800 border border-slate-700 rounded-lg p-3 mb-3 flex items-center gap-3 hover:border-blue-500/50 transition-all cursor-grab active:cursor-grabbing">
+                    <div class="flex items-center gap-3 flex-1">
+                        <span class="material-symbols-outlined text-gray-500">drag_indicator</span>
+                        <div class="w-12 h-12 bg-slate-700 rounded overflow-hidden flex-shrink-0">
+                            <img src="https://via.placeholder.com/100" alt="Test Verification URL"
+                                class="w-full h-full object-cover" />
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-sm font-medium text-white truncate">Test Verification URL</h3>
+                            <div class="flex items-center gap-2 text-xs text-gray-400">
+                                <span class="flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[12px]">link</span>
+                                    URL
+                                </span>
+                                <span>•</span>
+                                <span>38s</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button
+                        class="opacity-0 group-hover:opacity-100 p-1.5 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded transition-all">
+                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                    </button>
+                </div>
+
+                <!-- Playlist Item 2 -->
+                <div
+                    class="group bg-slate-800 border border-slate-700 rounded-lg p-3 mb-3 flex items-center gap-3 hover:border-blue-500/50 transition-all cursor-grab active:cursor-grabbing">
+                    <div class="flex items-center gap-3 flex-1">
+                        <span class="material-symbols-outlined text-gray-500">drag_indicator</span>
+                        <div class="w-12 h-12 bg-slate-700 rounded overflow-hidden flex-shrink-0">
+                            <img src="https://via.placeholder.com/100" alt="Google Homepage"
+                                class="w-full h-full object-cover" />
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-sm font-medium text-white truncate">Google Homepage</h3>
+                            <div class="flex items-center gap-2 text-xs text-gray-400">
+                                <span class="flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[12px]">link</span>
+                                    URL
+                                </span>
+                                <span>•</span>
+                                <span>28s</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button
+                        class="opacity-0 group-hover:opacity-100 p-1.5 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded transition-all">
+                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                    </button>
+                </div>
+
+                <!-- Playlist Item 3 -->
+                <div
+                    class="group bg-slate-800 border border-slate-700 rounded-lg p-3 mb-3 flex items-center gap-3 hover:border-blue-500/50 transition-all cursor-grab active:cursor-grabbing">
+                    <div class="flex items-center gap-3 flex-1">
+                        <span class="material-symbols-outlined text-gray-500">drag_indicator</span>
+                        <div class="w-12 h-12 bg-slate-700 rounded overflow-hidden flex-shrink-0">
+                            <img src="https://via.placeholder.com/100" alt="Test Menu Board"
+                                class="w-full h-full object-cover" />
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-sm font-medium text-white truncate">Test Menu Board</h3>
+                            <div class="flex items-center gap-2 text-xs text-gray-400">
+                                <span class="flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[12px]">image</span>
+                                    Image
+                                </span>
+                                <span>•</span>
+                                <span>15s</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button
+                        class="opacity-0 group-hover:opacity-100 p-1.5 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded transition-all">
+                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right: Asset Directory (30%) -->
+        <aside class="w-[30%] bg-background-dark flex flex-col h-full border-l border-border-dark">
+            <!-- Asset Directory Header -->
+            <div class="p-4 border-b border-border-dark">
+                <h2 class="text-sm font-semibold text-white uppercase tracking-wider mb-4">Asset Directory</h2>
+
+                <!-- Filter Tabs: All / Assigned / Unassigned -->
+                <div class="flex gap-2">
+                    <button
+                        class="flex-1 px-3 py-2 bg-blue-600 text-white rounded text-xs font-medium transition-colors">
+                        All
+                    </button>
+                    <button
+                        class="flex-1 px-3 py-2 bg-slate-800 text-slate-400 hover:text-white rounded text-xs font-medium transition-colors">
+                        Assigned
+                    </button>
+                    <button
+                        class="flex-1 px-3 py-2 bg-slate-800 text-slate-400 hover:text-white rounded text-xs font-medium transition-colors">
+                        Unassigned
+                    </button>
+                </div>
+            </div>
+
+            <!-- Asset Grid -->
+            <div class="flex-1 overflow-y-auto p-4">
+                <div class="grid grid-cols-2 gap-3">
+                    <!-- Asset 1 - Assigned (with checkmark) -->
+                    <div
+                        class="group relative bg-slate-800 border border-slate-700 rounded-lg overflow-hidden hover:border-blue-500/50 transition-all">
+                        <div class="aspect-video relative bg-black">
+                            <img src="https://via.placeholder.com/300x200" alt="Google Homepage"
+                                class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                            <span
+                                class="absolute bottom-1 right-1 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded font-medium">
+                                28s
+                            </span>
+                            <!-- Assigned Checkmark -->
+                            <div class="absolute top-2 right-2">
+                                <div class="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-white text-sm">check</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-2">
+                            <h3 class="text-xs font-medium text-white truncate">Google Homepage</h3>
+                            <div class="flex justify-between items-center text-[10px] text-slate-400">
+                                <span>N/A</span>
+                                <span class="flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[10px]">link</span>
+                                    URL
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Asset 2 - Assigned (with checkmark) -->
+                    <div
+                        class="group relative bg-slate-800 border border-slate-700 rounded-lg overflow-hidden hover:border-blue-500/50 transition-all">
+                        <div class="aspect-video relative bg-black">
+                            <img src="https://via.placeholder.com/300x200" alt="Test Verification URL"
+                                class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                            <span
+                                class="absolute bottom-1 right-1 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded font-medium">
+                                38s
+                            </span>
+                            <!-- Assigned Checkmark -->
+                            <div class="absolute top-2 right-2">
+                                <div class="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-white text-sm">check</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-2">
+                            <h3 class="text-xs font-medium text-white truncate">Test Verification URL</h3>
+                            <div class="flex justify-between items-center text-[10px] text-slate-400">
+                                <span>N/A</span>
+                                <span class="flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[10px]">link</span>
+                                    URL
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Asset 3 - Assigned (with checkmark) -->
+                    <div
+                        class="group relative bg-slate-800 border border-slate-700 rounded-lg overflow-hidden hover:border-blue-500/50 transition-all">
+                        <div class="aspect-video relative bg-black">
+                            <img src="https://via.placeholder.com/300x200" alt="Test Menu Board"
+                                class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                            <span
+                                class="absolute bottom-1 right-1 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded font-medium">
+                                15s
+                            </span>
+                            <!-- Assigned Checkmark -->
+                            <div class="absolute top-2 right-2">
+                                <div class="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-white text-sm">check</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-2">
+                            <h3 class="text-xs font-medium text-white truncate">Test Menu Board</h3>
+                            <div class="flex justify-between items-center text-[10px] text-slate-400">
+                                <span>2.1 MB</span>
+                                <span class="flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[10px]">image</span>
+                                    Image
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Asset 4 - Unassigned (with + button) -->
+                    <div
+                        class="group relative bg-slate-800 border border-slate-700 rounded-lg overflow-hidden hover:border-blue-500/50 transition-all cursor-pointer">
+                        <div class="aspect-video relative bg-black">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-br from-slate-700 to-slate-800 opacity-80 group-hover:opacity-100 transition-opacity">
+                            </div>
+                            <span
+                                class="absolute bottom-1 right-1 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded font-medium">
+                                45s
+                            </span>
+                            <!-- Add Button -->
+                            <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div
+                                    class="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center hover:bg-blue-500">
+                                    <span class="material-symbols-outlined text-white text-sm">add</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-2">
+                            <h3 class="text-xs font-medium text-white truncate">Winter Promo Video</h3>
+                            <div class="flex justify-between items-center text-[10px] text-slate-400">
+                                <span>15.3 MB</span>
+                                <span class="flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[10px]">videocam</span>
+                                    Video
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Content Button (Anchored at Bottom) -->
+            <div class="p-4 border-t border-border-dark bg-surface-darker">
+                <button
+                    class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-all shadow-lg shadow-blue-600/20 hover:shadow-blue-600/40">
+                    <span class="material-symbols-outlined">add</span>
+                    Add Content
+                </button>
+            </div>
+        </aside>
+    </main>
+
+</body>
+
+</html>

@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>System Operations Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3c83f6",
+                        "primary-dark": "#2563eb",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#0f172a", // Slate-900 based
+                        "surface-dark": "#1e293b", // Slate-800 based
+                        "surface-glass": "rgba(30, 41, 59, 0.7)",
+                        "border-dark": "#334155", // Slate-700 based
+                        "success": "#10b981",
+                        "warning": "#f59e0b",
+                        "danger": "#ef4444",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white min-h-screen flex flex-col antialiased selection:bg-primary selection:text-white">
+    <header
+        class="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-border-dark bg-white/80 dark:bg-background-dark/80 backdrop-blur-md">
+        <div class="px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-8">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="size-8 rounded-lg bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center text-white shadow-lg shadow-primary/20">
+                        <svg class="size-5" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" fill="currentColor" stroke="currentColor"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                    </div>
+                    <span class="text-lg font-bold tracking-tight text-slate-900 dark:text-white">ODS <span
+                            class="text-slate-500 font-medium">Cloud</span></span>
+                </div>
+                <nav class="hidden md:flex items-center gap-1">
+                    <a class="px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-white/5"
+                        href="#">
+                        Players
+                    </a>
+                    <a class="px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-white/5"
+                        href="#">
+                        Content Library
+                    </a>
+                    <a class="px-4 py-2 text-sm font-medium text-primary bg-primary/10 dark:bg-primary/20 rounded-lg transition-colors"
+                        href="#">
+                        Operations
+                    </a>
+                    <a class="px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-white/5"
+                        href="#">
+                        Analytics
+                    </a>
+                </nav>
+            </div>
+            <div class="flex items-center gap-4">
+                <div
+                    class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                    <span class="relative flex h-2 w-2">
+                        <span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    <span class="text-xs font-semibold text-emerald-500 uppercase tracking-wider">System Optimal</span>
+                </div>
+                <button
+                    class="relative p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-white/5">
+                    <span
+                        class="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white dark:ring-background-dark"></span>
+                    <span class="material-symbols-outlined text-[20px]">notifications</span>
+                </button>
+                <div
+                    class="h-8 w-8 rounded-full bg-gradient-to-tr from-slate-700 to-slate-600 border border-slate-500 overflow-hidden cursor-pointer ring-offset-2 ring-offset-background-dark hover:ring-2 ring-primary transition-all">
+                    <img alt="User Avatar" class="h-full w-full object-cover" data-alt="Portrait of a user"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnbAUKRWg7cwB2oRH-qRJ3qzts2BP1vgmPX8zwROd6lNo0G_LdXBYJOS92DB4QjbI9_PSEBS86_0OQ0EIXh8s7Ipbpl5htYQHs8wygw50ELBsWYBb48mbrnOMnvhIWPBSQaGm6O9pMXE2IUMXQq-wPC3qdG8NpSjX4axBmTX69zkzHjfDNY5qXQIB6JVxgkvsBMtrW8MScf1NySXfDHkQv7rlv8W14WT1ukKzZl_2Zlwj-soz_RExvuppzdWZRGzXgYLg3TsQ-W570" />
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="flex-1 w-full max-w-[1400px] mx-auto p-6 md:p-8 lg:px-12 flex flex-col gap-8">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">System Operations</h1>
+                <p class="text-slate-500 dark:text-slate-400 mt-1">Monitor infrastructure health and manage scheduled
+                    deployments.</p>
+            </div>
+            <div class="flex gap-3">
+                <button
+                    class="flex items-center gap-2 px-4 py-2 bg-slate-200 dark:bg-surface-dark hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-lg text-sm font-medium transition-colors border border-transparent dark:border-border-dark shadow-sm">
+                    <span class="material-symbols-outlined text-[18px]">refresh</span>
+                    Refresh Data
+                </button>
+                <button
+                    class="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg text-sm font-medium transition-colors shadow-lg shadow-primary/25">
+                    <span class="material-symbols-outlined text-[18px]">add_circle</span>
+                    New Schedule
+                </button>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
+            <div class="lg:col-span-8 flex flex-col gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div
+                        class="glass-panel p-5 rounded-xl border-l-4 border-l-emerald-500 dark:bg-surface-dark shadow-sm hover:shadow-md transition-all">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-sm font-medium text-slate-500 dark:text-slate-400">Server Status</span>
+                            <span class="material-symbols-outlined text-emerald-500">dns</span>
+                        </div>
+                        <div class="flex items-end gap-2">
+                            <span class="text-2xl font-bold text-slate-900 dark:text-white">99.9%</span>
+                            <span class="text-xs text-emerald-500 mb-1">Uptime</span>
+                        </div>
+                        <div class="mt-3 text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> All regions operational
+                        </div>
+                    </div>
+                    <div
+                        class="glass-panel p-5 rounded-xl border-l-4 border-l-emerald-500 dark:bg-surface-dark shadow-sm hover:shadow-md transition-all">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-sm font-medium text-slate-500 dark:text-slate-400">Database Load</span>
+                            <span class="material-symbols-outlined text-emerald-500">database</span>
+                        </div>
+                        <div class="flex items-end gap-2">
+                            <span class="text-2xl font-bold text-slate-900 dark:text-white">24ms</span>
+                            <span class="text-xs text-emerald-500 mb-1">Latency</span>
+                        </div>
+                        <div class="mt-3 w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5">
+                            <div class="bg-emerald-500 h-1.5 rounded-full" style="width: 15%"></div>
+                        </div>
+                    </div>
+                    <div
+                        class="glass-panel p-5 rounded-xl border-l-4 border-l-amber-500 dark:bg-surface-dark shadow-sm hover:shadow-md transition-all bg-amber-500/5">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-sm font-medium text-amber-500">Storage Usage</span>
+                            <span class="material-symbols-outlined text-amber-500">hard_drive</span>
+                        </div>
+                        <div class="flex items-end gap-2">
+                            <span class="text-2xl font-bold text-slate-900 dark:text-white">78%</span>
+                            <span class="text-xs text-amber-500 mb-1">Warning</span>
+                        </div>
+                        <div class="mt-3 w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5">
+                            <div class="bg-amber-500 h-1.5 rounded-full" style="width: 78%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6 shadow-sm">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">calendar_month</span>
+                            Scheduled Updates
+                        </h2>
+                        <button class="text-sm text-primary hover:text-primary-dark font-medium">View Calendar</button>
+                    </div>
+                    <div class="relative pl-4 border-l border-slate-200 dark:border-slate-700 space-y-8">
+                        <div class="relative group">
+                            <div
+                                class="absolute -left-[21px] top-1 h-3 w-3 rounded-full border-2 border-primary bg-background-light dark:bg-background-dark group-hover:bg-primary transition-colors">
+                            </div>
+                            <div
+                                class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700">
+                                <div>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span
+                                            class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/10 text-purple-500 uppercase">Playlist</span>
+                                        <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Q3 Marketing
+                                            Campaign</h3>
+                                    </div>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400">Target: All Retail Displays
+                                        (North America)</p>
+                                </div>
+                                <div class="flex items-center gap-4 text-xs">
+                                    <div class="flex items-center gap-1 text-slate-500">
+                                        <span class="material-symbols-outlined text-[16px]">schedule</span>
+                                        Today, 14:00 PM
+                                    </div>
+                                    <button
+                                        class="px-3 py-1.5 rounded-md bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary transition-colors">Edit</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="relative group">
+                            <div
+                                class="absolute -left-[21px] top-1 h-3 w-3 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-background-light dark:bg-background-dark group-hover:bg-slate-400 transition-colors">
+                            </div>
+                            <div
+                                class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700">
+                                <div>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span
+                                            class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/10 text-blue-500 uppercase">Firmware</span>
+                                        <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Player OS
+                                            Update v4.2.1</h3>
+                                    </div>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400">Target: Lobby Screens (Group
+                                        B)</p>
+                                </div>
+                                <div class="flex items-center gap-4 text-xs">
+                                    <div class="flex items-center gap-1 text-slate-500">
+                                        <span class="material-symbols-outlined text-[16px]">schedule</span>
+                                        Tomorrow, 02:00 AM
+                                    </div>
+                                    <button
+                                        class="px-3 py-1.5 rounded-md bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary transition-colors">Edit</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="relative group">
+                            <div
+                                class="absolute -left-[21px] top-1 h-3 w-3 rounded-full border-2 border-slate-300 dark:border-slate-600 bg-background-light dark:bg-background-dark group-hover:bg-slate-400 transition-colors">
+                            </div>
+                            <div
+                                class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700">
+                                <div>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span
+                                            class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-500 uppercase">Maint</span>
+                                        <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Database
+                                            Optimization</h3>
+                                    </div>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400">System-wide performance tune
+                                    </p>
+                                </div>
+                                <div class="flex items-center gap-4 text-xs">
+                                    <div class="flex items-center gap-1 text-slate-500">
+                                        <span class="material-symbols-outlined text-[16px]">schedule</span>
+                                        Sat, 23:00 PM
+                                    </div>
+                                    <button
+                                        class="px-3 py-1.5 rounded-md bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary transition-colors">Edit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                            <span class="material-symbols-outlined text-rose-500">warning</span>
+                            Active Alerts
+                        </h2>
+                        <span class="text-xs font-medium px-2 py-1 bg-rose-500/10 text-rose-500 rounded-full">2
+                            Critical</span>
+                    </div>
+                    <div class="space-y-3">
+                        <div
+                            class="flex items-center justify-between p-3 rounded-lg border border-rose-200 dark:border-rose-900/30 bg-rose-50 dark:bg-rose-900/10">
+                            <div class="flex items-center gap-3">
+                                <span class="material-symbols-outlined text-rose-500">wifi_off</span>
+                                <div>
+                                    <p class="text-sm font-medium text-slate-900 dark:text-rose-100">3 Players Offline
+                                    </p>
+                                    <p class="text-xs text-slate-500 dark:text-rose-300/70">Building C, Floor 2 • Since
+                                        10:45 AM</p>
+                                </div>
+                            </div>
+                            <button
+                                class="text-xs font-medium text-rose-600 dark:text-rose-400 hover:underline">Troubleshoot</button>
+                        </div>
+                        <div
+                            class="flex items-center justify-between p-3 rounded-lg border border-amber-200 dark:border-amber-900/30 bg-amber-50 dark:bg-amber-900/10">
+                            <div class="flex items-center gap-3">
+                                <span class="material-symbols-outlined text-amber-500">sd_card_alert</span>
+                                <div>
+                                    <p class="text-sm font-medium text-slate-900 dark:text-amber-100">Approaching
+                                        Storage Limit</p>
+                                    <p class="text-xs text-slate-500 dark:text-amber-300/70">CDN Node US-East-1 • 85%
+                                        Used</p>
+                                </div>
+                            </div>
+                            <button
+                                class="text-xs font-medium text-amber-600 dark:text-amber-400 hover:underline">Manage</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="lg:col-span-4 flex flex-col gap-6">
+                <div
+                    class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark shadow-sm flex flex-col h-full max-h-[600px]">
+                    <div
+                        class="p-5 border-b border-slate-200 dark:border-border-dark flex justify-between items-center">
+                        <h3 class="font-semibold text-slate-900 dark:text-white">Recent Activity</h3>
+                        <button class="text-xs text-slate-500 hover:text-primary transition-colors">View All</button>
+                    </div>
+                    <div class="flex-1 overflow-y-auto p-2 scrollbar-hide">
+                        <ul class="space-y-1">
+                            <li
+                                class="flex items-start gap-3 p-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-lg transition-colors group">
+                                <div class="relative shrink-0">
+                                    <img alt="User"
+                                        class="w-8 h-8 rounded-full object-cover ring-2 ring-white dark:ring-surface-dark"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaK03TZogKEN_2XWRTdTfUcc8fjvZyTvYOLiEweLmkvEDAFIMDE3tQkn2SjPTgtClj7EZvAbiWfoUJ83ykpbUmob5gowXaNf1B6wKcOyNOpVvHG3Pl2FRVvRwFdYjvlbK3IlmTbF2siWXAMcn74AVnCAkek8Nbae0u2F9qLd8f9Z2UrEbnVg8uFTuTxmxrHuvXIPTTq5yXeXdl0oWo38N1zDwga4P4u0kbatDjjiLaGWb8bEp3YdWDaOKvJKB84VzDyoKkGhOR6Ag1" />
+                                    <div
+                                        class="absolute -bottom-1 -right-1 bg-blue-500 text-white p-0.5 rounded-full ring-2 ring-white dark:ring-surface-dark">
+                                        <span class="material-symbols-outlined text-[10px] block">upload</span>
+                                    </div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-0.5">
+                                        <span class="font-medium text-slate-900 dark:text-white">Sarah Jenkins</span>
+                                        uploaded 3 new assets
+                                    </p>
+                                    <p class="text-[10px] text-slate-400">2 mins ago</p>
+                                </div>
+                            </li>
+                            <li
+                                class="flex items-start gap-3 p-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-lg transition-colors group">
+                                <div class="relative shrink-0">
+                                    <img alt="User"
+                                        class="w-8 h-8 rounded-full object-cover ring-2 ring-white dark:ring-surface-dark"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnbAUKRWg7cwB2oRH-qRJ3qzts2BP1vgmPX8zwROd6lNo0G_LdXBYJOS92DB4QjbI9_PSEBS86_0OQ0EIXh8s7Ipbpl5htYQHs8wygw50ELBsWYBb48mbrnOMnvhIWPBSQaGm6O9pMXE2IUMXQq-wPC3qdG8NpSjX4axBmTX69zkzHjfDNY5qXQIB6JVxgkvsBMtrW8MScf1NySXfDHkQv7rlv8W14WT1ukKzZl_2Zlwj-soz_RExvuppzdWZRGzXgYLg3TsQ-W570" />
+                                    <div
+                                        class="absolute -bottom-1 -right-1 bg-amber-500 text-white p-0.5 rounded-full ring-2 ring-white dark:ring-surface-dark">
+                                        <span class="material-symbols-outlined text-[10px] block">edit</span>
+                                    </div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-0.5">
+                                        <span class="font-medium text-slate-900 dark:text-white">Mike Ross</span>
+                                        updated playlist <span class="text-primary">"Lobby Main"</span>
+                                    </p>
+                                    <p class="text-[10px] text-slate-400">45 mins ago</p>
+                                </div>
+                            </li>
+                            <li
+                                class="flex items-start gap-3 p-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-lg transition-colors group">
+                                <div class="relative shrink-0">
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-600 dark:text-slate-300 ring-2 ring-white dark:ring-surface-dark">
+                                        SYS</div>
+                                    <div
+                                        class="absolute -bottom-1 -right-1 bg-emerald-500 text-white p-0.5 rounded-full ring-2 ring-white dark:ring-surface-dark">
+                                        <span class="material-symbols-outlined text-[10px] block">check</span>
+                                    </div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-0.5">
+                                        <span class="font-medium text-slate-900 dark:text-white">System</span> completed
+                                        nightly backup
+                                    </p>
+                                    <p class="text-[10px] text-slate-400">4 hours ago</p>
+                                </div>
+                            </li>
+                            <li
+                                class="flex items-start gap-3 p-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-lg transition-colors group">
+                                <div class="relative shrink-0">
+                                    <img alt="User"
+                                        class="w-8 h-8 rounded-full object-cover ring-2 ring-white dark:ring-surface-dark"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtO-9p8eM-R5ZTvQ9zoEm52UUy_kt2Zr14xeiStvVl9buy_G9kBRmio3pVHWcByAuTmp2rZQpvUK0DcCOYMR6y2BiUm4T0p_rqn_pzbuA4u1-2ymniWvO6o7xn82QeSMQUDWIHjSYW66D8q_xLc7vyOLG66az9afDESqE9L-J3ZXbDgNOuxDeeF0gNzMSFc-WMp0xLgAJ25OeWUHCPcpea7zsPP2xd8yxqgfVZHOVChT0eEPIMF_v_bgxm6aC1JLi6BfthWv4WIksS" />
+                                    <div
+                                        class="absolute -bottom-1 -right-1 bg-red-500 text-white p-0.5 rounded-full ring-2 ring-white dark:ring-surface-dark">
+                                        <span class="material-symbols-outlined text-[10px] block">delete</span>
+                                    </div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-0.5">
+                                        <span class="font-medium text-slate-900 dark:text-white">Elena Fisher</span>
+                                        deleted expired assets
+                                    </p>
+                                    <p class="text-[10px] text-slate-400">Yesterday, 5:20 PM</p>
+                                </div>
+                            </li>
+                            <li
+                                class="flex items-start gap-3 p-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-lg transition-colors group">
+                                <div class="relative shrink-0">
+                                    <img alt="User"
+                                        class="w-8 h-8 rounded-full object-cover ring-2 ring-white dark:ring-surface-dark"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsBFvjggZ3JZljEleNN5HnCC54u084MDYp9F5hOpbjVtTbt44TbtH4-EEqLIQqbiGwtC4loCd2ZfRUlnSeL01OsVY7mxw-ZEF-1GKYEBq63Wo3guLXGIlwTNzBPlZW0lA_64P_-fBu04Osmx1IAiWOykpXlMu8JPHFll7JFE8rEx5Ftqb3akvCa663UhXIu_U45CQWzh5Y81kTAuJ2oKiyO9ubwMdqyTbjnXotTBxHsyd0AmhZuw3BE7Su3qE1go9-KWjhpumFPrEm" />
+                                    <div
+                                        class="absolute -bottom-1 -right-1 bg-blue-500 text-white p-0.5 rounded-full ring-2 ring-white dark:ring-surface-dark">
+                                        <span class="material-symbols-outlined text-[10px] block">upload</span>
+                                    </div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-0.5">
+                                        <span class="font-medium text-slate-900 dark:text-white">Tom Holland</span>
+                                        uploaded new menu board video
+                                    </p>
+                                    <p class="text-[10px] text-slate-400">Yesterday, 3:10 PM</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div
+                    class="p-5 rounded-xl bg-gradient-to-br from-primary to-purple-700 text-white shadow-lg shadow-primary/20 relative overflow-hidden group cursor-pointer">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <span class="material-symbols-outlined text-9xl -mr-8 -mt-8 rotate-12">rocket_launch</span>
+                    </div>
+                    <div class="relative z-10">
+                        <div
+                            class="h-10 w-10 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center mb-4">
+                            <span class="material-symbols-outlined text-white">rocket_launch</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-1">Deployment Center</h3>
+                        <p class="text-sm text-white/80 mb-4">Push updates to 50+ screens instantly.</p>
+                        <button
+                            class="w-full py-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-lg text-sm font-medium transition-colors border border-white/20">
+                            Start Deployment
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+</body>
+
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>ODS Content Library Dashboard - Pair Device Error</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3c83f6",
+                        "primary-dark": "#2563eb",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#0f172a", // Slate-900 based
+                        "surface-dark": "#1e293b", // Slate-800 based
+                        "border-dark": "#334155", // Slate-700 based
+                        "error-bg": "#450a0a", // Red-950
+                        "error-text": "#fecaca", // Red-200
+                        "error-border": "#ef4444", // Red-500
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                    },
+                    boxShadow: {
+                        'error': '0 0 0 4px rgba(239, 68, 68, 0.2)',
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white min-h-screen flex flex-col antialiased selection:bg-primary selection:text-white overflow-hidden relative">
+    <header
+        class="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-border-dark bg-white/80 dark:bg-background-dark/80 backdrop-blur-md">
+        <div class="px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-8">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="size-8 rounded-lg bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center text-white shadow-lg shadow-primary/20">
+                        <svg class="size-5" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" fill="currentColor" stroke="currentColor"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                    </div>
+                    <span class="text-lg font-bold tracking-tight text-slate-900 dark:text-white">ODS <span
+                            class="text-slate-500 font-medium">Cloud</span></span>
+                </div>
+                <nav class="hidden md:flex items-center gap-1">
+                    <a class="px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-white/5"
+                        href="#">
+                        Players
+                    </a>
+                    <a class="px-4 py-2 text-sm font-medium text-primary bg-primary/10 dark:bg-primary/20 rounded-lg transition-colors"
+                        href="#">
+                        Content Library
+                    </a>
+                    <a class="px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-white/5"
+                        href="#">
+                        Analytics
+                    </a>
+                </nav>
+            </div>
+            <div class="flex items-center gap-4">
+                <div
+                    class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                    <span class="relative flex h-2 w-2">
+                        <span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    <span class="text-xs font-semibold text-emerald-500 uppercase tracking-wider">Online</span>
+                </div>
+                <button
+                    class="p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-white/5">
+                    <span class="material-symbols-outlined text-[20px]">notifications</span>
+                </button>
+                <div
+                    class="h-8 w-8 rounded-full bg-gradient-to-tr from-slate-700 to-slate-600 border border-slate-500 overflow-hidden cursor-pointer ring-offset-2 ring-offset-background-dark hover:ring-2 ring-primary transition-all">
+                    <img alt="User Avatar" class="h-full w-full object-cover" data-alt="Portrait of a user"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnbAUKRWg7cwB2oRH-qRJ3qzts2BP1vgmPX8zwROd6lNo0G_LdXBYJOS92DB4QjbI9_PSEBS86_0OQ0EIXh8s7Ipbpl5htYQHs8wygw50ELBsWYBb48mbrnOMnvhIWPBSQaGm6O9pMXE2IUMXQq-wPC3qdG8NpSjX4axBmTX69zkzHjfDNY5qXQIB6JVxgkvsBMtrW8MScf1NySXfDHkQv7rlv8W14WT1ukKzZl_2Zlwj-soz_RExvuppzdWZRGzXgYLg3TsQ-W570" />
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="flex-1 w-full max-w-[1400px] mx-auto p-6 md:p-8 lg:px-12 flex flex-col gap-8 filter blur-[2px]">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Content Library</h1>
+                <p class="text-slate-500 dark:text-slate-400 mt-1">Manage and organize your digital signage assets.</p>
+            </div>
+            <div class="flex gap-3">
+                <button
+                    class="flex items-center gap-2 px-4 py-2 bg-slate-200 dark:bg-surface-dark hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-lg text-sm font-medium transition-colors border border-transparent dark:border-border-dark">
+                    <span class="material-symbols-outlined text-[18px]">folder_open</span>
+                    New Folder
+                </button>
+                <button
+                    class="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg text-sm font-medium transition-colors shadow-lg shadow-primary/25">
+                    <span class="material-symbols-outlined text-[18px]">cloud_upload</span>
+                    Upload Media
+                </button>
+            </div>
+        </div>
+        <div class="relative group cursor-pointer opacity-50">
+            <div
+                class="absolute -inset-0.5 bg-gradient-to-r from-primary to-purple-600 rounded-xl opacity-20 blur transition duration-500">
+            </div>
+            <div
+                class="relative flex flex-col items-center justify-center w-full h-48 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
+                <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center">
+                    <div class="p-3 rounded-full bg-primary/10 dark:bg-primary/20 text-primary mb-3">
+                        <span class="material-symbols-outlined text-[32px]">cloud_upload</span>
+                    </div>
+                    <p class="mb-1 text-base text-slate-900 dark:text-white font-semibold">Drag &amp; drop media here
+                    </p>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Supports JPG, PNG, MP4. <span
+                            class="text-slate-400 dark:text-slate-600">|</span> Max 100MB.</p>
+                </div>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 opacity-50">
+            <div class="lg:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div
+                    class="p-5 rounded-xl bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark flex flex-col justify-between shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-sm font-medium text-slate-500 dark:text-slate-400">Total Items</span>
+                        <span class="material-symbols-outlined text-slate-400">dataset</span>
+                    </div>
+                    <div class="flex items-end justify-between">
+                        <span class="text-3xl font-bold text-slate-900 dark:text-white">1,240</span>
+                        <span class="text-xs font-medium text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded">+12 this
+                            week</span>
+                    </div>
+                </div>
+                <div
+                    class="p-5 rounded-xl bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark flex flex-col justify-between shadow-sm relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-5">
+                        <span class="material-symbols-outlined text-8xl">image</span>
+                    </div>
+                    <div class="flex items-center justify-between mb-4 relative z-10">
+                        <span class="text-sm font-medium text-slate-500 dark:text-slate-400">Images</span>
+                        <span class="material-symbols-outlined text-primary">image</span>
+                    </div>
+                    <div class="relative z-10">
+                        <span class="text-3xl font-bold text-slate-900 dark:text-white">850</span>
+                        <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-1.5 mt-3">
+                            <div class="bg-primary h-1.5 rounded-full" style="width: 70%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="p-5 rounded-xl bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark flex flex-col justify-between shadow-sm relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-5">
+                        <span class="material-symbols-outlined text-8xl">movie</span>
+                    </div>
+                    <div class="flex items-center justify-between mb-4 relative z-10">
+                        <span class="text-sm font-medium text-slate-500 dark:text-slate-400">Videos</span>
+                        <span class="material-symbols-outlined text-purple-500">movie</span>
+                    </div>
+                    <div class="relative z-10">
+                        <span class="text-3xl font-bold text-slate-900 dark:text-white">390</span>
+                        <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-1.5 mt-3">
+                            <div class="bg-purple-500 h-1.5 rounded-full" style="width: 30%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="lg:col-span-4 flex flex-col justify-end gap-3">
+                <div class="relative w-full">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="material-symbols-outlined text-slate-400 text-[20px]">search</span>
+                    </div>
+                    <input
+                        class="block w-full pl-10 pr-3 py-3 border-none rounded-xl leading-5 bg-white dark:bg-surface-dark text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none sm:text-sm shadow-sm border border-slate-200 dark:border-border-dark"
+                        placeholder="Search by filename or tag..." type="text" />
+                </div>
+                <div class="flex gap-2">
+                    <select
+                        class="block w-1/2 pl-3 pr-10 py-2.5 text-sm border-none focus:outline-none rounded-xl bg-white dark:bg-surface-dark text-slate-900 dark:text-white shadow-sm border border-slate-200 dark:border-border-dark cursor-pointer">
+                        <option>Newest First</option>
+                        <option>Oldest First</option>
+                        <option>A-Z</option>
+                        <option>File Size</option>
+                    </select>
+                    <button
+                        class="flex-1 flex items-center justify-center gap-2 bg-white dark:bg-surface-dark text-slate-700 dark:text-slate-300 py-2.5 px-4 rounded-xl text-sm font-medium shadow-sm">
+                        <span class="material-symbols-outlined text-[18px]">filter_list</span>
+                        Filter
+                    </button>
+                    <button
+                        class="flex-none flex items-center justify-center bg-white dark:bg-surface-dark text-slate-700 dark:text-slate-300 w-10 h-10 rounded-xl shadow-sm">
+                        <span class="material-symbols-outlined text-[20px]">grid_view</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-12 opacity-50">
+            <div
+                class="group relative flex flex-col bg-white dark:bg-surface-dark rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-border-dark">
+                <div class="relative aspect-video bg-slate-800 overflow-hidden">
+                    <img alt="Coffee pouring video thumbnail" class="w-full h-full object-cover opacity-80"
+                        data-alt="Close up of coffee pouring"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCkFkY1L7i7lid-JUjOd54JUlru6W8pzHON91C-877IMg59nVZtzqZyQZucixI48rdML1Z4eh5shtPIoJnaA0bD9tG4gqclXCyZ_h-15ZyXo-pFtBcCu96YH9dcBjVIyuPD-niW7LRLVvMze44EDPCtZpVkZVFvl7Tno-GRf9DEodBzJxYeLKNmhtD6arywSF0YIltd0Wv4VIaD4Ne0buk5cSby25Mf8NUyv0Y_lSR9W_krZv88hXthLS1CHv41xE_lsYAE4sc7M2-" />
+                </div>
+                <div class="p-4 flex flex-col flex-1">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-sm font-semibold text-slate-900 dark:text-white truncate pr-2">
+                            Summer_Promo_v3.mp4</h3>
+                    </div>
+                    <div class="mt-auto flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                        <span>12.4 MB</span>
+                        <span class="flex items-center gap-1"><span
+                                class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Active</span>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="group relative flex flex-col bg-white dark:bg-surface-dark rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-border-dark">
+                <div class="relative aspect-video bg-slate-800 overflow-hidden">
+                    <img alt="Restaurant menu board design" class="w-full h-full object-cover opacity-80"
+                        data-alt="Modern menu board design on screen"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaK03TZogKEN_2XWRTdTfUcc8fjvZyTvYOLiEweLmkvEDAFIMDE3tQkn2SjPTgtClj7EZvAbiWfoUJ83ykpbUmob5gowXaNf1B6wKcOyNOpVvHG3Pl2FRVvRwFdYjvlbK3IlmTbF2siWXAMcn74AVnCAkek8Nbae0u2F9qLd8f9Z2UrEbnVg8uFTuTxmxrHuvXIPTTq5yXeXdl0oWo38N1zDwga4P4u0kbatDjjiLaGWb8bEp3YdWDaOKvJKB84VzDyoKkGhOR6Ag1" />
+                </div>
+                <div class="p-4 flex flex-col flex-1">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-sm font-semibold text-slate-900 dark:text-white truncate pr-2">
+                            Menu_Board_Breakfast.jpg</h3>
+                    </div>
+                    <div class="mt-auto flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                        <span>2.8 MB</span>
+                        <span class="flex items-center gap-1 text-slate-500">Updated 2h ago</span>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="group relative flex flex-col bg-white dark:bg-surface-dark rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-border-dark">
+                <div class="relative aspect-video bg-slate-800 overflow-hidden">
+                    <img alt="Nike shoe advertisement" class="w-full h-full object-cover opacity-80"
+                        data-alt="Red sneaker product shot"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzzoMMw08BKnfO1RYqSbYVcADVlG1NpLab_pK6v7lHtwGSlif-eGWWgfnM2_YlHv_afVme_Vpjkn3fWDVN-cHg8wsBN_E3zGERzDAiMWZhaNwjAwbAP6Y3sb3gogrNEoD7tCmGpx8VjtL7_h1wMfhzKR9m6PUHDIiI2NIV9CvQZd0U21hw0zxdNkIrPN_ghKVRczRNkezTlDnTdzoS0w5SJPJzGodxeVNTGBqYchXdeYTL6hmGyfAIYkRimsPRWLCU-P9ilcv8p55_" />
+                </div>
+                <div class="p-4 flex flex-col flex-1">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-sm font-semibold text-slate-900 dark:text-white truncate pr-2">
+                            Product_Launch_Red.png</h3>
+                    </div>
+                    <div class="mt-auto flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                        <span>4.1 MB</span>
+                        <span class="flex items-center gap-1 text-slate-500">Updated 5h ago</span>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="group relative flex flex-col bg-white dark:bg-surface-dark rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-border-dark">
+                <div class="relative aspect-video bg-slate-800 overflow-hidden">
+                    <img alt="Abstract gradient video background" class="w-full h-full object-cover opacity-80"
+                        data-alt="Abstract colorful neon lights"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5z7CBLzTypxjMGvyLN6rUWO05oXIdN7RGPLDsqQafsER7MJ-swpiHAse_JSaKO3F_hbTilrtQEC6k14VfR0p69IHeEa8lwW_RmrUoKQDFfheHkQGpn3v_HA5_3dl4zNTS0O6GTLk17VKP4ftmqf03j57DHen_RZdkeFMzLOxIll2KHYl-vG5fAYM188zv4L9gaDj_7m5k7bWXZjlLQNOHIb4BMkada5x17tH_G1Z4MBjl2Kx2yUGQOnC7tHXh2QSGdr2jJlDOxKIw" />
+                </div>
+                <div class="p-4 flex flex-col flex-1">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-sm font-semibold text-slate-900 dark:text-white truncate pr-2">
+                            Idle_Loop_Neon.mp4</h3>
+                    </div>
+                    <div class="mt-auto flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                        <span>45.2 MB</span>
+                        <span class="flex items-center gap-1"><span
+                                class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Active</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"></div>
+        <div
+            class="relative w-full max-w-lg transform rounded-2xl bg-surface-dark border border-slate-700 shadow-2xl transition-all p-6 sm:p-8">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 rounded-lg bg-blue-600/20 text-blue-500">
+                        <span class="material-symbols-outlined text-[24px]">devices_other</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white">Pair Device</h3>
+                </div>
+                <button class="text-slate-400 hover:text-white transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="mb-6 flex gap-3 rounded-lg border border-red-900/50 bg-red-900/20 p-4 text-red-200">
+                <span class="material-symbols-outlined text-red-400">warning</span>
+                <div class="text-sm">
+                    <h4 class="font-semibold text-red-400">Invalid pairing code</h4>
+                    <p class="mt-1 text-red-200/90">Please check the code on your screen and try again.</p>
+                </div>
+            </div>
+            <div class="space-y-6">
+                <div class="space-y-1.5">
+                    <label class="block text-sm font-medium text-slate-300" for="pairing-code">Pairing Code</label>
+                    <div class="relative">
+                        <input
+                            class="block w-full rounded-lg border-red-500 bg-background-dark text-white shadow-error focus:border-red-500 focus:ring-red-500 sm:text-lg tracking-widest px-4 py-3 placeholder-slate-500 font-mono uppercase"
+                            id="pairing-code" type="text" value="XJ9-22M" />
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                            <span class="material-symbols-outlined text-red-500">error</span>
+                        </div>
+                    </div>
+                    <p class="mt-1.5 text-xs text-red-400">This code doesn't match any active device request.</p>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="block text-sm font-medium text-slate-300" for="device-name">Device Name <span
+                            class="text-slate-500 font-normal ml-1">(Optional)</span></label>
+                    <input
+                        class="block w-full rounded-lg border-slate-700 bg-background-dark text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm px-4 py-2.5 placeholder-slate-500"
+                        id="device-name" placeholder="e.g. Lobby Display 1" type="text" />
+                </div>
+            </div>
+            <div class="mt-8 flex items-center justify-end gap-3">
+                <button
+                    class="px-4 py-2.5 rounded-lg text-sm font-medium text-white bg-slate-700 hover:bg-slate-600 border border-slate-600 hover:border-slate-500 transition-all focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 focus:ring-offset-surface-dark">
+                    Cancel
+                </button>
+                <button
+                    class="px-6 py-2.5 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-600/20 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-surface-dark flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">refresh</span>
+                    Try Again
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

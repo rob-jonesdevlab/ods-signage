@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>ODS Players Dashboard - Pair Device</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3c83f6",
+                        "primary-dark": "#2563eb",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#0f172a", // Slate-900 based
+                        "surface-dark": "#1e293b", // Slate-800 based
+                        "border-dark": "#334155", // Slate-700 based
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "mono": ["ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", "monospace"]
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white min-h-screen flex flex-col antialiased selection:bg-primary selection:text-white overflow-hidden relative">
+    <header
+        class="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-border-dark bg-white/80 dark:bg-background-dark/80 backdrop-blur-md">
+        <div class="px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-8">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="size-8 rounded-lg bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center text-white shadow-lg shadow-primary/20">
+                        <svg class="size-5" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" fill="currentColor" stroke="currentColor"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        </svg>
+                    </div>
+                    <span class="text-lg font-bold tracking-tight text-slate-900 dark:text-white">ODS <span
+                            class="text-slate-500 font-medium">Cloud</span></span>
+                </div>
+                <nav class="hidden md:flex items-center gap-1">
+                    <a class="px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-white/5"
+                        href="#">
+                        Dashboard
+                    </a>
+                    <a class="px-4 py-2 text-sm font-medium text-primary bg-primary/10 dark:bg-primary/20 rounded-lg transition-colors"
+                        href="#">
+                        Players
+                    </a>
+                    <a class="px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-white/5"
+                        href="#">
+                        Playlists
+                    </a>
+                    <a class="px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-white/5"
+                        href="#">
+                        Content Library
+                    </a>
+                    <a class="px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-white/5"
+                        href="#">
+                        Analytics
+                    </a>
+                    <a class="px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-white/5"
+                        href="#">
+                        Network
+                    </a>
+                    <a class="px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-white/5"
+                        href="#">
+                        Operations
+                    </a>
+                </nav>
+            </div>
+            <div class="flex items-center gap-4">
+                <div
+                    class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                    <span class="relative flex h-2 w-2">
+                        <span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    <span class="text-xs font-semibold text-emerald-500 uppercase tracking-wider">Online</span>
+                </div>
+                <button
+                    class="p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-white/5">
+                    <span class="material-symbols-outlined text-[20px]">notifications</span>
+                </button>
+                <div
+                    class="h-8 w-8 rounded-full bg-gradient-to-tr from-slate-700 to-slate-600 border border-slate-500 overflow-hidden cursor-pointer ring-offset-2 ring-offset-background-dark hover:ring-2 ring-primary transition-all">
+                    <img alt="User Avatar" class="h-full w-full object-cover" data-alt="Portrait of a user"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnbAUKRWg7cwB2oRH-qRJ3qzts2BP1vgmPX8zwROd6lNo0G_LdXBYJOS92DB4QjbI9_PSEBS86_0OQ0EIXh8s7Ipbpl5htYQHs8wygw50ELBsWYBb48mbrnOMnvhIWPBSQaGm6O9pMXE2IUMXQq-wPC3qdG8NpSjX4axBmTX69zkzHjfDNY5qXQIB6JVxgkvsBMtrW8MScf1NySXfDHkQv7rlv8W14WT1ukKzZl_2Zlwj-soz_RExvuppzdWZRGzXgYLg3TsQ-W570" />
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="flex-1 w-full max-w-[1400px] mx-auto p-6 md:p-8 lg:px-12 flex flex-col gap-8 filter blur-[8px]">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Players</h1>
+                <p class="text-slate-500 dark:text-slate-400 mt-1">Manage your digital signage players</p>
+            </div>
+            <div class="flex gap-3">
+                <button
+                    class="flex items-center gap-2 px-4 py-2 bg-slate-200 dark:bg-surface-dark hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-lg text-sm font-medium transition-colors border border-transparent dark:border-border-dark">
+                    <span class="material-symbols-outlined text-[18px]">calendar_month</span>
+                    Select date range
+                    <span class="material-symbols-outlined text-[16px]">expand_more</span>
+                </button>
+                <button
+                    class="flex items-center gap-2 px-4 py-2 bg-slate-200 dark:bg-surface-dark hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-lg text-sm font-medium transition-colors border border-transparent dark:border-border-dark">
+                    <span class="material-symbols-outlined text-[18px]">filter_list</span>
+                    Status
+                    <span class="material-symbols-outlined text-[16px]">expand_more</span>
+                </button>
+                <button
+                    class="flex items-center gap-2 px-4 py-2 bg-slate-200 dark:bg-surface-dark hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-lg text-sm font-medium transition-colors border border-transparent dark:border-border-dark">
+                    <span class="material-symbols-outlined text-[18px]">download</span>
+                    Export
+                    <span class="material-symbols-outlined text-[16px]">expand_more</span>
+                </button>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div
+                class="p-6 rounded-xl bg-surface-dark border border-border-dark flex flex-col justify-between shadow-sm">
+                <div class="flex flex-col gap-1">
+                    <span class="text-4xl font-bold text-white">0</span>
+                    <span class="text-sm font-medium text-slate-400">Total Players</span>
+                </div>
+            </div>
+            <div
+                class="p-6 rounded-xl bg-surface-dark border border-border-dark flex flex-col justify-between shadow-sm">
+                <div class="flex flex-col gap-1">
+                    <span class="text-4xl font-bold text-emerald-500">0</span>
+                    <span class="text-sm font-medium text-slate-400">Online</span>
+                </div>
+            </div>
+            <div
+                class="p-6 rounded-xl bg-surface-dark border border-border-dark flex flex-col justify-between shadow-sm">
+                <div class="flex flex-col gap-1">
+                    <span class="text-4xl font-bold text-slate-400">0</span>
+                    <span class="text-sm font-medium text-slate-400">Offline</span>
+                </div>
+            </div>
+        </div>
+        <div class="rounded-xl border border-border-dark bg-surface-dark overflow-hidden min-h-[400px]">
+            <div class="px-6 py-4 border-b border-border-dark">
+                <h2 class="text-lg font-semibold text-white">All Players</h2>
+            </div>
+            <div class="flex flex-col items-center justify-center h-full py-24 gap-4">
+                <span class="material-symbols-outlined text-6xl text-slate-600">smartphone</span>
+                <h3 class="text-xl font-medium text-slate-300">No players registered</h3>
+                <p class="text-slate-500">Connect a player to get started</p>
+            </div>
+        </div>
+    </main>
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
+        <div
+            class="relative w-full max-w-md transform rounded-[16px] bg-slate-900 border border-slate-700 shadow-[0_0_40px_-10px_rgba(30,58,138,0.2)] transition-all p-8">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-1">Pair Device</h3>
+                    <p class="text-sm text-slate-400">Enter the 6-character code displayed on your device</p>
+                </div>
+                <button class="text-slate-400 hover:text-white transition-colors p-1 -mt-4 -mr-2">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="space-y-6">
+                <div class="space-y-1.5">
+                    <input
+                        class="block w-full rounded-lg border-slate-700 bg-background-dark/50 text-white shadow-[0_0_15px_rgba(59,130,246,0.1)] focus:border-blue-500 focus:ring-blue-500 focus:shadow-[0_0_20px_rgba(59,130,246,0.15)] text-center text-3xl font-mono tracking-widest py-4 placeholder-slate-600 uppercase"
+                        placeholder="ABC 123" type="text" />
+                </div>
+                <div class="space-y-1.5">
+                    <label class="block text-sm font-medium text-slate-300" for="device-name">Device Name <span
+                            class="text-slate-500 font-normal ml-1">(Optional)</span></label>
+                    <input
+                        class="block w-full rounded-lg border-slate-700 bg-background-dark text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-4 py-3 placeholder-slate-600"
+                        id="device-name" placeholder="e.g., Lobby Display" type="text" />
+                </div>
+                <button
+                    class="w-full mt-2 px-6 py-3 rounded-lg text-sm font-bold text-white bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-600/20 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-surface-dark">
+                    Pair Device
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
