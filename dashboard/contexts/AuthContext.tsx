@@ -12,8 +12,18 @@ interface UserProfile {
     full_name: string | null
     role: UserRole
     organization_id: string | null
+    // Extended profile fields
+    bio: string | null
+    avatar_url: string | null
+    organization: string | null
+    job_title: string | null
+    phone: string | null
+    timezone: string | null
+    language: string | null
     created_at: string
+    updated_at: string | null
 }
+
 
 interface AuthContextType {
     user: User | null
