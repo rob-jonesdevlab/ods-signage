@@ -16,6 +16,8 @@ interface Player {
     status: string;
     last_seen: string | null;
     created_at: string;
+    paired_at: string | null;
+    pairing_code: string | null;
 }
 
 export default function PlayersPage() {
