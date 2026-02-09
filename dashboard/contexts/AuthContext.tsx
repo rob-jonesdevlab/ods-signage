@@ -77,11 +77,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const signIn = async (email: string, password: string) => {
         try {
-            const { error } = await supabase.auth.signInWithPassword({
+            const { data, error } = await supabase.auth.signInWithPassword({
                 email,
                 password,
             })
-            return { error }
+
+            if (error) return { error }
+
+            // Sync session to cookie for middleware
+            if (data.session) {
+                const tokenKey = 'sb-dimcecmdkoaxakknftwg-auth-token'
+                document.cookie = `${tokenKey}=${encodeURIComponent(JSON.stringify(data.session))}; path=/; max-age=604800; SameSite=Lax`
+            }
+
+            return { error: null }
         } catch (error) {
             return { error: error as Error }
         }

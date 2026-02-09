@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import Header from '@/components/Header';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface DashboardStats {
     activePlayers: number;
@@ -25,6 +26,9 @@ interface ActivityItem {
 }
 
 export default function DashboardPage() {
+    const { profile } = useAuth();
+    const displayName = profile?.full_name || profile?.email?.split('@')[0] || 'User';
+
     const [stats, setStats] = useState<DashboardStats>({
         activePlayers: 0,
         totalPlayers: 0,
@@ -169,7 +173,7 @@ export default function DashboardPage() {
                 {/* Page Header */}
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                     <div>
-                        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white">Welcome back, Alex</h1>
+                        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white">Welcome back, {displayName}</h1>
                         <p className="text-slate-400 mt-1 text-sm md:text-base">Here's what's happening with your digital signage network today.</p>
                     </div>
                     <div className="flex flex-wrap gap-3">

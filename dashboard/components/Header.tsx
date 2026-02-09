@@ -1,10 +1,15 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { useState } from 'react';
 
 export default function Header() {
     const pathname = usePathname();
+    const router = useRouter();
+    const { signOut, profile } = useAuth();
+    const [showDropdown, setShowDropdown] = useState(false);
 
     const navLinks = [
         { href: '/dashboard', label: 'Dashboard' },
@@ -17,6 +22,11 @@ export default function Header() {
     ];
 
     const isActive = (href: string) => pathname === href;
+
+    const handleLogout = async () => {
+        await signOut();
+        router.push('/login');
+    };
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-slate-800 bg-slate-950/80 backdrop-blur-md">
@@ -40,8 +50,8 @@ export default function Header() {
                                 key={link.href}
                                 href={link.href}
                                 className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${isActive(link.href)
-                                        ? 'text-blue-400 bg-blue-500/10 border border-blue-500/20'
-                                        : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                                    ? 'text-blue-400 bg-blue-500/10 border border-blue-500/20'
+                                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
                                     }`}
                             >
                                 {link.label}
@@ -70,15 +80,50 @@ export default function Header() {
                         <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border border-slate-950"></span>
                     </button>
 
-                    {/* User Avatar */}
-                    <div className="flex items-center gap-3 cursor-pointer group">
-                        <div className="h-9 w-9 rounded-full bg-gradient-to-tr from-slate-700 to-slate-600 border border-slate-700 overflow-hidden ring-offset-2 ring-offset-slate-950 group-hover:ring-2 ring-blue-500 transition-all">
-                            <img
-                                alt="User Avatar"
-                                className="h-full w-full object-cover"
-                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnbAUKRWg7cwB2oRH-qRJ3qzts2BP1vgmPX8zwROd6lNo0G_LdXBYJOS92DB4QjbI9_PSEBS86_0OQ0EIXh8s7Ipbpl5htYQHs8wygw50ELBsWYBb48mbrnOMnvhIWPBSQaGm6O9pMXE2IUMXQq-wPC3qdG8NpSjX4axBmTX69zkzHjfDNY5qXQIB6JVxgkvsBMtrW8MScf1NySXfDHkQv7rlv8W14WT1ukKzZl_2Zlwj-soz_RExvuppzdWZRGzXgYLg3TsQ-W570"
-                            />
-                        </div>
+                    {/* User Menu */}
+                    <div className="relative">
+                        <button
+                            onClick={() => setShowDropdown(!showDropdown)}
+                            className="flex items-center gap-3 group"
+                        >
+                            <div className="h-9 w-9 rounded-full bg-gradient-to-tr from-slate-700 to-slate-600 border border-slate-700 overflow-hidden ring-offset-2 ring-offset-slate-950 group-hover:ring-2 ring-blue-500 transition-all">
+                                <img
+                                    alt="User Avatar"
+                                    className="h-full w-full object-cover"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnbAUKRWg7cwB2oRH-qRJ3qzts2BP1vgmPX8zwROd6lNo0G_LdXBYJOS92DB4QjbI9_PSEBS86_0OQ0EIXh8s7Ipbpl5htYQHs8wygw50ELBsWYBb48mbrnOMnvhIWPBSQaGm6O9pMXE2IUMXQq-wPC3qdG8NpSjX4axBmTX69zkzHjfDNY5qXQIB6JVxgkvsBMtrW8MScf1NySXfDHkQv7rlv8W14WT1ukKzZl_2Zlwj-soz_RExvuppzdWZRGzXgYLg3TsQ-W570"
+                                />
+                            </div>
+                        </button>
+
+                        {/* Dropdown Menu */}
+                        {showDropdown && (
+                            <div className="absolute right-0 mt-2 w-56 rounded-xl bg-slate-900 border border-slate-800 shadow-xl shadow-black/20 overflow-hidden z-50">
+                                {/* User Info */}
+                                <div className="px-4 py-3 border-b border-slate-800">
+                                    <p className="text-sm font-medium text-white">{profile?.full_name || 'User'}</p>
+                                    <p className="text-xs text-slate-400 mt-0.5">{profile?.email}</p>
+                                </div>
+
+                                {/* Menu Items */}
+                                <div className="py-2">
+                                    <Link
+                                        href="/settings/profile"
+                                        className="flex items-center gap-3 px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors"
+                                        onClick={() => setShowDropdown(false)}
+                                    >
+                                        <span className="material-symbols-outlined text-[18px]">settings</span>
+                                        Settings
+                                    </Link>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-400 hover:bg-slate-800 hover:text-red-300 transition-colors"
+                                    >
+                                        <span className="material-symbols-outlined text-[18px]">logout</span>
+                                        Sign Out
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
