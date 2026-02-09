@@ -1,11 +1,10 @@
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { supabase } from '../supabase';
 import { NotificationPreferences } from '../validations/notifications';
 
 /**
  * Get notification preferences for a user
  */
 export async function getNotificationPreferences(userId: string): Promise<NotificationPreferences | null> {
-    const supabase = createClientComponentClient();
 
     const { data, error } = await supabase
         .from('notification_preferences')
@@ -46,7 +45,6 @@ export async function updateNotificationPreferences(
     userId: string,
     preferences: NotificationPreferences
 ): Promise<void> {
-    const supabase = createClientComponentClient();
 
     // Map camelCase to database columns
     const dbData = {

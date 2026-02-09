@@ -15,7 +15,7 @@ import {
     updateNotificationPreferences,
     requestPushPermission,
 } from '@/lib/api/notifications';
-import SettingsCard from '@/components/settings/SettingsCard';
+import SettingsCard from '@/components/SettingsCard';
 
 export default function NotificationsSettings() {
     const { user, profile } = useAuth();
@@ -169,7 +169,6 @@ export default function NotificationsSettings() {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 {/* Email Notifications */}
                 <SettingsCard
-                    icon={Mail}
                     title="Email Notifications"
                     description="Receive notifications via email"
                 >
@@ -244,7 +243,6 @@ export default function NotificationsSettings() {
 
                 {/* Push Notifications */}
                 <SettingsCard
-                    icon={Smartphone}
                     title="Push Notifications"
                     description="Receive notifications in your browser"
                 >
@@ -291,7 +289,6 @@ export default function NotificationsSettings() {
 
                 {/* Quiet Hours */}
                 <SettingsCard
-                    icon={Moon}
                     title="Quiet Hours"
                     description="Pause notifications during specific hours"
                 >
@@ -386,14 +383,12 @@ export default function NotificationsSettings() {
 }
 
 // Toggle item component
-function ToggleItem({
-    label,
-    description,
-    ...props
-}: {
+interface ToggleItemProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label: string;
     description: string;
-} & ReturnType<typeof useForm<NotificationPreferences>['register']>) {
+}
+
+function ToggleItem({ label, description, ...props }: ToggleItemProps) {
     return (
         <div className="flex items-center justify-between">
             <div>
