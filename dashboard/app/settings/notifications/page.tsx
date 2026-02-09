@@ -64,14 +64,23 @@ export default function NotificationsSettings() {
                 const prefs = await getNotificationPreferences(user.id);
                 if (prefs) {
                     reset(prefs);
+                } else {
+                    // No preferences exist yet, use defaults
+                    console.log('No notification preferences found, using defaults');
                 }
             } catch (error) {
-                console.error('Failed to load notification preferences:', error);
+                // Log detailed error information for debugging
+                console.error('Failed to load notification preferences:', {
+                    error,
+                    message: error instanceof Error ? error.message : 'Unknown error',
+                    stack: error instanceof Error ? error.stack : undefined,
+                    userId: user.id,
+                });
                 showToast({
                     type: 'error',
                     title: 'Error',
-                    message: 'Failed to load notification preferences',
-                    duration: 3000,
+                    message: error instanceof Error ? error.message : 'Failed to load notification preferences',
+                    duration: 5000,
                 });
             } finally {
                 setLoading(false);
@@ -137,12 +146,17 @@ export default function NotificationsSettings() {
             // Reset form dirty state
             reset(data);
         } catch (error) {
-            console.error('Failed to save notification preferences:', error);
+            console.error('Failed to save notification preferences:', {
+                error,
+                message: error instanceof Error ? error.message : 'Unknown error',
+                stack: error instanceof Error ? error.stack : undefined,
+                data,
+            });
             showToast({
                 type: 'error',
                 title: 'Save Failed',
-                message: 'Failed to save notification preferences. Please try again.',
-                duration: 3000,
+                message: error instanceof Error ? error.message : 'Failed to save notification preferences. Please try again.',
+                duration: 5000,
             });
         } finally {
             setSaving(false);
