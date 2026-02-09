@@ -25,7 +25,8 @@ export default function Header() {
 
     const handleLogout = async () => {
         await signOut();
-        router.push('/login');
+        // Use window.location.href for immediate redirect after session clear
+        window.location.href = '/login';
     };
 
     return (
