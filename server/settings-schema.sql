@@ -7,15 +7,15 @@
 
 -- 1. Extend profiles table with additional fields
 -- =====================================================
-ALTER TABLE profiles ADD COLUMN IF NOT EXISTS
-  bio TEXT,
-  avatar_url TEXT,
-  organization TEXT,
-  job_title TEXT,
-  phone TEXT,
-  timezone TEXT DEFAULT 'America/Los_Angeles',
-  language TEXT DEFAULT 'en',
-  updated_at TIMESTAMPTZ DEFAULT NOW();
+ALTER TABLE profiles 
+  ADD COLUMN IF NOT EXISTS bio TEXT,
+  ADD COLUMN IF NOT EXISTS avatar_url TEXT,
+  ADD COLUMN IF NOT EXISTS organization TEXT,
+  ADD COLUMN IF NOT EXISTS job_title TEXT,
+  ADD COLUMN IF NOT EXISTS phone TEXT,
+  ADD COLUMN IF NOT EXISTS timezone TEXT DEFAULT 'America/Los_Angeles',
+  ADD COLUMN IF NOT EXISTS language TEXT DEFAULT 'en',
+  ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
 
 -- Add trigger to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
