@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>ODS Cloud - Login</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3b82f6", // Vibrant blue from screenshot
+                        "primary-hover": "#2563eb",
+                        "background-light": "#f8fafc", // Slate-50
+                        "background-dark": "#020617", // Very deep slate/black matching dashboard bg
+                        "card-dark": "#0f172a", // Slate-900 for card bg
+                        "input-dark": "#1e293b", // Slate-800 for inputs
+                        "border-dark": "#334155", // Slate-700
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                    },
+                    boxShadow: {
+                        'glow': '0 0 20px rgba(59, 130, 246, 0.15)',
+                        'glow-strong': '0 0 25px rgba(59, 130, 246, 0.3)',
+                    }
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .bg-grid-pattern {
+            background-image: radial-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark min-h-screen flex items-center justify-center relative overflow-hidden text-slate-900 dark:text-white transition-colors duration-300">
+    <script>
+        // Force dark mode for this specific premium dark aesthetic request
+        document.documentElement.classList.add('dark');
+    </script>
+    <div class="absolute inset-0 z-0 pointer-events-none">
+        <div class="absolute inset-0 bg-grid-pattern opacity-[0.4]"></div>
+        <div
+            class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-pulse">
+        </div>
+        <div
+            class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-purple-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-10">
+        </div>
+    </div>
+    <div class="w-full max-w-[440px] px-6 relative z-10">
+        <div class="flex flex-col items-center mb-8">
+            <div
+                class="w-12 h-12 bg-blue-600/20 rounded-xl flex items-center justify-center mb-4 border border-blue-500/20 shadow-glow">
+                <span class="material-icons text-primary text-3xl">bolt</span>
+            </div>
+            <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+                ODS <span class="text-slate-500 dark:text-slate-400 font-normal">Cloud</span>
+            </h1>
+        </div>
+        <div class="glass-card rounded-2xl p-8 shadow-2xl">
+            <div class="mb-8 text-center">
+                <h2 class="text-xl font-semibold text-slate-900 dark:text-white">Welcome back</h2>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">Enter your credentials to access the network.
+                </p>
+            </div>
+            <form action="#" class="space-y-5" method="POST">
+                <div class="space-y-2">
+                    <label class="block text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400"
+                        for="email">
+                        Email Address
+                    </label>
+                    <div class="relative group">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span
+                                class="material-icons text-slate-400 dark:text-slate-500 text-lg group-focus-within:text-primary transition-colors">mail_outline</span>
+                        </div>
+                        <input
+                            class="block w-full pl-10 pr-3 py-2.5 bg-white dark:bg-input-dark border border-slate-300 dark:border-border-dark rounded-lg text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all shadow-sm sm:text-sm"
+                            id="email" name="email" placeholder="name@company.com" required="" type="email" />
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label
+                            class="block text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400"
+                            for="password">
+                            Password
+                        </label>
+                    </div>
+                    <div class="relative group">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span
+                                class="material-icons text-slate-400 dark:text-slate-500 text-lg group-focus-within:text-primary transition-colors">lock_outline</span>
+                        </div>
+                        <input
+                            class="block w-full pl-10 pr-3 py-2.5 bg-white dark:bg-input-dark border border-slate-300 dark:border-border-dark rounded-lg text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all shadow-sm sm:text-sm"
+                            id="password" name="password" placeholder="••••••••" required="" type="password" />
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input
+                            class="h-4 w-4 text-primary focus:ring-primary border-slate-300 dark:border-slate-600 rounded bg-transparent"
+                            id="remember-me" name="remember-me" type="checkbox" />
+                        <label class="ml-2 block text-sm text-slate-600 dark:text-slate-400" for="remember-me">
+                            Remember me
+                        </label>
+                    </div>
+                    <div class="text-sm">
+                        <a class="font-medium text-primary hover:text-primary-hover transition-colors" href="#">
+                            Forgot password?
+                        </a>
+                    </div>
+                </div>
+                <button
+                    class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-glow text-sm font-medium text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary focus:ring-offset-background-dark transition-all transform active:scale-[0.98]"
+                    type="submit">
+                    Sign In to Dashboard
+                </button>
+            </form>
+            <div class="mt-6">
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-slate-300 dark:border-slate-700"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white dark:bg-[#0f172a] text-slate-500">Or continue with</span>
+                    </div>
+                </div>
+                <div class="mt-6 grid grid-cols-2 gap-3">
+                    <a class="w-full inline-flex justify-center py-2 px-4 border border-slate-300 dark:border-slate-700 rounded-lg shadow-sm bg-white dark:bg-slate-800 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                        href="#">
+                        <svg aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M12.545 10.551v2.921h4.27c-.209 1.408-1.503 2.921-4.27 2.921-2.584 0-4.697-2.115-4.697-4.733s2.113-4.733 4.697-4.733c1.334 0 2.457.514 3.298 1.29l2.257-2.315C16.592 4.698 14.717 4 12.545 4 8.1 4 4.5 7.6 4.5 12.051c0 4.453 3.6 8.052 8.045 8.052 4.191 0 7.373-2.921 7.373-7.514 0-.663-.07-1.127-.156-1.589h-7.217z">
+                            </path>
+                        </svg>
+                        <span class="sr-only">Sign in with Google</span>
+                    </a>
+                    <a class="w-full inline-flex justify-center py-2 px-4 border border-slate-300 dark:border-slate-700 rounded-lg shadow-sm bg-white dark:bg-slate-800 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                        href="#">
+                        <svg aria-hidden="true" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path clip-rule="evenodd"
+                                d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z"
+                                fill-rule="evenodd"></path>
+                        </svg>
+                        <span class="sr-only">Sign in with GitHub</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <p class="mt-8 text-center text-xs text-slate-500 dark:text-slate-500">
+            © 2024 ODS Cloud. All rights reserved. <br />
+            <a class="hover:text-primary transition-colors" href="#">Privacy Policy</a> • <a
+                class="hover:text-primary transition-colors" href="#">Terms of Service</a>
+        </p>
+    </div>
+
+</body>
+
+</html>

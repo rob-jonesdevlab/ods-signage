@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>ODS Cloud - User Profile Settings</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3c83f6",
+                        "primary-hover": "#2563eb",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101722",
+                        "surface-dark": "#0f172a",
+                        "surface-dark-lighter": "#1e293b",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 min-h-screen flex flex-col font-display transition-colors duration-200">
+    <nav
+        class="sticky top-0 z-50 bg-white dark:bg-[#020617]/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-6 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-8">
+            <div class="flex items-center gap-2">
+                <div
+                    class="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20">
+                    <span class="material-symbols-outlined text-[20px]">bolt</span>
+                </div>
+                <span class="text-lg font-bold tracking-tight text-slate-900 dark:text-white">ODS Cloud</span>
+            </div>
+            <div class="hidden md:flex items-center gap-1">
+                <a class="px-3 py-2 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-md transition-colors"
+                    href="#">Dashboard</a>
+                <a class="px-3 py-2 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-md transition-colors"
+                    href="#">Players</a>
+                <a class="px-3 py-2 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-md transition-colors"
+                    href="#">Playlists</a>
+                <a class="px-3 py-2 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-md transition-colors"
+                    href="#">Content Library</a>
+                <a class="px-3 py-2 text-sm font-medium text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 rounded-md transition-colors"
+                    href="#">Settings</a>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <div
+                class="hidden md:flex items-center px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+                <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse mr-2"></div>
+                <span class="text-xs font-semibold text-emerald-600 dark:text-emerald-400">ONLINE</span>
+            </div>
+            <button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 relative p-1">
+                <span class="material-symbols-outlined text-[24px]">notifications</span>
+                <span
+                    class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-[#020617]"></span>
+            </button>
+            <div
+                class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold border border-slate-300 dark:border-slate-600 shadow-md">
+                AJ
+            </div>
+        </div>
+    </nav>
+    <main class="flex-1 max-w-7xl w-full mx-auto p-6 md:p-8">
+        <header class="mb-8">
+            <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Account Settings</h1>
+            <p class="text-slate-500 dark:text-slate-400 mt-1">Manage your profile details and workspace preferences.
+            </p>
+        </header>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <aside class="lg:col-span-3">
+                <nav class="space-y-1">
+                    <a class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-white bg-primary rounded-lg shadow-lg shadow-blue-500/20 transition-colors"
+                        href="#">
+                        <span class="material-symbols-outlined text-[20px] text-white">person</span>
+                        Profile
+                    </a>
+                    <a class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-lg transition-colors group"
+                        href="#">
+                        <span
+                            class="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300">lock</span>
+                        Security
+                    </a>
+                    <a class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-lg transition-colors group"
+                        href="#">
+                        <span
+                            class="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300">notifications</span>
+                        Notifications
+                    </a>
+                    <a class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-lg transition-colors group"
+                        href="#">
+                        <span
+                            class="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300">group</span>
+                        Team Members
+                    </a>
+                    <a class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-lg transition-colors group"
+                        href="#">
+                        <span
+                            class="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300">receipt_long</span>
+                        Billing
+                    </a>
+                    <a class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-lg transition-colors group"
+                        href="#">
+                        <span
+                            class="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300">api</span>
+                        API Access
+                    </a>
+                </nav>
+            </aside>
+            <div class="lg:col-span-9 space-y-6">
+                <div class="glass-card rounded-xl shadow-xl overflow-hidden">
+                    <div class="relative h-32 bg-gradient-to-r from-slate-800 via-slate-900 to-black">
+                        <div class="absolute inset-0 bg-grid-slate-700/[0.1] bg-[size:20px_20px]"></div>
+                        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-slate-900/50"></div>
+                    </div>
+                    <div class="px-6 md:px-10 pb-10 -mt-12">
+                        <div class="flex flex-col md:flex-row items-end md:items-center justify-between gap-6 mb-8">
+                            <div class="flex items-end gap-6">
+                                <div class="relative group">
+                                    <div
+                                        class="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 p-[2px] shadow-2xl shadow-blue-500/30">
+                                        <div
+                                            class="w-full h-full rounded-[14px] bg-slate-900 flex items-center justify-center relative overflow-hidden">
+                                            <span class="text-3xl font-bold text-white z-10">AJ</span>
+                                            <div
+                                                class="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-indigo-600/20">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button
+                                        class="absolute -bottom-2 -right-2 w-8 h-8 bg-white dark:bg-slate-700 rounded-full flex items-center justify-center shadow-lg border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-200 hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-all">
+                                        <span class="material-symbols-outlined text-[16px]">edit</span>
+                                    </button>
+                                </div>
+                                <div class="mb-2">
+                                    <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Alex Johnson</h2>
+                                    <p class="text-slate-500 dark:text-slate-400 text-sm">Product Manager @ ODS Cloud
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="flex gap-3 w-full md:w-auto">
+                                <button
+                                    class="flex-1 md:flex-none px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm">
+                                    Change Avatar
+                                </button>
+                            </div>
+                        </div>
+                        <form class="space-y-8">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-1">
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                                        for="first-name">First Name</label>
+                                    <div class="relative">
+                                        <input
+                                            class="block w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all sm:text-sm"
+                                            id="first-name" name="first-name" type="text" value="Alex" />
+                                    </div>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                                        for="last-name">Last Name</label>
+                                    <div class="relative">
+                                        <input
+                                            class="block w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all sm:text-sm"
+                                            id="last-name" name="last-name" type="text" value="Johnson" />
+                                    </div>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                                        for="email">Email Address</label>
+                                    <div class="relative">
+                                        <span
+                                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                            <span class="material-symbols-outlined text-[20px]">mail</span>
+                                        </span>
+                                        <input
+                                            class="block w-full pl-10 pr-3 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all sm:text-sm"
+                                            id="email" name="email" type="email" value="alex.j@odscloud.io" />
+                                    </div>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                                        for="org">Organization</label>
+                                    <div class="relative">
+                                        <span
+                                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                            <span class="material-symbols-outlined text-[20px]">business</span>
+                                        </span>
+                                        <input
+                                            class="block w-full pl-10 pr-3 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all sm:text-sm"
+                                            id="org" name="org" type="text" value="ODS Cloud Inc." />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="col-span-1 md:col-span-2 space-y-1">
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300"
+                                        for="bio">Personal Bio</label>
+                                    <textarea
+                                        class="block w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all sm:text-sm resize-none h-24"
+                                        id="bio" name="bio"
+                                        placeholder="Tell us a little about yourself...">Responsible for overseeing product strategy and development roadmap. Passionate about cloud infrastructure and UX design.</textarea>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 text-right">240 characters left
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="border-t border-slate-200 dark:border-slate-800 pt-6">
+                                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                    <div>
+                                        <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Role &amp;
+                                            Permissions</h3>
+                                        <div class="mt-2 flex items-center gap-2">
+                                            <div
+                                                class="bg-blue-500/10 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-full text-xs font-semibold border border-blue-500/20 flex items-center gap-1">
+                                                <span class="material-symbols-outlined text-[14px]">verified_user</span>
+                                                System Admin
+                                            </div>
+                                            <span class="text-xs text-slate-500 dark:text-slate-400">Full access to all
+                                                resources</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <button
+                                            class="px-5 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                                            type="button">
+                                            Cancel
+                                        </button>
+                                        <button
+                                            class="px-5 py-2.5 text-sm font-medium text-white bg-primary hover:bg-primary-hover rounded-lg shadow-lg shadow-blue-500/30 transition-all transform active:scale-95"
+                                            type="submit">
+                                            Save Changes
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="glass-card rounded-xl p-6 border border-slate-200 dark:border-slate-800/50">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <h3 class="text-base font-semibold text-slate-900 dark:text-white">Account Status</h3>
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Your account is fully active.
+                                Next billing date: Oct 24, 2023.</p>
+                        </div>
+                        <div
+                            class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded-full text-xs font-semibold border border-emerald-500/20 flex items-center gap-1">
+                            <div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                            Active
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="mt-auto border-t border-slate-200 dark:border-slate-800 py-6">
+        <div
+            class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-xs text-slate-400 dark:text-slate-500">
+            <p>© 2023 ODS Cloud Inc. All rights reserved.</p>
+            <div class="flex gap-4 mt-2 md:mt-0">
+                <a class="hover:text-slate-300" href="#">Privacy Policy</a>
+                <a class="hover:text-slate-300" href="#">Terms of Service</a>
+                <a class="hover:text-slate-300" href="#">Support</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>ODS Cloud - Login Error</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3b82f6", // Bright Blue as seen in 'Add Player' button
+                        "primary-hover": "#2563eb",
+                        "background-light": "#f3f4f6",
+                        "background-dark": "#05060d", // Very dark background from screenshot
+                        "surface-dark": "#11131f", // Card background
+                        "surface-light": "#ffffff",
+                        "border-dark": "#1f2937",
+                        "text-secondary": "#9ca3af",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                        body: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        "xl": "1rem",
+                        "2xl": "1.5rem",
+                    },
+                    boxShadow: {
+                        'glow': '0 0 20px rgba(59, 130, 246, 0.15)',
+                    }
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-white min-h-screen flex items-center justify-center p-4 relative overflow-hidden transition-colors duration-200">
+    <div class="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/10 rounded-full blur-[120px]">
+        </div>
+    </div>
+    <div
+        class="w-full max-w-md bg-surface-light dark:bg-surface-dark rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 p-8 md:p-10 relative z-10 backdrop-blur-sm">
+        <div class="flex flex-col items-center mb-8">
+            <div class="flex items-center gap-2 mb-2">
+                <div
+                    class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                    <span class="material-icons-round text-2xl">bolt</span>
+                </div>
+                <h1 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">ODS <span
+                        class="text-gray-500 font-normal">Cloud</span></h1>
+            </div>
+            <p class="text-sm text-gray-500 dark:text-text-secondary">Sign in to manage your digital signage network</p>
+        </div>
+        <div
+            class="mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 flex items-start gap-3 animate-pulse">
+            <span class="material-icons-round text-red-500 dark:text-red-400 mt-0.5 text-xl">error_outline</span>
+            <div class="flex-1">
+                <h3 class="text-sm font-medium text-red-800 dark:text-red-300">Authentication Failed</h3>
+                <p class="text-sm text-red-700 dark:text-red-400 mt-1">Invalid email or password. Please try again.</p>
+            </div>
+        </div>
+        <form action="#" class="space-y-5" method="POST">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5" for="email">Email
+                    Address</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="material-icons-round text-gray-400 text-xl">mail_outline</span>
+                    </div>
+                    <input
+                        class="block w-full pl-10 pr-3 py-2.5 rounded-lg border border-red-500 dark:border-red-500 bg-white dark:bg-gray-900/50 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 sm:text-sm transition-all"
+                        id="email" name="email" placeholder="name@company.com" type="email" value="alex@ods.cloud" />
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                        <span class="material-icons-round text-red-500 text-xl">error</span>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="flex items-center justify-between mb-1.5">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                        for="password">Password</label>
+                    <a class="text-xs font-medium text-primary hover:text-blue-400 transition-colors" href="#">Forgot
+                        password?</a>
+                </div>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="material-icons-round text-gray-400 text-xl">lock_outline</span>
+                    </div>
+                    <input
+                        class="block w-full pl-10 pr-3 py-2.5 rounded-lg border border-red-500 dark:border-red-500 bg-white dark:bg-gray-900/50 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 sm:text-sm transition-all"
+                        id="password" name="password" placeholder="••••••••" type="password" value="wrongpassword" />
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                        <span class="material-icons-round text-red-500 text-xl">error</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center">
+                <input
+                    class="h-4 w-4 text-primary focus:ring-blue-500 border-gray-300 rounded bg-gray-50 dark:bg-gray-800 dark:border-gray-600"
+                    id="remember-me" name="remember-me" type="checkbox" />
+                <label class="ml-2 block text-sm text-gray-600 dark:text-gray-400" for="remember-me">
+                    Keep me logged in
+                </label>
+            </div>
+            <button
+                class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 shadow-glow"
+                type="submit">
+                Sign in
+            </button>
+        </form>
+        <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-800 text-center">
+            <p class="text-xs text-gray-500 dark:text-gray-400">
+                Don't have an account?
+                <a class="font-medium text-primary hover:text-blue-400 transition-colors" href="#">Contact Support</a>
+            </p>
+        </div>
+    </div>
+    <div class="absolute bottom-4 w-full text-center">
+        <p class="text-xs text-gray-400 dark:text-gray-600">© 2024 ODS Cloud. All rights reserved.</p>
+    </div>
+
+</body>
+
+</html>
