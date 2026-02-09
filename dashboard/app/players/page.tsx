@@ -192,6 +192,9 @@ export default function PlayersPage() {
                                             Status
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                                            Pairing
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                                             Name
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
@@ -213,6 +216,24 @@ export default function PlayersPage() {
                                                     <div className={`w-3 h-3 rounded-full ${getStatusColor(player.status)}`} />
                                                     <span className="text-sm capitalize text-white">{player.status}</span>
                                                 </div>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                {player.paired_at ? (
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="material-symbols-outlined text-emerald-500 text-lg">check_circle</span>
+                                                        <span className="text-sm text-emerald-400 font-medium">Paired</span>
+                                                    </div>
+                                                ) : player.pairing_code ? (
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="material-symbols-outlined text-amber-500 text-lg animate-pulse">pending</span>
+                                                        <span className="text-sm text-amber-400 font-medium font-mono">{player.pairing_code}</span>
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="material-symbols-outlined text-slate-500 text-lg">radio_button_unchecked</span>
+                                                        <span className="text-sm text-slate-500">Not initiated</span>
+                                                    </div>
+                                                )}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap font-medium text-white">
                                                 {player.name}
