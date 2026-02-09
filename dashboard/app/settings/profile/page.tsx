@@ -1,50 +1,136 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@/contexts/AuthContext';
 import SettingsCard from '@/components/SettingsCard';
+import { profileSchema, ProfileFormData } from '@/lib/validations/profile';
+import { updateProfile, uploadAvatar } from '@/lib/api/profile';
+import { useToast } from '@/hooks/useToast';
 
 export default function ProfilePage() {
     const { profile, user } = useAuth();
-    const [isLoading, setIsLoading] = useState(false);
-    const [formData, setFormData] = useState({
-        firstName: profile?.full_name?.split(' ')[0] || '',
-        lastName: profile?.full_name?.split(' ').slice(1).join(' ') || '',
-        email: user?.email || '',
-        organization: profile?.organization || '',
-        jobTitle: profile?.job_title || '',
-        bio: profile?.bio || '',
+    const { showToast } = useToast();
+    const [isUploading, setIsUploading] = useState(false);
+    const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors, isSubmitting },
+        watch,
+        reset,
+    } = useForm<ProfileFormData>({
+        resolver: zodResolver(profileSchema),
+        defaultValues: {
+            firstName: profile?.full_name?.split(' ')[0] || '',
+            lastName: profile?.full_name?.split(' ').slice(1).join(' ') || '',
+            organization: profile?.organization || '',
+            jobTitle: profile?.job_title || '',
+            bio: profile?.bio || '',
+            phone: profile?.phone || '',
+            timezone: profile?.timezone || 'America/Los_Angeles',
+            language: profile?.language || 'en',
+        },
     });
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsLoading(true);
+    // Update form when profile loads
+    useEffect(() => {
+        if (profile) {
+            reset({
+                firstName: profile.full_name?.split(' ')[0] || '',
+                lastName: profile.full_name?.split(' ').slice(1).join(' ') || '',
+                organization: profile.organization || '',
+                jobTitle: profile.job_title || '',
+                bio: profile.bio || '',
+                phone: profile.phone || '',
+                timezone: profile.timezone || 'America/Los_Angeles',
+                language: profile.language || 'en',
+            });
+        }
+    }, [profile, reset]);
+
+    const onSubmit = async (data: ProfileFormData) => {
+        if (!user) return;
 
         try {
-            // TODO: Implement profile update API call
-            console.log('Updating profile:', formData);
+            await updateProfile(user.id, data);
 
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            showToast({
+                type: 'success',
+                title: 'Profile Updated',
+                message: 'Your profile has been updated successfully.',
+                duration: 3000,
+            });
 
-            alert('Profile updated successfully!');
+            // Refresh the page to update the auth context
+            window.location.reload();
         } catch (error) {
             console.error('Error updating profile:', error);
-            alert('Failed to update profile');
-        } finally {
-            setIsLoading(false);
+            showToast({
+                type: 'error',
+                title: 'Update Failed',
+                message: error instanceof Error ? error.message : 'Failed to update profile',
+                duration: 5000,
+            });
         }
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
+    const handleAvatarClick = () => {
+        fileInputRef.current?.click();
     };
 
-    const bioCharCount = formData.bio.length;
+    const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file || !user) return;
+
+        setIsUploading(true);
+
+        try {
+            // Show preview
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setAvatarPreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+
+            // Upload to Supabase
+            const avatarUrl = await uploadAvatar(user.id, file);
+
+            showToast({
+                type: 'success',
+                title: 'Avatar Updated',
+                message: 'Your avatar has been uploaded successfully.',
+                duration: 3000,
+            });
+
+            // Refresh to update avatar
+            setTimeout(() => window.location.reload(), 1000);
+        } catch (error) {
+            console.error('Error uploading avatar:', error);
+            showToast({
+                type: 'error',
+                title: 'Upload Failed',
+                message: error instanceof Error ? error.message : 'Failed to upload avatar',
+                duration: 5000,
+            });
+            setAvatarPreview(null);
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
+    const formValues = watch();
+    const bioCharCount = formValues.bio?.length || 0;
     const bioMaxChars = 240;
+
+    const getInitials = () => {
+        const first = formValues.firstName?.[0] || '';
+        const last = formValues.lastName?.[0] || '';
+        return `${first}${last}`.toUpperCase();
+    };
 
     return (
         <div className="space-y-6">
@@ -63,27 +149,51 @@ export default function ProfilePage() {
                             <div className="relative group">
                                 <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 p-[2px] shadow-2xl shadow-blue-500/30">
                                     <div className="w-full h-full rounded-[14px] bg-slate-900 flex items-center justify-center relative overflow-hidden">
-                                        <span className="text-3xl font-bold text-white z-10">
-                                            {formData.firstName[0]}{formData.lastName[0]}
-                                        </span>
-                                        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-indigo-600/20"></div>
+                                        {avatarPreview || profile?.avatar_url ? (
+                                            <img
+                                                src={avatarPreview || profile?.avatar_url || ''}
+                                                alt="Avatar"
+                                                className="w-full h-full object-cover rounded-[14px]"
+                                            />
+                                        ) : (
+                                            <>
+                                                <span className="text-3xl font-bold text-white z-10">
+                                                    {getInitials()}
+                                                </span>
+                                                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-indigo-600/20"></div>
+                                            </>
+                                        )}
+                                        {isUploading && (
+                                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                                 <button
                                     type="button"
-                                    className="absolute -bottom-2 -right-2 w-8 h-8 bg-slate-700 rounded-full flex items-center justify-center shadow-lg border border-slate-600 text-slate-200 hover:bg-blue-600 hover:text-white transition-all"
+                                    onClick={handleAvatarClick}
+                                    disabled={isUploading}
+                                    className="absolute -bottom-2 -right-2 w-8 h-8 bg-slate-700 rounded-full flex items-center justify-center shadow-lg border border-slate-600 text-slate-200 hover:bg-blue-600 hover:text-white transition-all disabled:opacity-50"
                                 >
                                     <span className="material-symbols-outlined text-[16px]">edit</span>
                                 </button>
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/webp"
+                                    onChange={handleAvatarChange}
+                                    className="hidden"
+                                />
                             </div>
 
                             {/* Name & Title */}
                             <div className="mb-2">
                                 <h2 className="text-2xl font-bold text-white">
-                                    {formData.firstName} {formData.lastName}
+                                    {formValues.firstName} {formValues.lastName}
                                 </h2>
                                 <p className="text-slate-400 text-sm">
-                                    {formData.jobTitle || 'No job title'} @ {formData.organization || 'No organization'}
+                                    {formValues.jobTitle || 'No job title'} @ {formValues.organization || 'No organization'}
                                 </p>
                             </div>
                         </div>
@@ -92,15 +202,17 @@ export default function ProfilePage() {
                         <div className="flex gap-3 w-full md:w-auto">
                             <button
                                 type="button"
-                                className="flex-1 md:flex-none px-4 py-2 text-sm font-medium text-slate-300 bg-slate-800 border border-slate-600 rounded-lg hover:bg-slate-700 transition-colors shadow-sm"
+                                onClick={handleAvatarClick}
+                                disabled={isUploading}
+                                className="flex-1 md:flex-none px-4 py-2 text-sm font-medium text-slate-300 bg-slate-800 border border-slate-600 rounded-lg hover:bg-slate-700 transition-colors shadow-sm disabled:opacity-50"
                             >
-                                Change Avatar
+                                {isUploading ? 'Uploading...' : 'Change Avatar'}
                             </button>
                         </div>
                     </div>
 
                     {/* Profile Form */}
-                    <form onSubmit={handleSubmit} className="space-y-8">
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
                         {/* Name Fields */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-1">
@@ -108,14 +220,16 @@ export default function ProfilePage() {
                                     First Name
                                 </label>
                                 <input
-                                    className="block w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm"
+                                    {...register('firstName')}
+                                    className={`block w-full px-4 py-2.5 bg-slate-800/50 border rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm ${errors.firstName ? 'border-red-500' : 'border-slate-700'
+                                        }`}
                                     id="firstName"
-                                    name="firstName"
                                     type="text"
-                                    value={formData.firstName}
-                                    onChange={handleChange}
-                                    required
+                                    placeholder="John"
                                 />
+                                {errors.firstName && (
+                                    <p className="text-xs text-red-400 mt-1">{errors.firstName.message}</p>
+                                )}
                             </div>
 
                             <div className="space-y-1">
@@ -123,14 +237,16 @@ export default function ProfilePage() {
                                     Last Name
                                 </label>
                                 <input
-                                    className="block w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm"
+                                    {...register('lastName')}
+                                    className={`block w-full px-4 py-2.5 bg-slate-800/50 border rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm ${errors.lastName ? 'border-red-500' : 'border-slate-700'
+                                        }`}
                                     id="lastName"
-                                    name="lastName"
                                     type="text"
-                                    value={formData.lastName}
-                                    onChange={handleChange}
-                                    required
+                                    placeholder="Doe"
                                 />
+                                {errors.lastName && (
+                                    <p className="text-xs text-red-400 mt-1">{errors.lastName.message}</p>
+                                )}
                             </div>
 
                             {/* Email */}
@@ -143,11 +259,10 @@ export default function ProfilePage() {
                                         <span className="material-symbols-outlined text-[20px]">mail</span>
                                     </span>
                                     <input
-                                        className="block w-full pl-10 pr-3 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm"
+                                        className="block w-full pl-10 pr-3 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-slate-500 placeholder-slate-400 focus:outline-none sm:text-sm cursor-not-allowed"
                                         id="email"
-                                        name="email"
                                         type="email"
-                                        value={formData.email}
+                                        value={user?.email || ''}
                                         disabled
                                     />
                                 </div>
@@ -164,15 +279,17 @@ export default function ProfilePage() {
                                         <span className="material-symbols-outlined text-[20px]">business</span>
                                     </span>
                                     <input
-                                        className="block w-full pl-10 pr-3 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm"
+                                        {...register('organization')}
+                                        className={`block w-full pl-10 pr-3 py-2.5 bg-slate-800/50 border rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm ${errors.organization ? 'border-red-500' : 'border-slate-700'
+                                            }`}
                                         id="organization"
-                                        name="organization"
                                         type="text"
-                                        value={formData.organization}
-                                        onChange={handleChange}
                                         placeholder="Your company name"
                                     />
                                 </div>
+                                {errors.organization && (
+                                    <p className="text-xs text-red-400 mt-1">{errors.organization.message}</p>
+                                )}
                             </div>
                         </div>
 
@@ -182,14 +299,16 @@ export default function ProfilePage() {
                                 Job Title
                             </label>
                             <input
-                                className="block w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm"
+                                {...register('jobTitle')}
+                                className={`block w-full px-4 py-2.5 bg-slate-800/50 border rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm ${errors.jobTitle ? 'border-red-500' : 'border-slate-700'
+                                    }`}
                                 id="jobTitle"
-                                name="jobTitle"
                                 type="text"
-                                value={formData.jobTitle}
-                                onChange={handleChange}
                                 placeholder="e.g., Product Manager"
                             />
+                            {errors.jobTitle && (
+                                <p className="text-xs text-red-400 mt-1">{errors.jobTitle.message}</p>
+                            )}
                         </div>
 
                         {/* Bio */}
@@ -198,17 +317,21 @@ export default function ProfilePage() {
                                 Personal Bio
                             </label>
                             <textarea
-                                className="block w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm resize-none h-24"
+                                {...register('bio')}
+                                className={`block w-full px-4 py-3 bg-slate-800/50 border rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm resize-none h-24 ${errors.bio ? 'border-red-500' : 'border-slate-700'
+                                    }`}
                                 id="bio"
-                                name="bio"
                                 placeholder="Tell us a little about yourself..."
-                                value={formData.bio}
-                                onChange={handleChange}
                                 maxLength={bioMaxChars}
                             />
-                            <p className="text-xs text-slate-500 text-right">
-                                {bioMaxChars - bioCharCount} characters left
-                            </p>
+                            <div className="flex justify-between items-center">
+                                {errors.bio && (
+                                    <p className="text-xs text-red-400">{errors.bio.message}</p>
+                                )}
+                                <p className={`text-xs text-slate-500 ml-auto ${bioCharCount > bioMaxChars ? 'text-red-400' : ''}`}>
+                                    {bioMaxChars - bioCharCount} characters left
+                                </p>
+                            </div>
                         </div>
 
                         {/* Role & Permissions */}
@@ -229,16 +352,17 @@ export default function ProfilePage() {
                                 <div className="flex items-center gap-3">
                                     <button
                                         type="button"
+                                        onClick={() => reset()}
                                         className="px-5 py-2.5 text-sm font-medium text-slate-300 bg-transparent hover:bg-slate-800 rounded-lg transition-colors"
                                     >
                                         Cancel
                                     </button>
                                     <button
                                         type="submit"
-                                        disabled={isLoading}
+                                        disabled={isSubmitting}
                                         className="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-lg shadow-blue-500/30 transition-all transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
-                                        {isLoading ? 'Saving...' : 'Save Changes'}
+                                        {isSubmitting ? 'Saving...' : 'Save Changes'}
                                     </button>
                                 </div>
                             </div>
