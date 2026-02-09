@@ -107,6 +107,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     const signOut = async () => {
+        // Clear the auth cookie first
+        const tokenKey = 'sb-dimcecmdkoaxakknftwg-auth-token'
+        document.cookie = `${tokenKey}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`
+
+        // Sign out from Supabase
         await supabase.auth.signOut()
     }
 
