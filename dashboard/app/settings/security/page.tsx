@@ -179,7 +179,7 @@ export default function SecuritySettings() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg font-medium transition-colors"
+                        className="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg font-medium transition-colors text-white"
                     >
                         {loading ? 'Changing Password...' : 'Change Password'}
                     </button>
@@ -199,7 +199,7 @@ export default function SecuritySettings() {
                     </div>
                     <button
                         onClick={handleSignOutOtherDevices}
-                        className="px-6 py-2 bg-red-600 hover:bg-red-700 rounded-lg font-medium transition-colors flex items-center gap-2"
+                        className="px-6 py-2 bg-red-600 hover:bg-red-700 rounded-lg font-medium transition-colors flex items-center gap-2 text-white"
                     >
                         <LogOut className="w-4 h-4" />
                         Sign Out All Other Devices
