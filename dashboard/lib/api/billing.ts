@@ -60,18 +60,10 @@ export const PLANS = {
  * Get current subscription for organization
  */
 export async function getCurrentSubscription(organizationId: string) {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) throw new Error('No active session');
-
-    const { data, error } = await supabase
-        .from('subscriptions')
-        .select('*')
-        .eq('organization_id', organizationId)
-        .single();
-
-    if (error) {
-        // If no subscription exists, return default free plan
-        if (error.code === 'PGRST116') {
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+            // No session, return default free plan
             return {
                 id: null,
                 organization_id: organizationId,
@@ -81,28 +73,65 @@ export async function getCurrentSubscription(organizationId: string) {
                 current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
             };
         }
-        throw error;
-    }
 
-    return data;
+        const { data, error } = await supabase
+            .from('subscriptions')
+            .select('*')
+            .eq('organization_id', organizationId)
+            .single();
+
+        if (error) {
+            // If no subscription exists or any error, return default free plan
+            console.log('Subscription query error (returning default):', error);
+            return {
+                id: null,
+                organization_id: organizationId,
+                plan_id: 'free',
+                status: 'active',
+                current_period_start: new Date().toISOString(),
+                current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+            };
+        }
+
+        return data;
+    } catch (error) {
+        // Catch any unexpected errors and return default
+        console.error('Unexpected error in getCurrentSubscription:', error);
+        return {
+            id: null,
+            organization_id: organizationId,
+            plan_id: 'free',
+            status: 'active',
+            current_period_start: new Date().toISOString(),
+            current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        };
+    }
 }
 
 /**
  * Get billing history (invoices)
  */
 export async function getBillingHistory(organizationId: string, limit: number = 10) {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) throw new Error('No active session');
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return [];
 
-    const { data, error } = await supabase
-        .from('invoices')
-        .select('*')
-        .eq('organization_id', organizationId)
-        .order('invoice_date', { ascending: false })
-        .limit(limit);
+        const { data, error } = await supabase
+            .from('invoices')
+            .select('*')
+            .eq('organization_id', organizationId)
+            .order('invoice_date', { ascending: false })
+            .limit(limit);
 
-    if (error) throw error;
-    return data || [];
+        if (error) {
+            console.log('Invoice query error (returning empty):', error);
+            return [];
+        }
+        return data || [];
+    } catch (error) {
+        console.error('Unexpected error in getBillingHistory:', error);
+        return [];
+    }
 }
 
 /**
