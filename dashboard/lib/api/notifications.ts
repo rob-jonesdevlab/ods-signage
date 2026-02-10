@@ -17,6 +17,16 @@ export async function getNotificationPreferences(userId: string): Promise<Notifi
         if (error.code === 'PGRST116') {
             return null;
         }
+        // Log the full error object to understand its structure
+        console.error('Supabase error object:', {
+            error,
+            errorKeys: Object.keys(error),
+            errorMessage: error.message,
+            errorDetails: error.details,
+            errorHint: error.hint,
+            errorCode: error.code,
+            errorStringified: JSON.stringify(error, null, 2),
+        });
         // Supabase errors have a different structure - extract the message properly
         const errorMessage = error.message || error.details || error.hint || 'Failed to fetch notification preferences';
         throw new Error(errorMessage);
