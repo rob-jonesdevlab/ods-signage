@@ -123,7 +123,6 @@ export default function SecuritySettings() {
             <SettingsCard
                 title="Change Password"
                 description="Update your password to keep your account secure"
-                icon={<Key className="w-5 h-5" />}
             >
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                     {/* Current Password */}
@@ -191,7 +190,6 @@ export default function SecuritySettings() {
             <SettingsCard
                 title="Active Sessions"
                 description="Manage devices that are currently signed in to your account"
-                icon={<LogOut className="w-5 h-5" />}
             >
                 <div className="space-y-4">
                     <div className="p-4 bg-blue-900/20 border border-blue-800/30 rounded-lg">
@@ -213,7 +211,6 @@ export default function SecuritySettings() {
             <SettingsCard
                 title="Security Activity"
                 description="Recent security events on your account"
-                icon={<Activity className="w-5 h-5" />}
             >
                 <div className="space-y-2">
                     {loadingActivity ? (
@@ -237,8 +234,8 @@ export default function SecuritySettings() {
                                     </div>
                                     <span
                                         className={`text-xs px-2 py-1 rounded ${event.status === 'success'
-                                                ? 'bg-green-900/30 text-green-400'
-                                                : 'bg-red-900/30 text-red-400'
+                                            ? 'bg-green-900/30 text-green-400'
+                                            : 'bg-red-900/30 text-red-400'
                                             }`}
                                     >
                                         {event.status}
