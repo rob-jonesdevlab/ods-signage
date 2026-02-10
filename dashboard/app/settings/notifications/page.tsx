@@ -56,10 +56,7 @@ export default function NotificationsSettings() {
     const pushNotifications = useWatch({ control, name: 'pushNotifications' });
     const quietHoursEnabled = useWatch({ control, name: 'quietHoursEnabled' });
 
-    // Debug: Log when quietHoursEnabled changes
-    useEffect(() => {
-        console.log('Quiet Hours Enabled changed:', quietHoursEnabled);
-    }, [quietHoursEnabled]);
+
 
     // Load notification preferences
     useEffect(() => {
@@ -94,7 +91,8 @@ export default function NotificationsSettings() {
         }
 
         loadPreferences();
-    }, [user, reset, showToast]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user]);
 
     // Check push notification permission
     useEffect(() => {
