@@ -16,12 +16,8 @@
 
 body {
   color: rgb(var(--foreground));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background))
-    )
-    rgb(var(--background));
+  background: #020617;
+  /* slate-950 */
 }
 
 @keyframes slide-up {
@@ -29,6 +25,7 @@ body {
     opacity: 0;
     transform: translate(-50%, 20px);
   }
+
   to {
     opacity: 1;
     transform: translate(-50%, 0);
