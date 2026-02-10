@@ -17,7 +17,9 @@ export async function getNotificationPreferences(userId: string): Promise<Notifi
         if (error.code === 'PGRST116') {
             return null;
         }
-        throw error;
+        // Supabase errors have a different structure - extract the message properly
+        const errorMessage = error.message || error.details || error.hint || 'Failed to fetch notification preferences';
+        throw new Error(errorMessage);
     }
 
     // Map database columns to camelCase
@@ -69,7 +71,10 @@ export async function updateNotificationPreferences(
         .from('notification_preferences')
         .upsert(dbData, { onConflict: 'user_id' });
 
-    if (error) throw error;
+    if (error) {
+        const errorMessage = error.message || error.details || error.hint || 'Failed to save notification preferences';
+        throw new Error(errorMessage);
+    }
 }
 
 /**

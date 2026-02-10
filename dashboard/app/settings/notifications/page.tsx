@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Bell, Mail, Moon, Smartphone } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -30,6 +30,7 @@ export default function NotificationsSettings() {
         watch,
         setValue,
         reset,
+        control,
         formState: { errors, isDirty },
     } = useForm<NotificationPreferences>({
         resolver: zodResolver(notificationPreferencesSchema),
@@ -50,10 +51,10 @@ export default function NotificationsSettings() {
         },
     });
 
-    // Watch values for conditional rendering
-    const emailNotifications = watch('emailNotifications');
-    const pushNotifications = watch('pushNotifications');
-    const quietHoursEnabled = watch('quietHoursEnabled');
+    // Watch values for conditional rendering - use useWatch for proper reactivity
+    const emailNotifications = useWatch({ control, name: 'emailNotifications' });
+    const pushNotifications = useWatch({ control, name: 'pushNotifications' });
+    const quietHoursEnabled = useWatch({ control, name: 'quietHoursEnabled' });
 
     // Load notification preferences
     useEffect(() => {
