@@ -235,7 +235,7 @@ export default function BillingSettings() {
                                             <p className="text-sm font-medium text-white">{paymentMethod.brand} ending in {paymentMethod.last4}</p>
                                             <p className="text-xs text-slate-400">Expires {paymentMethod.exp_month}/{paymentMethod.exp_year}</p>
                                         </div>
-                                        <Check className="w-5 h-5 ml-auto text-emerald-500" title="Primary Method" />
+                                        <Check className="w-5 h-5 ml-auto text-emerald-500" />
                                     </div>
                                 ) : (
                                     <button className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-colors text-white">
@@ -336,10 +336,10 @@ export default function BillingSettings() {
                                                 <td className="px-6 py-4">
                                                     <span
                                                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${invoice.status === 'paid'
-                                                                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                                                                : invoice.status === 'pending'
-                                                                    ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
-                                                                    : 'bg-slate-700 text-slate-300 border-slate-600'
+                                                            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                                                            : invoice.status === 'pending'
+                                                                ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
+                                                                : 'bg-slate-700 text-slate-300 border-slate-600'
                                                             }`}
                                                     >
                                                         {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
@@ -380,8 +380,8 @@ export default function BillingSettings() {
                                     <div
                                         key={planId}
                                         className={`p-6 rounded-lg border ${isCurrentPlan
-                                                ? 'bg-blue-900/20 border-blue-600'
-                                                : 'bg-slate-900/30 border-slate-700/50'
+                                            ? 'bg-blue-900/20 border-blue-600'
+                                            : 'bg-slate-900/30 border-slate-700/50'
                                             }`}
                                     >
                                         <h3 className="text-lg font-semibold text-white">{plan.name}</h3>
@@ -401,8 +401,8 @@ export default function BillingSettings() {
                                             onClick={() => handlePlanChange(planId)}
                                             disabled={isCurrentPlan || updating}
                                             className={`w-full mt-6 px-4 py-2 rounded-lg font-medium transition-colors ${isCurrentPlan
-                                                    ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
-                                                    : 'bg-blue-600 hover:bg-blue-700 text-white'
+                                                ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
+                                                : 'bg-blue-600 hover:bg-blue-700 text-white'
                                                 }`}
                                         >
                                             {isCurrentPlan ? 'Current Plan' : 'Select Plan'}
