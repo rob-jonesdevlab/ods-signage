@@ -5,6 +5,11 @@ import { NotificationPreferences } from '../validations/notifications';
  * Get notification preferences for a user
  */
 export async function getNotificationPreferences(userId: string): Promise<NotificationPreferences | null> {
+    // Ensure we have an active session before making the request
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+        throw new Error('No active session');
+    }
 
     const { data, error } = await supabase
         .from('notification_preferences')
