@@ -42,7 +42,10 @@ export default function BillingSettings() {
 
     useEffect(() => {
         async function loadBillingData() {
-            if (!profile?.organization_id) return;
+            if (!profile?.organization_id) {
+                setLoading(false);
+                return;
+            }
 
             try {
                 const [subData, invoicesData, usageData, paymentData] = await Promise.all([
