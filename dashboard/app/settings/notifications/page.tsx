@@ -72,13 +72,7 @@ export default function NotificationsSettings() {
                     console.log('No notification preferences found, using defaults');
                 }
             } catch (error) {
-                // Log detailed error information for debugging
-                console.error('Failed to load notification preferences:', {
-                    error,
-                    message: error instanceof Error ? error.message : 'Unknown error',
-                    stack: error instanceof Error ? error.stack : undefined,
-                    userId: user.id,
-                });
+                console.error('Failed to load notification preferences:', error);
                 showToast({
                     type: 'error',
                     title: 'Error',
@@ -150,12 +144,7 @@ export default function NotificationsSettings() {
             // Reset form dirty state
             reset(data);
         } catch (error) {
-            console.error('Failed to save notification preferences:', {
-                error,
-                message: error instanceof Error ? error.message : 'Unknown error',
-                stack: error instanceof Error ? error.stack : undefined,
-                data,
-            });
+            console.error('Failed to save notification preferences:', error);
             showToast({
                 type: 'error',
                 title: 'Save Failed',
