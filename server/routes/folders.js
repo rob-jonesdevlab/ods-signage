@@ -1,14 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
+const { requireWriteAccess, requireOwner } = require('../middleware/auth');
 
 // GET /api/folders - List all folders (excluding system folders for non-admin users)
 router.get('/', async (req, res) => {
     try {
         const db = await require('../database');
+        const orgId = req.user.effective_organization_id;
 
-        // For now, show all folders including system (will add user auth later)
-        const folders = db.prepare('SELECT * FROM folders ORDER BY name ASC').all();
+        let folders;
+        if (req.user.role === 'ODSAdmin' && !req.user.view_as) {
+            folders = db.prepare('SELECT * FROM folders ORDER BY name ASC').all();
+        } else {
+            folders = db.prepare('SELECT * FROM folders WHERE org_id = ? ORDER BY name ASC').all(orgId);
+        }
 
         res.json(folders);
     } catch (error) {
@@ -101,10 +107,11 @@ router.get('/:id/content', async (req, res) => {
 });
 
 // POST /api/folders - Create new folder
-router.post('/', async (req, res) => {
+router.post('/', requireWriteAccess, async (req, res) => {
     try {
         const db = await require('../database');
         const { name, parent_id } = req.body;
+        const orgId = req.user.effective_organization_id;
 
         if (!name) {
             return res.status(400).json({ error: 'Folder name is required' });
@@ -114,11 +121,11 @@ router.post('/', async (req, res) => {
         const now = new Date().toISOString();
 
         db.prepare(`
-            INSERT INTO folders (id, name, parent_id, is_system, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?)
-        `).run(id, name, parent_id || null, 0, now, now);
+            INSERT INTO folders (id, name, parent_id, org_id, is_system, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        `).run(id, name, parent_id || null, orgId, 0, now, now);
 
-        res.json({ id, name, parent_id, is_system: 0, created_at: now, updated_at: now });
+        res.json({ id, name, parent_id, org_id: orgId, is_system: 0, created_at: now, updated_at: now });
     } catch (error) {
         console.error('Error creating folder:', error);
         res.status(500).json({ error: error.message });
@@ -211,14 +218,24 @@ router.put('/:id/move', async (req, res) => {
 });
 
 // DELETE /api/folders/:id - Delete folder
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', requireOwner, async (req, res) => {
     try {
         const db = await require('../database');
+        const orgId = req.user.effective_organization_id;
 
-        // Prevent deletion of system folders
-        const folder = db.prepare('SELECT is_system FROM folders WHERE id = ?').get(req.params.id);
+        // Get folder to check ownership and system status
+        let folder;
+        if (req.user.role === 'ODSAdmin' && !req.user.view_as) {
+            folder = db.prepare('SELECT is_system FROM folders WHERE id = ?').get(req.params.id);
+        } else {
+            folder = db.prepare('SELECT is_system FROM folders WHERE id = ? AND org_id = ?').get(req.params.id, orgId);
+        }
 
-        if (folder && folder.is_system === 1) {
+        if (!folder) {
+            return res.status(404).json({ error: 'Folder not found' });
+        }
+
+        if (folder.is_system === 1) {
             return res.status(403).json({ error: 'Cannot delete system folder' });
         }
 

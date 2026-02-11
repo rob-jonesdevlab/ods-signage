@@ -2,17 +2,32 @@ const express = require('express');
 const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const db = require('../database');
+const { requireWriteAccess, requireOwner } = require('../middleware/auth');
 
 // List all templates
 router.get('/', (req, res) => {
     try {
-        const templates = db.prepare(`
-            SELECT id, name, description, organization_id, 
-                   content_items, duration_per_item,
-                   created_at, updated_at
-            FROM playlist_templates
-            ORDER BY name ASC
-        `).all();
+        const orgId = req.user.effective_organization_id;
+
+        let templates;
+        if (req.user.role === 'ODSAdmin' && !req.user.view_as) {
+            templates = db.prepare(`
+                SELECT id, name, description, organization_id, 
+                       content_items, duration_per_item,
+                       created_at, updated_at
+                FROM playlist_templates
+                ORDER BY name ASC
+            `).all();
+        } else {
+            templates = db.prepare(`
+                SELECT id, name, description, organization_id, 
+                       content_items, duration_per_item,
+                       created_at, updated_at
+                FROM playlist_templates
+                WHERE organization_id = ?
+                ORDER BY name ASC
+            `).all(orgId);
+        }
 
         res.json(templates.map(t => ({
             ...t,
@@ -51,9 +66,10 @@ router.get('/:id', (req, res) => {
 });
 
 // Create template
-router.post('/', (req, res) => {
+router.post('/', requireWriteAccess, (req, res) => {
     try {
-        const { name, description, content_items, duration_per_item, organization_id } = req.body;
+        const { name, description, content_items, duration_per_item } = req.body;
+        const orgId = req.user.effective_organization_id;
 
         if (!name) {
             return res.status(400).json({ error: 'Name is required' });
@@ -71,7 +87,7 @@ router.post('/', (req, res) => {
             description || '',
             JSON.stringify(content_items || []),
             duration_per_item || 10,
-            organization_id || null
+            orgId
         );
 
         res.json({
@@ -80,7 +96,7 @@ router.post('/', (req, res) => {
             description,
             content_items: content_items || [],
             duration_per_item: duration_per_item || 10,
-            organization_id,
+            organization_id: orgId,
             contentCount: (content_items || []).length
         });
     } catch (error) {
@@ -119,8 +135,22 @@ router.put('/:id', (req, res) => {
 });
 
 // Delete template
-router.delete('/:id', (req, res) => {
+router.delete('/:id', requireOwner, (req, res) => {
     try {
+        const orgId = req.user.effective_organization_id;
+
+        // Verify ownership
+        let template;
+        if (req.user.role === 'ODSAdmin' && !req.user.view_as) {
+            template = db.prepare('SELECT id FROM playlist_templates WHERE id = ?').get(req.params.id);
+        } else {
+            template = db.prepare('SELECT id FROM playlist_templates WHERE id = ? AND organization_id = ?').get(req.params.id, orgId);
+        }
+
+        if (!template) {
+            return res.status(404).json({ error: 'Template not found' });
+        }
+
         db.prepare('DELETE FROM playlist_templates WHERE id = ?').run(req.params.id);
         res.json({ success: true });
     } catch (error) {
