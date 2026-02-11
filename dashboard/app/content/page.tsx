@@ -453,7 +453,7 @@ export default function ContentLibraryPage() {
         if (!confirmed) return;
 
         try {
-            await Promise.all(selectedItems.map(item =>
+            await Promise.all(selectedItems.map(item => 
                 fetch(`http://localhost:3001/api/content/${item.id}`, { method: 'DELETE' })
             ));
 
@@ -558,27 +558,7 @@ export default function ContentLibraryPage() {
                                 <h1 className="text-3xl font-bold tracking-tight text-white">Content Library</h1>
                                 <p className="text-slate-400 mt-1">Manage and organize your digital signage assets.</p>
                             </div>
-                            <div className="flex flex-wrap gap-3">
-                                {/* Date Range Filter */}
-                                <DateRangePicker
-                                    value={dateRange}
-                                    onChange={setDateRange}
-                                />
-                                {/* Content Type Filter */}
-                                <FilterDropdown
-                                    label="Content Type"
-                                    options={typeFilterOptions}
-                                    value={typeFilters}
-                                    onChange={setTypeFilters}
-                                    icon="category"
-                                />
-                                {/* Sort Filter */}
-                                <SortDropdown
-                                    options={sortOptions}
-                                    value={sortBy}
-                                    onChange={setSortBy}
-                                />
-                                {/* Export Button */}
+                            <div className="flex gap-3">
                                 <ExportButton
                                     data={content.map(item => ({
                                         Name: item.name,
@@ -591,7 +571,6 @@ export default function ContentLibraryPage() {
                                     filename="content_library"
                                     title="Content Library Export"
                                 />
-                                {/* Action Buttons */}
                                 <button
                                     onClick={() => setShowUrlModal(true)}
                                     className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-colors shadow-lg shadow-purple-600/25"
@@ -704,13 +683,36 @@ export default function ContentLibraryPage() {
                             </div>
                         </div>
 
-                        {/* Search Bar */}
-                        <SearchBar
-                            value={searchQuery}
-                            onChange={setSearchQuery}
-                            placeholder="Search by name, type, or URL..."
-                            className="w-full"
-                        />
+                        {/* Search and Filter Bar */}
+                        <div className="flex flex-col md:flex-row gap-3">
+                            {/* Search */}
+                            <SearchBar
+                                value={searchQuery}
+                                onChange={setSearchQuery}
+                                placeholder="Search by name, type, or URL..."
+                                className="flex-1"
+                            />
+
+                            {/* Filters */}
+                            <div className="flex gap-2">
+                                <DateRangePicker
+                                    value={dateRange}
+                                    onChange={setDateRange}
+                                />
+                                <FilterDropdown
+                                    label="Content Type"
+                                    options={typeFilterOptions}
+                                    value={typeFilters}
+                                    onChange={setTypeFilters}
+                                    icon="category"
+                                />
+                                <SortDropdown
+                                    options={sortOptions}
+                                    value={sortBy}
+                                    onChange={setSortBy}
+                                />
+                            </div>
+                        </div>
 
                         {/* Content Grid */}
                         {loading ? (
