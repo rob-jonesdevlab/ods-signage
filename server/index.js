@@ -125,6 +125,10 @@ async function startServer() {
     const auditLogsRoutes = require('./routes/audit-logs');
     app.use('/api/audit-logs', auditLogsRoutes);
 
+    // Analytics routes
+    const analyticsRoutes = require('./routes/analytics');
+    app.use('/api/analytics', analyticsRoutes);
+
     // Pairing routes
     app.use('/api/pairing', pairingRoutes);
 

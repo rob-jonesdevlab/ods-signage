@@ -39,6 +39,7 @@ export default function PlayersPage() {
     const [showNewGroupModal, setShowNewGroupModal] = useState(false);
     const [showRenameGroupModal, setShowRenameGroupModal] = useState(false);
     const [showDeleteGroupModal, setShowDeleteGroupModal] = useState(false);
+    const [showBulkAssignModal, setShowBulkAssignModal] = useState(false);
 
     // Context menu
     const [contextMenu, setContextMenu] = useState<{ groupId: string; x: number; y: number } | null>(null);
@@ -46,6 +47,10 @@ export default function PlayersPage() {
     // Drag and drop
     const [draggedPlayerId, setDraggedPlayerId] = useState<string | null>(null);
     const [dragOverGroup, setDragOverGroup] = useState<string | null>(null);
+
+    // Bulk operations
+    const [selectedPlayers, setSelectedPlayers] = useState<string[]>([]);
+    const [selectAll, setSelectAll] = useState(false);
 
     // Filter states
     const [dateRange, setDateRange] = useState<{ start: Date | null; end: Date | null }>({ start: null, end: null });
@@ -180,6 +185,81 @@ export default function PlayersPage() {
             }
         } catch (error) {
             showToast({ type: 'error', title: 'Error', message: 'Failed to delete group' });
+        }
+    };
+
+    // Bulk operation handlers
+    const handleSelectAll = () => {
+        if (selectAll) {
+            setSelectedPlayers([]);
+            setSelectAll(false);
+        } else {
+            setSelectedPlayers(filteredPlayers.map(p => p.id));
+            setSelectAll(true);
+        }
+    };
+
+    const handleTogglePlayer = (playerId: string) => {
+        if (selectedPlayers.includes(playerId)) {
+            setSelectedPlayers(selectedPlayers.filter(id => id !== playerId));
+            setSelectAll(false);
+        } else {
+            const newSelected = [...selectedPlayers, playerId];
+            setSelectedPlayers(newSelected);
+            if (newSelected.length === filteredPlayers.length) {
+                setSelectAll(true);
+            }
+        }
+    };
+
+    const handleBulkAssignGroup = async (groupId: string) => {
+        try {
+            const res = await fetch(`http://localhost:3001/api/player-groups/${groupId}/assign-players`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ player_ids: selectedPlayers })
+            });
+
+            if (res.ok) {
+                showToast({
+                    type: 'success',
+                    title: 'Players Assigned',
+                    message: `${selectedPlayers.length} player(s) assigned to group`
+                });
+                setSelectedPlayers([]);
+                setSelectAll(false);
+                setShowBulkAssignModal(false);
+                fetchPlayers();
+                fetchGroups();
+            }
+        } catch (error) {
+            showToast({ type: 'error', title: 'Error', message: 'Failed to assign players' });
+        }
+    };
+
+    const handleBulkDelete = async () => {
+        if (!confirm(`Are you sure you want to delete ${selectedPlayers.length} player(s)? This action cannot be undone.`)) {
+            return;
+        }
+
+        try {
+            await Promise.all(
+                selectedPlayers.map(id =>
+                    fetch(`http://localhost:3001/api/players/${id}`, { method: 'DELETE' })
+                )
+            );
+
+            showToast({
+                type: 'success',
+                title: 'Players Deleted',
+                message: `${selectedPlayers.length} player(s) deleted successfully`
+            });
+            setSelectedPlayers([]);
+            setSelectAll(false);
+            fetchPlayers();
+            fetchGroups();
+        } catch (error) {
+            showToast({ type: 'error', title: 'Error', message: 'Failed to delete players' });
         }
     };
 
@@ -358,6 +438,14 @@ export default function PlayersPage() {
                                 <table className="w-full">
                                     <thead className="bg-slate-900/50">
                                         <tr>
+                                            <th className="px-6 py-3 text-left">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectAll}
+                                                    onChange={handleSelectAll}
+                                                    className="w-4 h-4 rounded border-slate-600 bg-slate-700 text-blue-600 focus:ring-blue-500 focus:ring-offset-slate-900"
+                                                />
+                                            </th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                                                 Status
                                             </th>
@@ -387,6 +475,15 @@ export default function PlayersPage() {
                                                 onDragStart={() => handlePlayerDragStart(player.id)}
                                                 onDragEnd={() => setDraggedPlayerId(null)}
                                             >
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={selectedPlayers.includes(player.id)}
+                                                        onChange={() => handleTogglePlayer(player.id)}
+                                                        className="w-4 h-4 rounded border-slate-600 bg-slate-700 text-blue-600 focus:ring-blue-500 focus:ring-offset-slate-900"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    />
+                                                </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex items-center gap-2">
                                                         <div className={`w-3 h-3 rounded-full ${getStatusColor(player.status)}`} />
@@ -470,6 +567,75 @@ export default function PlayersPage() {
                 onClose={() => setShowDeleteGroupModal(false)}
                 onConfirm={handleDeleteGroup}
             />
+
+            {/* Bulk Actions Toolbar */}
+            {selectedPlayers.length > 0 && (
+                <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
+                    <div className="glass-card p-4 rounded-2xl border border-slate-700/50 bg-slate-800/95 backdrop-blur-md shadow-2xl">
+                        <div className="flex items-center gap-4">
+                            <span className="text-sm text-slate-300 font-medium">
+                                {selectedPlayers.length} player{selectedPlayers.length > 1 ? 's' : ''} selected
+                            </span>
+                            <div className="h-6 w-px bg-slate-700"></div>
+                            <button
+                                onClick={() => setShowBulkAssignModal(true)}
+                                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+                            >
+                                <span className="material-symbols-outlined text-[18px]">folder</span>
+                                Assign to Group
+                            </button>
+                            <button
+                                onClick={handleBulkDelete}
+                                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+                            >
+                                <span className="material-symbols-outlined text-[18px]">delete</span>
+                                Delete
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setSelectedPlayers([]);
+                                    setSelectAll(false);
+                                }}
+                                className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-medium transition-colors"
+                            >
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Bulk Assign Modal */}
+            {showBulkAssignModal && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="glass-card bg-slate-800/95 backdrop-blur-md rounded-2xl border border-slate-700/50 p-6 w-full max-w-md">
+                        <h2 className="text-2xl font-bold text-white mb-6">Assign to Group</h2>
+                        <p className="text-slate-300 mb-6">
+                            Select a group to assign {selectedPlayers.length} player{selectedPlayers.length > 1 ? 's' : ''}:
+                        </p>
+                        <div className="space-y-2 max-h-64 overflow-y-auto mb-6">
+                            {groups.map(group => (
+                                <button
+                                    key={group.id}
+                                    onClick={() => handleBulkAssignGroup(group.id)}
+                                    className="w-full px-4 py-3 bg-slate-900/50 hover:bg-slate-700/50 border border-slate-700/50 rounded-lg text-left transition-colors"
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-white font-medium">{group.name}</span>
+                                        <span className="text-sm text-slate-400">{group.playerCount || 0} players</span>
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                        <button
+                            onClick={() => setShowBulkAssignModal(false)}
+                            className="w-full px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-medium transition-colors"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* Context Menu */}
             {contextMenu && (
