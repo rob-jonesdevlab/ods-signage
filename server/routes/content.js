@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const { syncToSupabase } = require('../supabase');
+const { requireWriteAccess, requireOwner } = require('../middleware/auth');
 
 // Create media directories
 const MEDIA_DIR = path.join(__dirname, '../media');
@@ -98,9 +99,16 @@ module.exports = function (db) {
     router.get('/', async (req, res) => {
         try {
             const { search, type, sort } = req.query;
+            const orgId = req.user.effective_organization_id;
 
             let query = 'SELECT * FROM content WHERE 1=1';
             const params = [];
+
+            // Tenant filtering
+            if (req.user.role !== 'ODSAdmin' || req.user.view_as) {
+                query += ' AND org_id = ?';
+                params.push(orgId);
+            }
 
             // Search filter
             if (search) {
@@ -167,7 +175,7 @@ module.exports = function (db) {
     });
 
     // POST /api/content - Upload new content
-    router.post('/', upload.single('file'), async (req, res) => {
+    router.post('/', requireWriteAccess, upload.single('file'), async (req, res) => {
         try {
             if (!req.file) {
                 return res.status(400).json({ error: 'No file uploaded' });
@@ -175,6 +183,7 @@ module.exports = function (db) {
 
             const { name, duration } = req.body;
             const file = req.file;
+            const orgId = req.user.effective_organization_id;
 
             // Determine content type
             const isImage = file.mimetype.startsWith('image/');
@@ -207,8 +216,8 @@ module.exports = function (db) {
                 : null;
 
             const stmt = db.prepare(`
-          INSERT INTO content (id, name, type, url, duration, metadata)
-          VALUES (?, ?, ?, ?, ?, ?)
+          INSERT INTO content (id, name, type, url, duration, org_id, metadata)
+          VALUES (?, ?, ?, ?, ?, ?, ?)
         `);
 
             stmt.run(
@@ -217,6 +226,7 @@ module.exports = function (db) {
                 type,
                 contentUrl,
                 duration || (isImage ? 10 : 30), // Default durations
+                orgId,
                 JSON.stringify({
                     ...metadata,
                     thumbnail: thumbnailUrl,
@@ -250,9 +260,10 @@ module.exports = function (db) {
     });
 
     // POST /api/content/url - Add URL content
-    router.post('/url', express.json(), async (req, res) => {
+    router.post('/url', requireWriteAccess, express.json(), async (req, res) => {
         try {
             const { name, url, duration, isNonStop } = req.body;
+            const orgId = req.user.effective_organization_id;
 
             if (!name || !url) {
                 return res.status(400).json({ error: 'Name and URL are required' });
@@ -269,8 +280,8 @@ module.exports = function (db) {
             const id = uuidv4();
 
             const stmt = db.prepare(`
-                INSERT INTO content (id, name, type, url, duration, metadata)
-                VALUES (?, ?, ?, ?, ?, ?)
+                INSERT INTO content (id, name, type, url, duration, org_id, metadata)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
             `);
 
             stmt.run(
@@ -279,6 +290,7 @@ module.exports = function (db) {
                 'url',
                 url,
                 duration || 10,
+                orgId,
                 JSON.stringify({
                     originalName: name,
                     mimeType: 'text/html',
@@ -363,12 +375,18 @@ module.exports = function (db) {
     });
 
     // DELETE /api/content/:id - Delete content
-    router.delete('/:id', async (req, res) => {
+    router.delete('/:id', requireOwner, async (req, res) => {
         try {
             const { id } = req.params;
+            const orgId = req.user.effective_organization_id;
 
-            // Get content to find file paths
-            const content = db.prepare('SELECT * FROM content WHERE id = ?').get(id);
+            // Get content to find file paths and verify ownership
+            let content;
+            if (req.user.role === 'ODSAdmin' && !req.user.view_as) {
+                content = db.prepare('SELECT * FROM content WHERE id = ?').get(id);
+            } else {
+                content = db.prepare('SELECT * FROM content WHERE id = ? AND org_id = ?').get(id, orgId);
+            }
 
             if (!content) {
                 return res.status(404).json({ error: 'Content not found' });
