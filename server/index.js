@@ -4,6 +4,7 @@ const { Server } = require('socket.io');
 const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
 const dbPromise = require('./database');
+const { authMiddleware, requireODSStaff } = require('./middleware/auth');
 
 const app = express();
 const server = http.createServer(app);
@@ -102,35 +103,22 @@ async function startServer() {
         res.json({ success: true });
     });
 
-    // Content routes
-    app.use('/api/content', contentRoutes);
-
-    // Folders routes
-    const foldersRoutes = require('./routes/folders');
-    app.use('/api/folders', foldersRoutes);
-
-    // Playlists routes
-    const playlistsRoutes = require('./routes/playlists');
-    app.use('/api/playlists', playlistsRoutes);
-
-    // Player Groups routes
-    const playerGroupsRoutes = require('./routes/player-groups');
-    app.use('/api/player-groups', playerGroupsRoutes);
-
-    // Playlist Templates routes
-    const playlistTemplatesRoutes = require('./routes/playlist-templates');
-    app.use('/api/playlist-templates', playlistTemplatesRoutes);
-
-    // Audit Logs routes
-    const auditLogsRoutes = require('./routes/audit-logs');
-    app.use('/api/audit-logs', auditLogsRoutes);
-
-    // Analytics routes
-    const analyticsRoutes = require('./routes/analytics');
-    app.use('/api/analytics', analyticsRoutes);
-
-    // Pairing routes
+    // Public routes (no auth required)
     app.use('/api/pairing', pairingRoutes);
+
+    // Protected routes (auth required)
+    app.use('/api/content', authMiddleware, contentRoutes);
+    app.use('/api/folders', authMiddleware, require('./routes/folders'));
+    app.use('/api/playlists', authMiddleware, require('./routes/playlists'));
+    app.use('/api/player-groups', authMiddleware, require('./routes/player-groups'));
+    app.use('/api/playlist-templates', authMiddleware, require('./routes/playlist-templates'));
+    app.use('/api/analytics', authMiddleware, require('./routes/analytics'));
+
+    // ODS Staff only routes
+    app.use('/api/audit-logs', authMiddleware, requireODSStaff, require('./routes/audit-logs'));
+
+    // View As routes (ODS Staff only)
+    app.use('/api/view-as', authMiddleware, requireODSStaff, require('./routes/view-as'));
 
 
     // WebSocket connection handling

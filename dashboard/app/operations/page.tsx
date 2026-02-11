@@ -18,6 +18,16 @@ interface Alert {
     details: string;
 }
 
+interface AuditLog {
+    id: string;
+    user_email: string;
+    action: string;
+    resource_type: string;
+    resource_id: string;
+    details: string;
+    created_at: string;
+}
+
 export default function OperationsPage() {
     const [stats, setStats] = useState<OperationsStats>({
         serverUptime: 99.9,
@@ -27,6 +37,7 @@ export default function OperationsPage() {
         storagePercentage: 0
     });
     const [alerts, setAlerts] = useState<Alert[]>([]);
+    const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
     const [loading, setLoading] = useState(true);
 
     const fetchOperationsData = useCallback(async () => {
@@ -81,6 +92,16 @@ export default function OperationsPage() {
             }
 
             setAlerts(generatedAlerts);
+
+            // Fetch audit logs
+            try {
+                const auditRes = await fetch('http://localhost:3001/api/audit-logs?limit=10');
+                const auditData = await auditRes.json();
+                setAuditLogs(auditData);
+            } catch (error) {
+                console.error('Error fetching audit logs:', error);
+            }
+
             setLoading(false);
         } catch (error) {
             console.error('Error fetching operations data:', error);
@@ -283,8 +304,8 @@ export default function OperationsPage() {
                                 ) : alerts.length > 0 ? (
                                     alerts.map((alert) => (
                                         <div key={alert.id} className={`flex items-center justify-between p-3 rounded-lg border ${alert.type === 'critical'
-                                                ? 'border-rose-900/30 bg-rose-900/10'
-                                                : 'border-amber-900/30 bg-amber-900/10'
+                                            ? 'border-rose-900/30 bg-rose-900/10'
+                                            : 'border-amber-900/30 bg-amber-900/10'
                                             }`}>
                                             <div className="flex items-center gap-3">
                                                 <span className={`material-symbols-outlined ${alert.type === 'critical' ? 'text-rose-500' : 'text-amber-500'
@@ -315,29 +336,69 @@ export default function OperationsPage() {
 
                     {/* Right Column - Recent Activity & Deployment Center */}
                     <div className="lg:col-span-4 flex flex-col gap-6">
-                        {/* Recent Activity */}
+                        {/* Audit Trail */}
                         <div className="bg-slate-800/50 rounded-xl border border-slate-700 shadow-sm flex flex-col max-h-[600px]">
                             <div className="p-5 border-b border-slate-700 flex justify-between items-center">
-                                <h3 className="font-semibold text-white">Recent Activity</h3>
+                                <h3 className="font-semibold text-white flex items-center gap-2">
+                                    <span className="material-symbols-outlined text-blue-400 text-[20px]">history</span>
+                                    Audit Trail
+                                </h3>
                                 <button className="text-xs text-slate-400 hover:text-blue-400 transition-colors">View All</button>
                             </div>
                             <div className="flex-1 overflow-y-auto p-2 scrollbar-hide">
-                                <ul className="space-y-1">
-                                    <li className="flex items-start gap-3 p-3 hover:bg-slate-800/50 rounded-lg transition-colors group">
-                                        <div className="relative shrink-0">
-                                            <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-300 ring-2 ring-slate-800">SYS</div>
-                                            <div className="absolute -bottom-1 -right-1 bg-emerald-500 text-white p-0.5 rounded-full ring-2 ring-slate-800">
-                                                <span className="material-symbols-outlined text-[10px] block">check</span>
-                                            </div>
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-xs text-slate-400 mb-0.5">
-                                                <span className="font-medium text-white">System</span> completed nightly backup
-                                            </p>
-                                            <p className="text-[10px] text-slate-500">4 hours ago</p>
-                                        </div>
-                                    </li>
-                                </ul>
+                                {loading ? (
+                                    <div className="space-y-2 p-2">
+                                        {[1, 2, 3].map(i => (
+                                            <div key={i} className="h-16 bg-slate-700/50 rounded-lg animate-pulse"></div>
+                                        ))}
+                                    </div>
+                                ) : auditLogs.length > 0 ? (
+                                    <ul className="space-y-1">
+                                        {auditLogs.map((log) => (
+                                            <li key={log.id} className="flex items-start gap-3 p-3 hover:bg-slate-800/50 rounded-lg transition-colors group">
+                                                <div className="relative shrink-0">
+                                                    <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-300 ring-2 ring-slate-800">
+                                                        {log.user_email?.substring(0, 2).toUpperCase() || 'SY'}
+                                                    </div>
+                                                    <div className={`absolute -bottom-1 -right-1 p-0.5 rounded-full ring-2 ring-slate-800 ${log.action.includes('create') ? 'bg-green-500' :
+                                                            log.action.includes('delete') ? 'bg-red-500' :
+                                                                log.action.includes('update') ? 'bg-blue-500' :
+                                                                    'bg-slate-500'
+                                                        }`}>
+                                                        <span className="material-symbols-outlined text-[10px] block text-white">
+                                                            {log.action.includes('create') ? 'add' :
+                                                                log.action.includes('delete') ? 'delete' :
+                                                                    log.action.includes('update') ? 'edit' :
+                                                                        'check'}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="text-xs text-slate-400 mb-0.5">
+                                                        <span className="font-medium text-white">{log.user_email || 'System'}</span>
+                                                        {' '}{log.action} {log.resource_type}
+                                                    </p>
+                                                    {log.details && (
+                                                        <p className="text-[10px] text-slate-500 truncate">{log.details}</p>
+                                                    )}
+                                                    <p className="text-[10px] text-slate-600 mt-0.5">
+                                                        {new Date(log.created_at).toLocaleString('en-US', {
+                                                            month: 'short',
+                                                            day: 'numeric',
+                                                            hour: '2-digit',
+                                                            minute: '2-digit'
+                                                        })}
+                                                    </p>
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center h-40 text-slate-500">
+                                        <span className="material-symbols-outlined text-4xl mb-2">history</span>
+                                        <p className="text-sm">No audit logs yet</p>
+                                    </div>
+                                )}
                             </div>
                         </div>
 
