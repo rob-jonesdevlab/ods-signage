@@ -45,68 +45,14 @@ async function startServer() {
         res.json({ status: 'ok', timestamp: new Date().toISOString() });
     });
 
-    // Players API
-    app.get('/api/players', (req, res) => {
-        const players = db.prepare('SELECT * FROM players').all();
-        res.json(players);
-    });
-
-    app.post('/api/players', (req, res) => {
-        const { name, cpu_serial } = req.body;
-        const id = uuidv4();
-
-        db.prepare(`
-            INSERT INTO players (id, name, cpu_serial)
-            VALUES (?, ?, ?)
-        `).run(id, name, cpu_serial);
-
-        res.json({ id, name, cpu_serial });
-    });
-
-    app.get('/api/players/:id', (req, res) => {
-        const player = db.prepare('SELECT * FROM players WHERE id = ?').get(req.params.id);
-        if (!player) {
-            return res.status(404).json({ error: 'Player not found' });
-        }
-        res.json(player);
-    });
-
-    app.patch('/api/players/:id', (req, res) => {
-        const { name, status, config } = req.body;
-        const updates = [];
-        const values = [];
-
-        if (name) {
-            updates.push('name = ?');
-            values.push(name);
-        }
-        if (status) {
-            updates.push('status = ?');
-            values.push(status);
-        }
-        if (config) {
-            updates.push('config = ?');
-            values.push(JSON.stringify(config));
-        }
-
-        if (updates.length > 0) {
-            values.push(req.params.id);
-            db.prepare(`UPDATE players SET ${updates.join(', ')} WHERE id = ?`).run(...values);
-        }
-
-        const player = db.prepare('SELECT * FROM players WHERE id = ?').get(req.params.id);
-        res.json(player);
-    });
-
-    app.delete('/api/players/:id', (req, res) => {
-        db.prepare('DELETE FROM players WHERE id = ?').run(req.params.id);
-        res.json({ success: true });
-    });
-
     // Public routes (no auth required)
     app.use('/api/pairing', pairingRoutes);
 
     // Protected routes (auth required)
+    const createPlayersRoutes = require('./routes/players');
+    const playersRoutes = createPlayersRoutes(db);
+    app.use('/api/players', authMiddleware, playersRoutes);
+
     app.use('/api/content', authMiddleware, contentRoutes);
     app.use('/api/folders', authMiddleware, require('./routes/folders'));
     app.use('/api/playlists', authMiddleware, require('./routes/playlists'));

@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@/contexts/AuthContext'
+import { useAuth } from '@/components/AuthProvider'
+import { signIn } from '@/lib/auth'
 import Image from 'next/image'
 
 export default function LoginPage() {
@@ -10,7 +11,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const { signIn, user } = useAuth()
+  const { user } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
@@ -24,13 +25,12 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
 
-    const { error } = await signIn(email, password)
-
-    if (error) {
-      setError(error.message)
-      setLoading(false)
-    } else {
+    try {
+      await signIn(email, password)
       router.push('/dashboard')
+    } catch (err: any) {
+      setError(err.message || 'Failed to sign in')
+      setLoading(false)
     }
   }
 
