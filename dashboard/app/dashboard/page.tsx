@@ -177,17 +177,31 @@ export default function DashboardPage() {
                         <p className="text-slate-400 mt-1 text-sm md:text-base">Here's what's happening with your digital signage network today.</p>
                     </div>
                     <div className="flex flex-wrap gap-3">
+                        {/* Date Range Filter */}
                         <button className="flex items-center gap-2 px-4 py-2.5 bg-slate-800/50 hover:bg-slate-800 text-white rounded-xl text-sm font-medium transition-all border border-slate-700 backdrop-blur-sm shadow-sm hover:shadow-md hover:border-slate-600">
-                            <span className="material-symbols-outlined text-[18px] text-emerald-400">playlist_add</span>
-                            New Playlist
+                            <span className="material-symbols-outlined text-[18px] text-slate-400">calendar_today</span>
+                            Last 7 Days
+                            <span className="material-symbols-outlined text-[16px] text-slate-400">expand_more</span>
                         </button>
+
+                        {/* Status Filter */}
                         <button className="flex items-center gap-2 px-4 py-2.5 bg-slate-800/50 hover:bg-slate-800 text-white rounded-xl text-sm font-medium transition-all border border-slate-700 backdrop-blur-sm shadow-sm hover:shadow-md hover:border-slate-600">
-                            <span className="material-symbols-outlined text-[18px] text-blue-400">cloud_upload</span>
-                            Upload
+                            <span className="material-symbols-outlined text-[18px] text-emerald-400">check_circle</span>
+                            All Status
+                            <span className="material-symbols-outlined text-[16px] text-slate-400">expand_more</span>
                         </button>
+
+                        {/* Sort Filter */}
+                        <button className="flex items-center gap-2 px-4 py-2.5 bg-slate-800/50 hover:bg-slate-800 text-white rounded-xl text-sm font-medium transition-all border border-slate-700 backdrop-blur-sm shadow-sm hover:shadow-md hover:border-slate-600">
+                            <span className="material-symbols-outlined text-[18px] text-blue-400">sort</span>
+                            Newest First
+                            <span className="material-symbols-outlined text-[16px] text-slate-400">expand_more</span>
+                        </button>
+
+                        {/* Export Button */}
                         <button className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-sm font-medium transition-all shadow-lg shadow-blue-500/20 border border-blue-500">
-                            <span className="material-symbols-outlined text-[18px]">add_to_queue</span>
-                            Add Player
+                            <span className="material-symbols-outlined text-[18px]">download</span>
+                            Export
                         </button>
                     </div>
                 </div>
