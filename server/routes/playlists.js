@@ -1,12 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
+const { requireWriteAccess, requireOwner } = require('../middleware/auth');
 
 // GET /api/playlists - List all playlists
 router.get('/', async (req, res) => {
     try {
         const db = await require('../database');
-        const playlists = db.prepare('SELECT * FROM playlists_v2 ORDER BY name ASC').all();
+        const orgId = req.user.effective_organization_id;
+
+        let playlists;
+        if (req.user.role === 'ODSAdmin' && !req.user.view_as) {
+            playlists = db.prepare('SELECT * FROM playlists_v2 ORDER BY name ASC').all();
+        } else {
+            playlists = db.prepare('SELECT * FROM playlists_v2 WHERE org_id = ? ORDER BY name ASC').all(orgId);
+        }
 
         res.json(playlists);
     } catch (error) {
@@ -19,7 +27,14 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         const db = await require('../database');
-        const playlist = db.prepare('SELECT * FROM playlists_v2 WHERE id = ?').get(req.params.id);
+        const orgId = req.user.effective_organization_id;
+
+        let playlist;
+        if (req.user.role === 'ODSAdmin' && !req.user.view_as) {
+            playlist = db.prepare('SELECT * FROM playlists_v2 WHERE id = ?').get(req.params.id);
+        } else {
+            playlist = db.prepare('SELECT * FROM playlists_v2 WHERE id = ? AND org_id = ?').get(req.params.id, orgId);
+        }
 
         if (!playlist) {
             return res.status(404).json({ error: 'Playlist not found' });
@@ -59,10 +74,11 @@ router.get('/:id/content', async (req, res) => {
 });
 
 // POST /api/playlists - Create new playlist
-router.post('/', async (req, res) => {
+router.post('/', requireWriteAccess, async (req, res) => {
     try {
         const db = await require('../database');
         const { name, description, created_by } = req.body;
+        const orgId = req.user.effective_organization_id;
 
         if (!name) {
             return res.status(400).json({ error: 'Playlist name is required' });
@@ -72,11 +88,11 @@ router.post('/', async (req, res) => {
         const now = new Date().toISOString();
 
         db.prepare(`
-            INSERT INTO playlists_v2 (id, name, description, created_by, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?)
-        `).run(id, name, description || null, created_by || 'System', now, now);
+            INSERT INTO playlists_v2 (id, name, description, org_id, created_by, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        `).run(id, name, description || null, orgId, created_by || req.user.email, now, now);
 
-        res.json({ id, name, description, created_by: created_by || 'System', created_at: now, updated_at: now });
+        res.json({ id, name, description, org_id: orgId, created_by: created_by || req.user.email, created_at: now, updated_at: now });
     } catch (error) {
         console.error('Error creating playlist:', error);
         res.status(500).json({ error: error.message });
@@ -120,11 +136,24 @@ router.post('/:id/content', async (req, res) => {
 });
 
 // PUT /api/playlists/:id - Update playlist
-router.put('/:id', async (req, res) => {
+router.put('/:id', requireWriteAccess, async (req, res) => {
     try {
         const db = await require('../database');
         const { name, description } = req.body;
         const now = new Date().toISOString();
+        const orgId = req.user.effective_organization_id;
+
+        // Verify ownership
+        let playlist;
+        if (req.user.role === 'ODSAdmin' && !req.user.view_as) {
+            playlist = db.prepare('SELECT * FROM playlists_v2 WHERE id = ?').get(req.params.id);
+        } else {
+            playlist = db.prepare('SELECT * FROM playlists_v2 WHERE id = ? AND org_id = ?').get(req.params.id, orgId);
+        }
+
+        if (!playlist) {
+            return res.status(404).json({ error: 'Playlist not found' });
+        }
 
         db.prepare(`
             UPDATE playlists_v2 
@@ -163,9 +192,23 @@ router.put('/:id/content/:contentId/order', async (req, res) => {
 });
 
 // DELETE /api/playlists/:id - Delete playlist
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', requireOwner, async (req, res) => {
     try {
         const db = await require('../database');
+        const orgId = req.user.effective_organization_id;
+
+        // Verify ownership
+        let playlist;
+        if (req.user.role === 'ODSAdmin' && !req.user.view_as) {
+            playlist = db.prepare('SELECT * FROM playlists_v2 WHERE id = ?').get(req.params.id);
+        } else {
+            playlist = db.prepare('SELECT * FROM playlists_v2 WHERE id = ? AND org_id = ?').get(req.params.id, orgId);
+        }
+
+        if (!playlist) {
+            return res.status(404).json({ error: 'Playlist not found' });
+        }
+
         db.prepare('DELETE FROM playlists_v2 WHERE id = ?').run(req.params.id);
 
         res.json({ success: true });

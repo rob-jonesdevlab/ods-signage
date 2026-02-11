@@ -1,22 +1,38 @@
 const express = require('express');
 const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
+const { requireWriteAccess, requireOwner } = require('../middleware/auth');
 
 // GET /api/player-groups - List all player groups with player counts
 router.get('/', async (req, res) => {
     try {
         const db = await require('../database');
+        const orgId = req.user.effective_organization_id;
 
         // Get groups with player counts
-        const groups = db.prepare(`
-            SELECT 
-                pg.*,
-                COUNT(p.id) as playerCount
-            FROM player_groups pg
-            LEFT JOIN players p ON p.group_id = pg.id
-            GROUP BY pg.id
-            ORDER BY pg.name ASC
-        `).all();
+        let groups;
+        if (req.user.role === 'ODSAdmin' && !req.user.view_as) {
+            groups = db.prepare(`
+                SELECT 
+                    pg.*,
+                    COUNT(p.id) as playerCount
+                FROM player_groups pg
+                LEFT JOIN players p ON p.group_id = pg.id
+                GROUP BY pg.id
+                ORDER BY pg.name ASC
+            `).all();
+        } else {
+            groups = db.prepare(`
+                SELECT 
+                    pg.*,
+                    COUNT(p.id) as playerCount
+                FROM player_groups pg
+                LEFT JOIN players p ON p.group_id = pg.id
+                WHERE pg.organization_id = ?
+                GROUP BY pg.id
+                ORDER BY pg.name ASC
+            `).all(orgId);
+        }
 
         res.json(groups);
     } catch (error) {
@@ -29,7 +45,14 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         const db = await require('../database');
-        const group = db.prepare('SELECT * FROM player_groups WHERE id = ?').get(req.params.id);
+        const orgId = req.user.effective_organization_id;
+
+        let group;
+        if (req.user.role === 'ODSAdmin' && !req.user.view_as) {
+            group = db.prepare('SELECT * FROM player_groups WHERE id = ?').get(req.params.id);
+        } else {
+            group = db.prepare('SELECT * FROM player_groups WHERE id = ? AND organization_id = ?').get(req.params.id, orgId);
+        }
 
         if (!group) {
             return res.status(404).json({ error: 'Player group not found' });
@@ -61,10 +84,11 @@ router.get('/:id/players', async (req, res) => {
 });
 
 // POST /api/player-groups - Create new player group
-router.post('/', async (req, res) => {
+router.post('/', requireWriteAccess, async (req, res) => {
     try {
         const db = await require('../database');
-        const { name, description, location, organization_id } = req.body;
+        const { name, description, location } = req.body;
+        const orgId = req.user.effective_organization_id;
 
         if (!name) {
             return res.status(400).json({ error: 'Group name is required' });
@@ -76,9 +100,9 @@ router.post('/', async (req, res) => {
         db.prepare(`
             INSERT INTO player_groups (id, organization_id, name, description, location, created_at, updated_at)
             VALUES (?, ?, ?, ?, ?, ?, ?)
-        `).run(id, organization_id || null, name, description || null, location || null, now, now);
+        `).run(id, orgId, name, description || null, location || null, now, now);
 
-        res.json({ id, organization_id, name, description, location, playerCount: 0, created_at: now, updated_at: now });
+        res.json({ id, organization_id: orgId, name, description, location, playerCount: 0, created_at: now, updated_at: now });
     } catch (error) {
         console.error('Error creating player group:', error);
         res.status(500).json({ error: error.message });
