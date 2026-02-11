@@ -43,6 +43,7 @@ export default function PlaylistsPage() {
     // Filter states
     const [dateRange, setDateRange] = useState<{ start: Date | null; end: Date | null }>({ start: null, end: null });
     const [statusFilters, setStatusFilters] = useState<string[]>([]);
+    const [sortBy, setSortBy] = useState<string>('newest');
 
     const statusFilterOptions = [
         { label: 'Active', value: 'active', icon: 'check_circle', color: 'text-green-400' },
@@ -143,7 +144,27 @@ export default function PlaylistsPage() {
                         <h1 className="text-3xl font-bold tracking-tight text-white">Playlists</h1>
                         <p className="text-slate-400 mt-1">Create and manage content sequences for your players</p>
                     </div>
-                    <div className="flex gap-3">
+                    <div className="flex flex-wrap gap-3">
+                        {/* Date Range Filter */}
+                        <DateRangePicker
+                            value={dateRange}
+                            onChange={setDateRange}
+                        />
+                        {/* Status Filter */}
+                        <FilterDropdown
+                            label="Status"
+                            options={statusFilterOptions}
+                            value={statusFilters}
+                            onChange={setStatusFilters}
+                            icon="filter_list"
+                        />
+                        {/* Sort Filter */}
+                        <SortDropdown
+                            options={sortOptions}
+                            value={sortBy}
+                            onChange={setSortBy}
+                        />
+                        {/* Export Button */}
                         <ExportButton
                             data={playlists.map(playlist => ({
                                 Name: playlist.name,
@@ -155,6 +176,7 @@ export default function PlaylistsPage() {
                             filename="playlists"
                             title="Playlists Export"
                         />
+                        {/* Action Button */}
                         <button
                             onClick={() => setShowNewPlaylistModal(true)}
                             className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-all shadow-lg shadow-blue-600/20 hover:shadow-blue-600/40"
@@ -165,33 +187,13 @@ export default function PlaylistsPage() {
                     </div>
                 </div>
 
-                {/* Search and Filters */}
-                <div className="flex flex-col sm:flex-row gap-4 items-center justify-between pb-2 border-b border-white/5">
-                    <SearchBar
-                        value={searchQuery}
-                        onChange={setSearchQuery}
-                        placeholder="Search playlists..."
-                        className="w-full sm:w-80"
-                    />
-                    <div className="flex gap-2 w-full sm:w-auto">
-                        <DateRangePicker
-                            value={dateRange}
-                            onChange={setDateRange}
-                        />
-                        <FilterDropdown
-                            label="Status"
-                            options={statusFilterOptions}
-                            value={statusFilters}
-                            onChange={setStatusFilters}
-                            icon="filter_list"
-                        />
-                        <SortDropdown
-                            options={sortOptions}
-                            value="newest"
-                            onChange={() => { }}
-                        />
-                    </div>
-                </div>
+                {/* Search Bar */}
+                <SearchBar
+                    value={searchQuery}
+                    onChange={setSearchQuery}
+                    placeholder="Search playlists..."
+                    className="w-full"
+                />
 
                 {/* Loading State */}
                 {loading ? (

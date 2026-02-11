@@ -2,6 +2,10 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Header from '@/components/Header';
+import DateRangePicker from '@/components/DateRangePicker';
+import FilterDropdown from '@/components/FilterDropdown';
+import SortDropdown, { SortOption } from '@/components/SortDropdown';
+import ExportButton from '@/components/ExportButton';
 
 // TypeScript Interfaces
 interface AnalyticsStats {
@@ -64,6 +68,11 @@ export default function AnalyticsPage() {
     const [playlists, setPlaylists] = useState<PlaylistDeployment[]>([]);
     const [geoData, setGeoData] = useState<GeographicData[]>([]);
     const [loading, setLoading] = useState(true);
+
+    // Filter states
+    const [dateRange, setDateRange] = useState<{ start: Date | null; end: Date | null }>({ start: null, end: null });
+    const [metricFilters, setMetricFilters] = useState<string[]>([]);
+    const [sortBy, setSortBy] = useState<string>('highest');
 
     const fetchAnalyticsData = useCallback(async () => {
         try {
@@ -205,15 +214,47 @@ export default function AnalyticsPage() {
                         <h1 className="text-3xl font-bold tracking-tight text-white">Analytics</h1>
                         <p className="text-slate-400 mt-1">Comprehensive insights into content performance and network health</p>
                     </div>
-                    <div className="flex gap-3">
-                        <div className="flex items-center gap-2 px-3 py-1.5 glass-card rounded-lg text-xs text-slate-400 bg-slate-800/50 backdrop-blur-sm border border-slate-700/50">
-                            <span className="material-symbols-outlined text-[16px]">calendar_today</span>
-                            Last 7 days
-                        </div>
-                        <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-colors shadow-lg shadow-blue-600/25">
-                            <span className="material-symbols-outlined text-[18px]">download</span>
-                            Export Report
-                        </button>
+                    <div className="flex flex-wrap gap-3">
+                        {/* Date Range Filter */}
+                        <DateRangePicker
+                            value={dateRange}
+                            onChange={setDateRange}
+                        />
+                        {/* Metric Filter */}
+                        <FilterDropdown
+                            label="Metric"
+                            options={[
+                                { label: 'All Metrics', value: 'all', icon: 'analytics', color: 'text-blue-400' },
+                                { label: 'Impressions', value: 'impressions', icon: 'visibility', color: 'text-blue-400' },
+                                { label: 'Uptime', value: 'uptime', icon: 'router', color: 'text-emerald-400' },
+                                { label: 'Utilization', value: 'utilization', icon: 'pie_chart', color: 'text-purple-400' },
+                            ]}
+                            value={metricFilters}
+                            onChange={setMetricFilters}
+                            icon="filter_list"
+                        />
+                        {/* Sort Filter */}
+                        <SortDropdown
+                            options={[
+                                { label: 'Highest First', value: 'highest', direction: 'desc' },
+                                { label: 'Lowest First', value: 'lowest', direction: 'asc' },
+                                { label: 'Name (A-Z)', value: 'name-asc', direction: 'asc' },
+                            ]}
+                            value={sortBy}
+                            onChange={setSortBy}
+                        />
+                        {/* Export Button */}
+                        <ExportButton
+                            data={playlists.map(playlist => ({
+                                Name: playlist.name,
+                                Status: playlist.status,
+                                'Active Players': `${playlist.activePlayers}/${playlist.totalPlayers}`,
+                                'Engagement Score': `${playlist.engagementScore}%`,
+                                'Updated': getTimeAgo(playlist.updatedAt),
+                            }))}
+                            filename="analytics_report"
+                            title="Analytics Export"
+                        />
                     </div>
                 </div>
 
