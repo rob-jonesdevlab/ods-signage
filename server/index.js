@@ -117,6 +117,14 @@ async function startServer() {
     const playerGroupsRoutes = require('./routes/player-groups');
     app.use('/api/player-groups', playerGroupsRoutes);
 
+    // Playlist Templates routes
+    const playlistTemplatesRoutes = require('./routes/playlist-templates');
+    app.use('/api/playlist-templates', playlistTemplatesRoutes);
+
+    // Audit Logs routes
+    const auditLogsRoutes = require('./routes/audit-logs');
+    app.use('/api/audit-logs', auditLogsRoutes);
+
     // Pairing routes
     app.use('/api/pairing', pairingRoutes);
 
