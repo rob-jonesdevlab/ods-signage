@@ -2,11 +2,21 @@ const express = require('express');
 const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 
-// GET /api/player-groups - List all player groups
+// GET /api/player-groups - List all player groups with player counts
 router.get('/', async (req, res) => {
     try {
         const db = await require('../database');
-        const groups = db.prepare('SELECT * FROM player_groups ORDER BY name ASC').all();
+
+        // Get groups with player counts
+        const groups = db.prepare(`
+            SELECT 
+                pg.*,
+                COUNT(p.id) as playerCount
+            FROM player_groups pg
+            LEFT JOIN players p ON p.group_id = pg.id
+            GROUP BY pg.id
+            ORDER BY pg.name ASC
+        `).all();
 
         res.json(groups);
     } catch (error) {
@@ -54,7 +64,7 @@ router.get('/:id/players', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
         const db = await require('../database');
-        const { name, description } = req.body;
+        const { name, description, location, organization_id } = req.body;
 
         if (!name) {
             return res.status(400).json({ error: 'Group name is required' });
@@ -64,11 +74,11 @@ router.post('/', async (req, res) => {
         const now = new Date().toISOString();
 
         db.prepare(`
-            INSERT INTO player_groups (id, name, description, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?)
-        `).run(id, name, description || null, now, now);
+            INSERT INTO player_groups (id, organization_id, name, description, location, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        `).run(id, organization_id || null, name, description || null, location || null, now, now);
 
-        res.json({ id, name, description, created_at: now, updated_at: now });
+        res.json({ id, organization_id, name, description, location, playerCount: 0, created_at: now, updated_at: now });
     } catch (error) {
         console.error('Error creating player group:', error);
         res.status(500).json({ error: error.message });
@@ -79,14 +89,14 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
     try {
         const db = await require('../database');
-        const { name, description } = req.body;
+        const { name, description, location } = req.body;
         const now = new Date().toISOString();
 
         db.prepare(`
             UPDATE player_groups 
-            SET name = ?, description = ?, updated_at = ?
+            SET name = ?, description = ?, location = ?, updated_at = ?
             WHERE id = ?
-        `).run(name, description, now, req.params.id);
+        `).run(name, description, location, now, req.params.id);
 
         res.json({ success: true });
     } catch (error) {
@@ -109,6 +119,61 @@ router.delete('/:id', async (req, res) => {
         res.json({ success: true });
     } catch (error) {
         console.error('Error deleting player group:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// POST /api/player-groups/:id/assign-players - Assign players to group
+router.post('/:id/assign-players', async (req, res) => {
+    try {
+        const db = await require('../database');
+        const { player_ids } = req.body;
+
+        if (!Array.isArray(player_ids)) {
+            return res.status(400).json({ error: 'player_ids must be an array' });
+        }
+
+        // Update all specified players to this group
+        const stmt = db.prepare('UPDATE players SET group_id = ? WHERE id = ?');
+        for (const playerId of player_ids) {
+            stmt.run(req.params.id, playerId);
+        }
+
+        res.json({ success: true, assigned: player_ids.length });
+    } catch (error) {
+        console.error('Error assigning players to group:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// POST /api/player-groups/:id/deploy - Deploy playlist to all players in group
+router.post('/:id/deploy', async (req, res) => {
+    try {
+        const db = await require('../database');
+        const { playlist_id } = req.body;
+
+        if (!playlist_id) {
+            return res.status(400).json({ error: 'playlist_id is required' });
+        }
+
+        // Get all players in this group
+        const players = db.prepare('SELECT * FROM players WHERE group_id = ?').all(req.params.id);
+
+        if (players.length === 0) {
+            return res.status(400).json({ error: 'No players in this group' });
+        }
+
+        // Deploy playlist to each player
+        // TODO: Implement actual deployment logic (WebSocket broadcast, etc.)
+        // For now, just return success
+
+        res.json({
+            success: true,
+            deployed_to: players.length,
+            players: players.map(p => ({ id: p.id, name: p.name }))
+        });
+    } catch (error) {
+        console.error('Error deploying playlist to group:', error);
         res.status(500).json({ error: error.message });
     }
 });

@@ -8,6 +8,11 @@ import ExportButton from '@/components/ExportButton';
 import DateRangePicker from '@/components/DateRangePicker';
 import FilterDropdown from '@/components/FilterDropdown';
 import PairDeviceModal from '@/components/PairDeviceModal';
+import PlayerGroupTree, { PlayerGroup } from '@/components/PlayerGroupTree';
+import NewGroupModal from '@/components/NewGroupModal';
+import GroupContextMenu from '@/components/GroupContextMenu';
+import RenameGroupModal from '@/components/RenameGroupModal';
+import DeleteGroupModal from '@/components/DeleteGroupModal';
 
 interface Player {
     id: string;
@@ -18,14 +23,29 @@ interface Player {
     created_at: string;
     paired_at: string | null;
     pairing_code: string | null;
+    group_id: string | null;
 }
 
 export default function PlayersPage() {
     const [players, setPlayers] = useState<Player[]>([]);
+    const [groups, setGroups] = useState<PlayerGroup[]>([]);
+    const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
     const [socket, setSocket] = useState<Socket | null>(null);
     const [connected, setConnected] = useState(false);
     const { showToast } = useToast();
+
+    // Modals
     const [isPairingModalOpen, setIsPairingModalOpen] = useState(false);
+    const [showNewGroupModal, setShowNewGroupModal] = useState(false);
+    const [showRenameGroupModal, setShowRenameGroupModal] = useState(false);
+    const [showDeleteGroupModal, setShowDeleteGroupModal] = useState(false);
+
+    // Context menu
+    const [contextMenu, setContextMenu] = useState<{ groupId: string; x: number; y: number } | null>(null);
+
+    // Drag and drop
+    const [draggedPlayerId, setDraggedPlayerId] = useState<string | null>(null);
+    const [dragOverGroup, setDragOverGroup] = useState<string | null>(null);
 
     // Filter states
     const [dateRange, setDateRange] = useState<{ start: Date | null; end: Date | null }>({ start: null, end: null });
@@ -36,12 +56,31 @@ export default function PlayersPage() {
         { label: 'Offline', value: 'offline', icon: 'cancel', color: 'text-slate-400' },
     ];
 
+    // Fetch groups
+    const fetchGroups = async () => {
+        try {
+            const res = await fetch('http://localhost:3001/api/player-groups');
+            const data = await res.json();
+            setGroups(data);
+        } catch (error) {
+            console.error('Error fetching groups:', error);
+        }
+    };
+
+    // Fetch players
+    const fetchPlayers = async () => {
+        try {
+            const res = await fetch('http://localhost:3001/api/players');
+            const data = await res.json();
+            setPlayers(data);
+        } catch (error) {
+            console.error('Error fetching players:', error);
+        }
+    };
+
     useEffect(() => {
-        // Fetch initial players
-        fetch('http://localhost:3001/api/players')
-            .then((res) => res.json())
-            .then((data) => setPlayers(data))
-            .catch((err) => console.error('Error fetching players:', err));
+        fetchPlayers();
+        fetchGroups();
 
         // Connect to WebSocket
         const newSocket = io('http://localhost:3001');
@@ -59,7 +98,6 @@ export default function PlayersPage() {
         newSocket.on('player:status', (data) => {
             console.log('📊 Player status update:', data);
 
-            // Show toast notification
             const player = data.player;
             const wasOnline = players.find(p => p.id === player.id)?.status === 'online';
             const isNowOnline = player.status === 'online';
@@ -80,10 +118,7 @@ export default function PlayersPage() {
                 });
             }
 
-            // Refresh players list
-            fetch('http://localhost:3001/api/players')
-                .then((res) => res.json())
-                .then((data) => setPlayers(data));
+            fetchPlayers();
         });
 
         setSocket(newSocket);
@@ -92,6 +127,100 @@ export default function PlayersPage() {
             newSocket.close();
         };
     }, []);
+
+    // Group handlers
+    const handleCreateGroup = async (name: string, description: string, location: string) => {
+        try {
+            const res = await fetch('http://localhost:3001/api/player-groups', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, description, location })
+            });
+
+            if (res.ok) {
+                showToast({ type: 'success', title: 'Group Created', message: `${name} has been created` });
+                fetchGroups();
+            }
+        } catch (error) {
+            showToast({ type: 'error', title: 'Error', message: 'Failed to create group' });
+        }
+    };
+
+    const handleRenameGroup = async (groupId: string, newName: string) => {
+        try {
+            const group = groups.find(g => g.id === groupId);
+            const res = await fetch(`http://localhost:3001/api/player-groups/${groupId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: newName, description: group?.description, location: group?.location })
+            });
+
+            if (res.ok) {
+                showToast({ type: 'success', title: 'Group Renamed', message: `Renamed to ${newName}` });
+                fetchGroups();
+            }
+        } catch (error) {
+            showToast({ type: 'error', title: 'Error', message: 'Failed to rename group' });
+        }
+    };
+
+    const handleDeleteGroup = async (groupId: string) => {
+        try {
+            const res = await fetch(`http://localhost:3001/api/player-groups/${groupId}`, {
+                method: 'DELETE'
+            });
+
+            if (res.ok) {
+                showToast({ type: 'success', title: 'Group Deleted', message: 'Group has been deleted' });
+                if (selectedGroupId === groupId) {
+                    setSelectedGroupId(null);
+                }
+                fetchGroups();
+                fetchPlayers();
+            }
+        } catch (error) {
+            showToast({ type: 'error', title: 'Error', message: 'Failed to delete group' });
+        }
+    };
+
+    // Drag and drop handlers
+    const handlePlayerDragStart = (playerId: string) => {
+        setDraggedPlayerId(playerId);
+    };
+
+    const handleGroupDrop = async (groupId: string) => {
+        if (!draggedPlayerId) return;
+
+        try {
+            const res = await fetch(`http://localhost:3001/api/player-groups/${groupId}/assign-players`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ player_ids: [draggedPlayerId] })
+            });
+
+            if (res.ok) {
+                const player = players.find(p => p.id === draggedPlayerId);
+                const group = groups.find(g => g.id === groupId);
+                showToast({
+                    type: 'success',
+                    title: 'Player Assigned',
+                    message: `${player?.name} assigned to ${group?.name}`
+                });
+                fetchPlayers();
+                fetchGroups();
+            }
+        } catch (error) {
+            showToast({ type: 'error', title: 'Error', message: 'Failed to assign player' });
+        } finally {
+            setDraggedPlayerId(null);
+            setDragOverGroup(null);
+        }
+    };
+
+    // Filter players by selected group
+    const filteredPlayers = selectedGroupId
+        ? players.filter(p => p.group_id === selectedGroupId)
+        : players;
 
     const getStatusColor = (status: string) => {
         switch (status) {
@@ -109,165 +238,207 @@ export default function PlayersPage() {
         return new Date(dateString).toLocaleString();
     };
 
+    const selectedGroup = groups.find(g => g.id === contextMenu?.groupId);
+
     return (
         <div className="min-h-screen bg-slate-950 text-white flex flex-col">
             <Header />
 
-            <main className="flex-1 w-full max-w-[1600px] mx-auto p-6 md:p-8 flex flex-col gap-8">
-                {/* Page Header */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                    <div>
-                        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white">Players</h1>
-                        <p className="text-slate-400 mt-1 text-sm md:text-base">Manage your digital signage players</p>
-                    </div>
-                    <div className="flex gap-2">
-                        <button
-                            onClick={() => setIsPairingModalOpen(true)}
-                            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center gap-2 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40"
-                        >
-                            <span className="material-symbols-outlined text-xl">add_circle</span>
-                            Pair Device
-                        </button>
-                        <DateRangePicker
-                            value={dateRange}
-                            onChange={setDateRange}
-                        />
-                        <FilterDropdown
-                            label="Status"
-                            options={statusFilterOptions}
-                            value={statusFilters}
-                            onChange={setStatusFilters}
-                            icon="filter_list"
-                        />
-                        <ExportButton
-                            data={players.map(player => ({
-                                Name: player.name,
-                                'CPU Serial': player.cpu_serial,
-                                Status: player.status,
-                                'Last Seen': formatDate(player.last_seen),
-                                'Created At': new Date(player.created_at).toLocaleDateString(),
-                            }))}
-                            filename="players"
-                            title="Players Export"
+            <main className="flex-1 w-full max-w-[1600px] mx-auto p-6 md:p-8 flex gap-6">
+                {/* Sidebar */}
+                <aside className="w-64 flex-shrink-0">
+                    <div className="glass-card p-4 rounded-2xl border border-slate-700/50 bg-slate-800/50 backdrop-blur-sm sticky top-6">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="font-semibold text-white">Groups</h3>
+                            <button
+                                onClick={() => setShowNewGroupModal(true)}
+                                className="p-1 hover:bg-slate-700 rounded transition-colors"
+                                title="New Group"
+                            >
+                                <span className="material-symbols-outlined text-[20px]">add</span>
+                            </button>
+                        </div>
+
+                        <PlayerGroupTree
+                            groups={groups}
+                            selectedGroupId={selectedGroupId}
+                            onSelectGroup={setSelectedGroupId}
+                            onContextMenu={(groupId, event) => {
+                                setContextMenu({ groupId, x: event.clientX, y: event.clientY });
+                            }}
+                            onGroupDrop={handleGroupDrop}
+                            dragOverGroup={dragOverGroup}
+                            setDragOverGroup={setDragOverGroup}
                         />
                     </div>
-                </div>
+                </aside>
 
-                {/* Stats */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="glass-card p-6 rounded-2xl relative overflow-hidden group hover:border-blue-500/30 transition-colors bg-slate-800/50 backdrop-blur-sm border border-slate-700/50">
-                        <div className="text-3xl font-bold mb-2 text-white">{players.length}</div>
-                        <div className="text-slate-400">Total Players</div>
-                    </div>
-                    <div className="glass-card p-6 rounded-2xl relative overflow-hidden group hover:border-emerald-500/30 transition-colors bg-slate-800/50 backdrop-blur-sm border border-slate-700/50">
-                        <div className="text-3xl font-bold mb-2 text-emerald-400">
-                            {players.filter((p) => p.status === 'online').length}
+                {/* Main Content */}
+                <div className="flex-1 flex flex-col gap-8">
+                    {/* Page Header */}
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                        <div>
+                            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white">
+                                {selectedGroupId ? groups.find(g => g.id === selectedGroupId)?.name : 'All Players'}
+                            </h1>
+                            <p className="text-slate-400 mt-1 text-sm md:text-base">
+                                {selectedGroupId
+                                    ? `${filteredPlayers.length} player${filteredPlayers.length !== 1 ? 's' : ''} in this group`
+                                    : 'Manage your digital signage players'
+                                }
+                            </p>
                         </div>
-                        <div className="text-slate-400">Online</div>
-                    </div>
-                    <div className="glass-card p-6 rounded-2xl relative overflow-hidden group hover:border-slate-500/30 transition-colors bg-slate-800/50 backdrop-blur-sm border border-slate-700/50">
-                        <div className="text-3xl font-bold mb-2 text-slate-400">
-                            {players.filter((p) => p.status === 'offline').length}
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => setIsPairingModalOpen(true)}
+                                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center gap-2 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40"
+                            >
+                                <span className="material-symbols-outlined text-xl">add_circle</span>
+                                Pair Device
+                            </button>
+                            <DateRangePicker
+                                value={dateRange}
+                                onChange={setDateRange}
+                            />
+                            <FilterDropdown
+                                label="Status"
+                                options={statusFilterOptions}
+                                value={statusFilters}
+                                onChange={setStatusFilters}
+                                icon="filter_list"
+                            />
+                            <ExportButton
+                                data={filteredPlayers.map(player => ({
+                                    Name: player.name,
+                                    'CPU Serial': player.cpu_serial,
+                                    Status: player.status,
+                                    'Last Seen': formatDate(player.last_seen),
+                                    'Created At': new Date(player.created_at).toLocaleDateString(),
+                                }))}
+                                filename="players"
+                                title="Players Export"
+                            />
                         </div>
-                        <div className="text-slate-400">Offline</div>
                     </div>
-                </div>
 
-                {/* Players List */}
-                <div className="glass-card rounded-2xl border border-slate-700/50 overflow-hidden bg-slate-800/50 backdrop-blur-sm">
-                    <div className="p-6 border-b border-slate-700/50">
-                        <h2 className="text-2xl font-bold text-white">All Players</h2>
+                    {/* Stats */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="glass-card p-6 rounded-2xl relative overflow-hidden group hover:border-blue-500/30 transition-colors bg-slate-800/50 backdrop-blur-sm border border-slate-700/50">
+                            <div className="text-3xl font-bold mb-2 text-white">{filteredPlayers.length}</div>
+                            <div className="text-slate-400">{selectedGroupId ? 'Players in Group' : 'Total Players'}</div>
+                        </div>
+                        <div className="glass-card p-6 rounded-2xl relative overflow-hidden group hover:border-emerald-500/30 transition-colors bg-slate-800/50 backdrop-blur-sm border border-slate-700/50">
+                            <div className="text-3xl font-bold mb-2 text-emerald-400">
+                                {filteredPlayers.filter((p) => p.status === 'online').length}
+                            </div>
+                            <div className="text-slate-400">Online</div>
+                        </div>
+                        <div className="glass-card p-6 rounded-2xl relative overflow-hidden group hover:border-slate-500/30 transition-colors bg-slate-800/50 backdrop-blur-sm border border-slate-700/50">
+                            <div className="text-3xl font-bold mb-2 text-slate-400">
+                                {filteredPlayers.filter((p) => p.status === 'offline').length}
+                            </div>
+                            <div className="text-slate-400">Offline</div>
+                        </div>
                     </div>
 
-                    {players.length === 0 ? (
-                        <div className="p-12 text-center text-slate-400">
-                            <div className="text-6xl mb-4">📱</div>
-                            <div className="text-xl mb-2">No players registered</div>
-                            <div className="text-sm">Connect a player to get started</div>
-                        </div>
-                    ) : (
-                        <div className="overflow-x-auto">
-                            <table className="w-full">
-                                <thead className="bg-slate-900/50">
-                                    <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
-                                            Status
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
-                                            Pairing
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
-                                            Name
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
-                                            CPU Serial
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
-                                            Last Seen
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
-                                            Created
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-700/50">
-                                    {players.map((player) => (
-                                        <tr key={player.id} className="hover:bg-slate-800/50 transition-colors">
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="flex items-center gap-2">
-                                                    <div className={`w-3 h-3 rounded-full ${getStatusColor(player.status)}`} />
-                                                    <span className="text-sm capitalize text-white">{player.status}</span>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                {player.paired_at ? (
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="material-symbols-outlined text-emerald-500 text-lg">check_circle</span>
-                                                        <span className="text-sm text-emerald-400 font-medium">Paired</span>
-                                                    </div>
-                                                ) : player.pairing_code ? (
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="material-symbols-outlined text-amber-500 text-lg animate-pulse">pending</span>
-                                                        <span className="text-sm text-amber-400 font-medium font-mono">{player.pairing_code}</span>
-                                                    </div>
-                                                ) : (
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="material-symbols-outlined text-slate-500 text-lg">radio_button_unchecked</span>
-                                                        <span className="text-sm text-slate-500">Not initiated</span>
-                                                    </div>
-                                                )}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap font-medium text-white">
-                                                {player.name}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400 font-mono">
-                                                {player.cpu_serial}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
-                                                {formatDate(player.last_seen)}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
-                                                {formatDate(player.created_at)}
-                                            </td>
+                    {/* Players List */}
+                    <div className="glass-card rounded-2xl border border-slate-700/50 overflow-hidden bg-slate-800/50 backdrop-blur-sm">
+                        {filteredPlayers.length === 0 ? (
+                            <div className="p-12 text-center text-slate-400">
+                                <div className="text-6xl mb-4">📱</div>
+                                <div className="text-xl mb-2">
+                                    {selectedGroupId ? 'No players in this group' : 'No players registered'}
+                                </div>
+                                <div className="text-sm">
+                                    {selectedGroupId ? 'Drag players here to assign them' : 'Connect a player to get started'}
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="overflow-x-auto">
+                                <table className="w-full">
+                                    <thead className="bg-slate-900/50">
+                                        <tr>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                                                Status
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                                                Pairing
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                                                Name
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                                                CPU Serial
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                                                Last Seen
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                                                Created
+                                            </th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-700/50">
+                                        {filteredPlayers.map((player) => (
+                                            <tr
+                                                key={player.id}
+                                                className="hover:bg-slate-800/50 transition-colors cursor-move"
+                                                draggable
+                                                onDragStart={() => handlePlayerDragStart(player.id)}
+                                                onDragEnd={() => setDraggedPlayerId(null)}
+                                            >
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className={`w-3 h-3 rounded-full ${getStatusColor(player.status)}`} />
+                                                        <span className="text-sm capitalize text-white">{player.status}</span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    {player.paired_at ? (
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="material-symbols-outlined text-emerald-500 text-lg">check_circle</span>
+                                                            <span className="text-sm text-emerald-400 font-medium">Paired</span>
+                                                        </div>
+                                                    ) : player.pairing_code ? (
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="material-symbols-outlined text-amber-500 text-lg animate-pulse">pending</span>
+                                                            <span className="text-sm text-amber-400 font-medium font-mono">{player.pairing_code}</span>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="material-symbols-outlined text-slate-500 text-lg">radio_button_unchecked</span>
+                                                            <span className="text-sm text-slate-500">Not initiated</span>
+                                                        </div>
+                                                    )}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap font-medium text-white">
+                                                    {player.name}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400 font-mono">
+                                                    {player.cpu_serial}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
+                                                    {formatDate(player.last_seen)}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
+                                                    {formatDate(player.created_at)}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </main>
 
-            {/* Pair Device Modal */}
+            {/* Modals */}
             <PairDeviceModal
                 isOpen={isPairingModalOpen}
                 onClose={() => setIsPairingModalOpen(false)}
                 onSuccess={() => {
-                    // Refresh players list
-                    fetch('http://localhost:3001/api/players')
-                        .then((res) => res.json())
-                        .then((data) => setPlayers(data));
-
+                    fetchPlayers();
                     showToast({
                         type: 'success',
                         title: 'Device Paired',
@@ -276,6 +447,44 @@ export default function PlayersPage() {
                     });
                 }}
             />
+
+            <NewGroupModal
+                isOpen={showNewGroupModal}
+                onClose={() => setShowNewGroupModal(false)}
+                onSubmit={handleCreateGroup}
+            />
+
+            <RenameGroupModal
+                isOpen={showRenameGroupModal}
+                groupId={contextMenu?.groupId || null}
+                currentName={selectedGroup?.name || ''}
+                onClose={() => setShowRenameGroupModal(false)}
+                onSubmit={handleRenameGroup}
+            />
+
+            <DeleteGroupModal
+                isOpen={showDeleteGroupModal}
+                groupId={contextMenu?.groupId || null}
+                groupName={selectedGroup?.name || ''}
+                playerCount={selectedGroup?.playerCount || 0}
+                onClose={() => setShowDeleteGroupModal(false)}
+                onConfirm={handleDeleteGroup}
+            />
+
+            {/* Context Menu */}
+            {contextMenu && (
+                <GroupContextMenu
+                    groupId={contextMenu.groupId}
+                    position={{ x: contextMenu.x, y: contextMenu.y }}
+                    onClose={() => setContextMenu(null)}
+                    onRename={() => setShowRenameGroupModal(true)}
+                    onDelete={() => setShowDeleteGroupModal(true)}
+                    onDeploy={() => {
+                        // TODO: Implement deploy modal
+                        showToast({ type: 'info', title: 'Coming Soon', message: 'Deploy playlist feature' });
+                    }}
+                />
+            )}
         </div>
     );
 }

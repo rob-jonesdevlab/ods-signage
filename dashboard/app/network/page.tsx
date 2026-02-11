@@ -117,10 +117,6 @@ export default function NetworkPage() {
                         <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-800 rounded-lg border border-slate-700 text-xs text-slate-400">
                             <span className="material-symbols-outlined text-[16px]">refresh</span> Auto-refresh: 30s
                         </div>
-                        <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-colors shadow-lg shadow-blue-500/25">
-                            <span className="material-symbols-outlined text-[18px]">add_circle</span>
-                            Add Player
-                        </button>
                     </div>
                 </div>
 
@@ -348,7 +344,7 @@ export default function NetworkPage() {
                                     alerts.map((alert) => (
                                         <div key={alert.id} className="flex items-start gap-3">
                                             <div className={`w-2 h-2 mt-1.5 rounded-full flex-shrink-0 ${alert.type === 'critical' ? 'bg-red-500' :
-                                                    alert.type === 'warning' ? 'bg-amber-500' : 'bg-blue-500'
+                                                alert.type === 'warning' ? 'bg-amber-500' : 'bg-blue-500'
                                                 }`}></div>
                                             <div>
                                                 <p className="text-xs font-medium text-slate-200">{alert.message}</p>

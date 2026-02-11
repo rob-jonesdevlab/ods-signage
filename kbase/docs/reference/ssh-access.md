@@ -36,12 +36,21 @@ ssh root@10.111.123.101
 
 ### Connection Details
 - **IP Address**: `209.38.118.127`
+- **Hostname**: `ODS-HOST-01`
 - **User**: `root`
-- **SSH Key**: (Use default SSH key)
+- **SSH Key**: `~/.ssh/id_ed25519_ods_pi5_dod`
+- **Passphrase**: `plki90o***`
 
 ### Connect
 ```bash
-ssh root@209.38.118.127
+ssh -i ~/.ssh/id_ed25519_ods_pi5_dod root@209.38.118.127
+# Enter passphrase when prompted: plki90o***
+```
+
+### Add Key to SSH Agent
+```bash
+ssh-add ~/.ssh/id_ed25519_ods_pi5_dod
+# Enter passphrase: plki90o***
 ```
 
 ### Common Commands
