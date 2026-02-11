@@ -2,7 +2,7 @@
 
 **Comprehensive architecture documentation for the ODS Digital Signage platform**
 
-Last Updated: February 9, 2026
+Last Updated: February 10, 2026
 
 ---
 
@@ -15,6 +15,7 @@ ODS Cloud is a full-stack digital signage platform consisting of three main comp
 │     Dashboard (Next.js + Supabase)      │
 │     https://ods-cloud.com               │
 │     - Player management                 │
+│     - Player Groups (drag-and-drop)     │
 │     - Content library                   │
 │     - User settings                     │
 │     - Real-time monitoring              │
@@ -114,6 +115,13 @@ POST   /api/players              # Register new player
 GET    /api/players/:id          # Get player details
 PUT    /api/players/:id          # Update player
 DELETE /api/players/:id          # Delete player
+GET    /api/player-groups        # List all player groups
+POST   /api/player-groups        # Create new player group
+GET    /api/player-groups/:id    # Get player group details
+PUT    /api/player-groups/:id    # Update player group
+DELETE /api/player-groups/:id    # Delete player group
+POST   /api/player-groups/:id/assign-players  # Assign players to group
+POST   /api/player-groups/:id/deploy          # Deploy playlist to group
 ```
 
 **Directory Structure:**

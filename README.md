@@ -1,13 +1,18 @@
-# ODS Digital Signage - Proof of Concept
+# ODS Cloud - Digital Signage Platform
+
+**Production URL:** https://ods-cloud.com
 
 ## 🎯 What We Built
 
-A working proof of concept for a custom digital signage platform with:
+An enterprise-grade digital signage platform with multi-tenancy and RBAC:
 
-- ✅ Express.js API server with SQLite database
+- ✅ Express.js API server with hybrid database (SQLite + Supabase)
 - ✅ Real-time WebSocket communication (Socket.io)
 - ✅ Next.js dashboard with live player monitoring
-- ✅ Standalone player client for testing
+- ✅ Player Groups with drag-and-drop organization
+- ✅ Content Library with folder management
+- ✅ Supabase authentication with Row Level Security
+- ✅ Multi-organization support with role-based access
 
 ## 🚀 Quick Start
 
@@ -80,26 +85,31 @@ python3 -m http.server 8080
 - [x] Player can connect and register
 - [x] Status updates in real-time
 
-## 🎉 What's Next
+## 🎉 Current Status
 
-### Phase 2: Content Management
-- Upload images/videos
-- Content library
-- Thumbnail generation
+### ✅ Phase 1: Database & Auth Foundation (COMPLETE)
+- Multi-tenant database architecture (Supabase + SQLite)
+- Row Level Security (RLS) with 15 policies
+- 6-role RBAC system (Owner, Manager, Viewer, Integrations, ODSAdmin, ODSTech)
+- Organizations, users, tech assignments, audit logs
 
-### Phase 3: Playlists
-- Create playlists
-- Schedule content
-- Time-based playback
+### ✅ Phase 2: Player Groups (COMPLETE - Feb 10, 2026)
+- Player Groups sidebar with drag-and-drop
+- Group-based player organization
+- Bulk playlist deployment to groups
+- Location-based grouping
 
-### Phase 4: Player OS
-- Custom Raspberry Pi image
-- Plymouth boot splash
-- Auto-start kiosk mode
+### 🚧 Phase 3: Playlist Templates & Audit Trail (IN PROGRESS)
+- Playlist Templates sidebar
+- Template-based playlist creation
+- Enhanced audit trail in Operations page
+- API key management
 
-### Phase 5: Supabase
-- Cloud backup
-- Real-time replication
+### 📋 Phase 4: Analytics & Polish (PLANNED)
+- Player analytics dashboard
+- Advanced filtering and bulk operations
+- Remote desktop integration (optional)
+- Final testing and demo prep
 
 ## 📝 Notes
 
