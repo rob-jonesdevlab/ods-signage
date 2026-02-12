@@ -4,11 +4,17 @@
 -- This script creates test organizations and users for
 -- end-to-end authentication and tenant isolation testing.
 --
+-- PREREQUISITES:
+-- 1. Run beta-state-push-supabase.sql FIRST to create tables
+--    (organizations, users, tech_assignments, audit_logs, players, etc.)
+-- 2. Ensure custom claims hook is deployed
+--
 -- USAGE:
--- 1. Run this in Supabase SQL Editor
--- 2. Create corresponding auth users via Supabase Dashboard
--- 3. Update user metadata with organization_id and role
--- 4. Test login and JWT claims
+-- 1. Run Step 1 (organizations) in Supabase SQL Editor
+-- 2. Create users via Supabase Dashboard → Authentication → Users
+-- 3. Run Step 3 (user metadata updates)
+-- 4. Run Step 4 (tech assignment) - uncomment first
+-- 5. Run Step 5 (players) - uncomment first
 -- =============================================
 
 -- Step 1: Create Test Organizations
@@ -174,8 +180,11 @@ ON CONFLICT DO NOTHING;
 
 -- Step 5: Create Test Players
 -- =============================================
--- Add test players for each organization
+-- NOTE: Run this AFTER running beta-state-push-supabase.sql
+-- The players table must exist before this can run
 
+-- Uncomment and run this after creating the players table:
+/*
 -- Players for Org 1
 INSERT INTO players (id, name, cpu_serial, org_id, status, ip_address, created_at, updated_at)
 SELECT 
@@ -187,7 +196,7 @@ SELECT
   '192.168.1.101',
   NOW(),
   NOW()
-FROM organizations WHERE name = 'Demo Organization 1'
+FROM organizations WHERE slug = 'demo-org-1'
 ON CONFLICT (cpu_serial, org_id) DO NOTHING;
 
 INSERT INTO players (id, name, cpu_serial, org_id, status, ip_address, created_at, updated_at)
@@ -200,7 +209,7 @@ SELECT
   '192.168.1.102',
   NOW(),
   NOW()
-FROM organizations WHERE name = 'Demo Organization 1'
+FROM organizations WHERE slug = 'demo-org-1'
 ON CONFLICT (cpu_serial, org_id) DO NOTHING;
 
 INSERT INTO players (id, name, cpu_serial, org_id, status, ip_address, created_at, updated_at)
@@ -213,7 +222,7 @@ SELECT
   '192.168.1.103',
   NOW(),
   NOW()
-FROM organizations WHERE name = 'Demo Organization 1'
+FROM organizations WHERE slug = 'demo-org-1'
 ON CONFLICT (cpu_serial, org_id) DO NOTHING;
 
 -- Players for Org 2
@@ -227,7 +236,7 @@ SELECT
   '192.168.2.101',
   NOW(),
   NOW()
-FROM organizations WHERE name = 'Demo Organization 2'
+FROM organizations WHERE slug = 'demo-org-2'
 ON CONFLICT (cpu_serial, org_id) DO NOTHING;
 
 INSERT INTO players (id, name, cpu_serial, org_id, status, ip_address, created_at, updated_at)
@@ -240,7 +249,7 @@ SELECT
   '192.168.2.102',
   NOW(),
   NOW()
-FROM organizations WHERE name = 'Demo Organization 2'
+FROM organizations WHERE slug = 'demo-org-2'
 ON CONFLICT (cpu_serial, org_id) DO NOTHING;
 
 -- Players for Org 3
@@ -254,8 +263,9 @@ SELECT
   '192.168.3.101',
   NOW(),
   NOW()
-FROM organizations WHERE name = 'Demo Organization 3'
+FROM organizations WHERE slug = 'demo-org-3'
 ON CONFLICT (cpu_serial, org_id) DO NOTHING;
+*/
 
 -- Step 6: Verify Setup
 -- =============================================
