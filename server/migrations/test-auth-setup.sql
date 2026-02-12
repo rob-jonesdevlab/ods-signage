@@ -13,13 +13,32 @@
 
 -- Step 1: Create Test Organizations
 -- =============================================
+-- Note: We'll use gen_random_uuid() and then reference by name in subsequent queries
 
-INSERT INTO organizations (id, name, created_at, updated_at)
-VALUES
-  ('org-demo-001', 'Demo Organization 1', NOW(), NOW()),
-  ('org-demo-002', 'Demo Organization 2', NOW(), NOW()),
-  ('org-demo-003', 'Demo Organization 3', NOW(), NOW())
-ON CONFLICT (id) DO NOTHING;
+DO $$
+DECLARE
+  org1_id UUID;
+  org2_id UUID;
+  org3_id UUID;
+BEGIN
+  -- Create organizations and get their IDs
+  INSERT INTO organizations (id, name, created_at, updated_at)
+  VALUES
+    (gen_random_uuid(), 'Demo Organization 1', NOW(), NOW()),
+    (gen_random_uuid(), 'Demo Organization 2', NOW(), NOW()),
+    (gen_random_uuid(), 'Demo Organization 3', NOW(), NOW())
+  ON CONFLICT (name) DO NOTHING;
+  
+  -- Store IDs for reference
+  SELECT id INTO org1_id FROM organizations WHERE name = 'Demo Organization 1';
+  SELECT id INTO org2_id FROM organizations WHERE name = 'Demo Organization 2';
+  SELECT id INTO org3_id FROM organizations WHERE name = 'Demo Organization 3';
+  
+  RAISE NOTICE 'Organization IDs created:';
+  RAISE NOTICE 'Org 1: %', org1_id;
+  RAISE NOTICE 'Org 2: %', org2_id;
+  RAISE NOTICE 'Org 3: %', org3_id;
+END $$;
 
 -- Step 2: Create Test Users (via Supabase Dashboard)
 -- =============================================
@@ -41,7 +60,7 @@ ON CONFLICT (id) DO NOTHING;
 -- Owner for Org 1
 UPDATE auth.users
 SET raw_user_meta_data = jsonb_build_object(
-  'organization_id', 'org-demo-001',
+  'organization_id', (SELECT id::text FROM organizations WHERE name = 'Demo Organization 1'),
   'role', 'Owner',
   'email', email,
   'full_name', 'Demo Owner 1'
@@ -51,7 +70,7 @@ WHERE email = 'owner@demo1.com';
 -- Manager for Org 1
 UPDATE auth.users
 SET raw_user_meta_data = jsonb_build_object(
-  'organization_id', 'org-demo-001',
+  'organization_id', (SELECT id::text FROM organizations WHERE name = 'Demo Organization 1'),
   'role', 'Manager',
   'email', email,
   'full_name', 'Demo Manager 1'
@@ -61,7 +80,7 @@ WHERE email = 'manager@demo1.com';
 -- Viewer for Org 1
 UPDATE auth.users
 SET raw_user_meta_data = jsonb_build_object(
-  'organization_id', 'org-demo-001',
+  'organization_id', (SELECT id::text FROM organizations WHERE name = 'Demo Organization 1'),
   'role', 'Viewer',
   'email', email,
   'full_name', 'Demo Viewer 1'
@@ -71,7 +90,7 @@ WHERE email = 'viewer@demo1.com';
 -- Owner for Org 2
 UPDATE auth.users
 SET raw_user_meta_data = jsonb_build_object(
-  'organization_id', 'org-demo-002',
+  'organization_id', (SELECT id::text FROM organizations WHERE name = 'Demo Organization 2'),
   'role', 'Owner',
   'email', email,
   'full_name', 'Demo Owner 2'
@@ -106,7 +125,7 @@ INSERT INTO tech_assignments (id, tech_id, organization_id, created_at)
 VALUES (
   gen_random_uuid(),
   (SELECT id FROM auth.users WHERE email = 'tech@ods.com'),
-  'org-demo-001',
+  (SELECT id FROM organizations WHERE name = 'Demo Organization 1'),
   NOW()
 )
 ON CONFLICT DO NOTHING;
@@ -117,23 +136,83 @@ ON CONFLICT DO NOTHING;
 
 -- Players for Org 1
 INSERT INTO players (id, name, cpu_serial, org_id, status, ip_address, created_at, updated_at)
-VALUES
-  (gen_random_uuid(), 'Player 1 - Org 1', 'CPU-ORG1-001', 'org-demo-001', 'online', '192.168.1.101', NOW(), NOW()),
-  (gen_random_uuid(), 'Player 2 - Org 1', 'CPU-ORG1-002', 'org-demo-001', 'offline', '192.168.1.102', NOW(), NOW()),
-  (gen_random_uuid(), 'Player 3 - Org 1', 'CPU-ORG1-003', 'org-demo-001', 'online', '192.168.1.103', NOW(), NOW())
+SELECT 
+  gen_random_uuid(),
+  'Player 1 - Org 1',
+  'CPU-ORG1-001',
+  id,
+  'online',
+  '192.168.1.101',
+  NOW(),
+  NOW()
+FROM organizations WHERE name = 'Demo Organization 1'
+ON CONFLICT (cpu_serial, org_id) DO NOTHING;
+
+INSERT INTO players (id, name, cpu_serial, org_id, status, ip_address, created_at, updated_at)
+SELECT 
+  gen_random_uuid(),
+  'Player 2 - Org 1',
+  'CPU-ORG1-002',
+  id,
+  'offline',
+  '192.168.1.102',
+  NOW(),
+  NOW()
+FROM organizations WHERE name = 'Demo Organization 1'
+ON CONFLICT (cpu_serial, org_id) DO NOTHING;
+
+INSERT INTO players (id, name, cpu_serial, org_id, status, ip_address, created_at, updated_at)
+SELECT 
+  gen_random_uuid(),
+  'Player 3 - Org 1',
+  'CPU-ORG1-003',
+  id,
+  'online',
+  '192.168.1.103',
+  NOW(),
+  NOW()
+FROM organizations WHERE name = 'Demo Organization 1'
 ON CONFLICT (cpu_serial, org_id) DO NOTHING;
 
 -- Players for Org 2
 INSERT INTO players (id, name, cpu_serial, org_id, status, ip_address, created_at, updated_at)
-VALUES
-  (gen_random_uuid(), 'Player 1 - Org 2', 'CPU-ORG2-001', 'org-demo-002', 'online', '192.168.2.101', NOW(), NOW()),
-  (gen_random_uuid(), 'Player 2 - Org 2', 'CPU-ORG2-002', 'org-demo-002', 'online', '192.168.2.102', NOW(), NOW())
+SELECT 
+  gen_random_uuid(),
+  'Player 1 - Org 2',
+  'CPU-ORG2-001',
+  id,
+  'online',
+  '192.168.2.101',
+  NOW(),
+  NOW()
+FROM organizations WHERE name = 'Demo Organization 2'
+ON CONFLICT (cpu_serial, org_id) DO NOTHING;
+
+INSERT INTO players (id, name, cpu_serial, org_id, status, ip_address, created_at, updated_at)
+SELECT 
+  gen_random_uuid(),
+  'Player 2 - Org 2',
+  'CPU-ORG2-002',
+  id,
+  'online',
+  '192.168.2.102',
+  NOW(),
+  NOW()
+FROM organizations WHERE name = 'Demo Organization 2'
 ON CONFLICT (cpu_serial, org_id) DO NOTHING;
 
 -- Players for Org 3
 INSERT INTO players (id, name, cpu_serial, org_id, status, ip_address, created_at, updated_at)
-VALUES
-  (gen_random_uuid(), 'Player 1 - Org 3', 'CPU-ORG3-001', 'org-demo-003', 'online', '192.168.3.101', NOW(), NOW())
+SELECT 
+  gen_random_uuid(),
+  'Player 1 - Org 3',
+  'CPU-ORG3-001',
+  id,
+  'online',
+  '192.168.3.101',
+  NOW(),
+  NOW()
+FROM organizations WHERE name = 'Demo Organization 3'
 ON CONFLICT (cpu_serial, org_id) DO NOTHING;
 
 -- Step 6: Verify Setup
