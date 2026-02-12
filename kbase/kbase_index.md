@@ -1,196 +1,238 @@
-# Kbase Index
+# Kbase Index - ODS Digital Signage Platform
 
-**Master navigation for ODS Cloud knowledge base**  
+**Master navigation for ODS Digital Signage knowledge base**  
 **Format:** Thing : Description : Location  
-**Last Updated:** February 10, 2026
+**Last Updated:** February 11, 2026
 
 ---
 
 ## 📁 Quick Navigation
 
 ### By Purpose
-- **Architecture Docs** → `/kbase/docs/architecture/`
-- **Deployment Guides** → `/kbase/docs/deployment/`
-- **Development Guides** → `/kbase/docs/development/`
-- **API Reference** → `/kbase/docs/reference/`
-- **Current Artifacts** → `/kbase/artifacts/current/`
-- **Archive** → `/kbase/artifacts/archive/`
+- **Project Overview** → `/kbase/PROJECT_OVERVIEW.md`
+- **Current Auth Docs** → `/kbase/artifacts/current/auth/`
+- **Task Master List** → `/kbase/artifacts/current/task.md`
+- **Deployment Guides** → `/server/migrations/`
+- **Complete Archive** → `/kbase/artifacts/archive/`
 
-### By Component
-- **Dashboard** → `/kbase/docs/architecture/dashboard.md`
-- **Server** → `/kbase/docs/architecture/server.md`
-- **Player OS** → `/kbase/docs/architecture/player-os.md`
-- **Database** → `/kbase/docs/reference/database-schema.md`
-
----
-
-## 🏗️ Architecture Documentation
-
-### System Overview
-- system-overview.md : Complete architecture documentation : `/kbase/docs/architecture/`
-
-### Component Details
-- dashboard.md : Next.js dashboard architecture : `/kbase/docs/architecture/` (TODO)
-- server.md : Express.js server architecture : `/kbase/docs/architecture/` (TODO)
-- player-os.md : Raspberry Pi player OS : `/kbase/docs/architecture/` (TODO)
+### By System
+- **Authentication** → `/kbase/artifacts/current/auth/`
+- **Database** → `/kbase/artifacts/current/database/`
+- **API Routes** → `/kbase/artifacts/current/api/`
+- **Frontend** → `/kbase/artifacts/current/frontend/`
+- **Deployment** → `/kbase/artifacts/current/deployment/`
 
 ---
 
-## 📚 Reference Documentation
+## 🏗️ Current Production Documentation
 
-### Access & Credentials
-- ssh-access.md : SSH credentials and commands : `/kbase/docs/reference/`
+### Authentication & Multi-Tenancy
+- phase5_tenant_filtering_walkthrough.md : Complete tenant filtering implementation : `/kbase/artifacts/current/auth/`
+- phase5_auth_plan.md : Phase 5 implementation plan : `/kbase/artifacts/current/auth/`
+- supabase_quick_start.md : Quick start guide for Supabase setup : `/kbase/artifacts/current/auth/`
 
-### API Documentation
-- api-reference.md : REST API endpoints : `/kbase/docs/reference/` (TODO)
-- websocket-events.md : WebSocket event reference : `/kbase/docs/reference/` (TODO)
-
-### Database
-- database-schema.md : Supabase and SQLite schemas : `/kbase/docs/reference/` (TODO)
-
----
-
-## 🚀 Deployment Guides
-
-### Production
-- production.md : Production deployment guide : `/kbase/docs/deployment/` (TODO)
-- environment.md : Environment configuration : `/kbase/docs/deployment/` (TODO)
-
-### Development
-- dev-device.md : Dev device setup guide : `/kbase/docs/deployment/` (TODO)
-- local-development.md : Local development setup : `/kbase/docs/deployment/` (TODO)
-
----
-
-## 💻 Development Guides
-
-### Getting Started
-- getting-started.md : Quick start for developers : `/kbase/docs/development/` (TODO)
-- code-style.md : Code style and conventions : `/kbase/docs/development/` (TODO)
-
-### Component Development
-- dashboard-development.md : Dashboard development guide : `/kbase/docs/development/` (TODO)
-- server-development.md : Server development guide : `/kbase/docs/development/` (TODO)
-
----
-
-## 📦 Current Artifacts
-
-### Dashboard
-- Settings Pages : Complete settings implementation : `/kbase/artifacts/current/dashboard/settings/`
-  - Profile, Security, Notifications, Team, Billing, API
-- Authentication : Supabase auth integration : `/kbase/artifacts/current/dashboard/auth/`
-
-### Server
-- Pairing System : Device pairing implementation : `/kbase/artifacts/current/server/pairing/`
-- API Routes : REST API endpoints : `/kbase/artifacts/current/server/api/`
-
-### Player
-- Pairing Screen : Dark-themed pairing interface : `/kbase/artifacts/current/player/pairing/`
-- Boot Splash : Plymouth boot screen : `/kbase/artifacts/current/player/boot/`
+### Project Management
+- task.md : Master task list for all phases : `/kbase/artifacts/current/`
 
 ### Deployment
-- SSH Scripts : Deployment automation : `/kbase/artifacts/current/deployment/`
-- Migration Scripts : Database migrations : `/kbase/artifacts/current/deployment/migrations/`
+- SUPABASE_CUSTOM_CLAIMS_GUIDE.md : Comprehensive Supabase hook guide : `/server/migrations/`
+- supabase-custom-claims-hook.sql : Custom claims SQL function : `/server/migrations/`
+- SUPABASE_MIGRATION_INSTRUCTIONS.md : Migration instructions : `/server/migrations/`
+- beta-state-push-supabase.sql : Beta state migration : `/server/migrations/`
 
 ---
 
-## 🗂️ Archive
+## 📚 Core Documentation
 
-### 2026-02-09
-- Initial kbase structure created
-- System overview documentation
-- SSH access reference
+### Architecture
+- PROJECT_OVERVIEW.md : Complete system architecture & overview : `/kbase/`
+  - Technology stack
+  - User roles & permissions
+  - Database schema
+  - Security model
+  - Project structure
+  - Development phases
+
+### Backend Code
+- server/middleware/auth.js : Auth middleware + RBAC functions : `/server/middleware/`
+- server/routes/view-as.js : View As API for ODS staff : `/server/routes/`
+- server/routes/players.js : Players API (tenant-filtered) : `/server/routes/`
+- server/routes/playlists.js : Playlists API (tenant-filtered) : `/server/routes/`
+- server/routes/player-groups.js : Player Groups API (tenant-filtered) : `/server/routes/`
+- server/routes/content.js : Content API (tenant-filtered) : `/server/routes/`
+- server/routes/folders.js : Folders API (tenant-filtered) : `/server/routes/`
+- server/routes/playlist-templates.js : Templates API (tenant-filtered) : `/server/routes/`
+
+### Frontend Code
+- dashboard/lib/auth.ts : Auth utilities (authenticatedFetch, etc.) : `/dashboard/lib/`
+- dashboard/components/AuthProvider.tsx : Auth context provider : `/dashboard/components/`
+- dashboard/components/RoleGate.tsx : Role-based UI rendering : `/dashboard/components/`
 
 ---
 
-## 🔗 External Resources
+## 📦 Complete Archive
 
-### Production URLs
-- Dashboard : https://ods-cloud.com
-- Server API : http://209.38.118.127:3001
-- Dev Device : http://10.111.123.101
+**Location:** `/kbase/artifacts/archive/`
 
-### Repositories
-- Main Repo : https://github.com/rob-jonesdevlab/ods-signage
-- Documentation : This kbase directory
+**Contains:**
+- All phase walkthroughs (phase1-5)
+- All phase implementation plans
+- Historical documentation
+- Evolution tracking
 
-### Services
-- Supabase : https://dimcecmdkoaxakknftwg.supabase.co
-- Vercel : https://vercel.com/rob-jonesdevlab/ods-signage
+**Purpose:** Historical reference, evolution tracking, complete context for future iterations
+
+---
+
+## 🎯 Key Features
+
+### Multi-Tenancy
+- **Tenant Isolation** : All routes filter by org_id : Backend API + Supabase RLS
+- **Auto-Injection** : org_id auto-injected on create : All POST routes
+- **Ownership Verification** : Verify ownership on update/delete : All PATCH/DELETE routes
+- **ODSAdmin Override** : Can see all orgs when not in View As : All GET routes
+
+### Role-Based Access Control (RBAC)
+- **6 Roles** : Owner, Manager, Viewer, Integrations, ODSAdmin, ODSTech : User metadata
+- **8 Middleware Functions** : authMiddleware, requireRole, requireWriteAccess, etc. : `/server/middleware/auth.js`
+- **Applied to All Routes** : GET/POST/PATCH/DELETE protection : All API routes
+
+### View As Functionality
+- **ODS Staff Impersonation** : View as customer or tech : `/server/routes/view-as.js`
+- **Audit Logging** : All View As actions logged : Supabase audit_logs table
+- **JWT Claims** : view_as claim in JWT : Custom access token hook
+
+### Supabase Integration
+- **Custom Claims Hook** : Injects org_id, role, view_as into JWT : `/server/migrations/supabase-custom-claims-hook.sql`
+- **RLS Policies** : 15 policies across 4 tables : Supabase Dashboard
+- **Auth Provider** : Supabase Auth integration : `/dashboard/components/AuthProvider.tsx`
+
+---
+
+## 🔗 Cross-References
+
+### Authentication System
+- Auth Middleware : RBAC enforcement : `/server/middleware/auth.js`
+- View As API : ODS staff impersonation : `/server/routes/view-as.js`
+- Auth Utilities : Frontend auth helpers : `/dashboard/lib/auth.ts`
+- Auth Provider : React context : `/dashboard/components/AuthProvider.tsx`
+- Custom Claims Hook : JWT claims injection : `/server/migrations/supabase-custom-claims-hook.sql`
+
+### Tenant-Filtered Routes
+- Players API : org_id filtering : `/server/routes/players.js`
+- Playlists API : org_id filtering : `/server/routes/playlists.js`
+- Player Groups API : organization_id filtering : `/server/routes/player-groups.js`
+- Content API : org_id filtering : `/server/routes/content.js`
+- Folders API : org_id filtering : `/server/routes/folders.js`
+- Playlist Templates API : organization_id filtering : `/server/routes/playlist-templates.js`
+
+### Documentation
+- Project Overview : Complete system architecture : `/kbase/PROJECT_OVERVIEW.md`
+- Phase 5 Walkthrough : Tenant filtering implementation : `/kbase/artifacts/current/auth/phase5_tenant_filtering_walkthrough.md`
+- Supabase Guide : Custom claims setup : `/server/migrations/SUPABASE_CUSTOM_CLAIMS_GUIDE.md`
+- Quick Start : 5-minute setup : `/kbase/artifacts/current/auth/supabase_quick_start.md`
 
 ---
 
 ## 🎯 Common Tasks
 
-### Find SSH Credentials
-1. Navigate to `/kbase/docs/reference/ssh-access.md`
-2. Dev device: `root@10.111.123.101` (password: `0d52o26!`)
-3. SSH key: `~/.ssh/id_ed25519_rpi5`
+### Find Latest Documentation
+1. Navigate to `/kbase/PROJECT_OVERVIEW.md` for system overview
+2. Check `/kbase/artifacts/current/[system]/` for system-specific docs
+3. Check `/server/migrations/` for deployment guides
 
-### Deploy to Dev Device
-```bash
-scp -i ~/.ssh/id_ed25519_rpi5 player/pairing.html \
-  root@10.111.123.101:/home/signage/ODS/webgui/pairing.html
-```
+### Find Code Implementation
+1. Backend routes: `/server/routes/`
+2. Auth middleware: `/server/middleware/auth.js`
+3. Frontend components: `/dashboard/components/`
+4. Frontend utilities: `/dashboard/lib/`
 
-### Access Production Server
-```bash
-ssh root@209.38.118.127
-cd /root/ods-server
-pm2 logs ods-server
-```
+### Deploy Supabase Hook
+1. Read `/server/migrations/SUPABASE_CUSTOM_CLAIMS_GUIDE.md`
+2. Or use quick start: `/kbase/artifacts/current/auth/supabase_quick_start.md`
+3. Execute SQL from `/server/migrations/supabase-custom-claims-hook.sql`
 
-### Run Database Migrations
-1. Navigate to `/server/migrations/`
-2. Open Supabase SQL Editor
-3. Run migration scripts in order
+### Test Tenant Isolation
+1. Follow testing checklist in `/kbase/PROJECT_OVERVIEW.md`
+2. Review walkthrough: `/kbase/artifacts/current/auth/phase5_tenant_filtering_walkthrough.md`
+3. Check audit logs in Supabase
+
+### Add New Feature
+1. Review architecture in `/kbase/PROJECT_OVERVIEW.md`
+2. Follow tenant filtering patterns from existing routes
+3. Apply RBAC middleware from `/server/middleware/auth.js`
+4. Update documentation in `/kbase/`
 
 ---
 
 ## 📊 Statistics
 
-**Total Documentation Files:** 3
-- Architecture: 1
-- Reference: 1
-- README: 1
+**Total Documentation Files:** 15+
+- Current artifacts: 4 files
+- Archive artifacts: 10+ files
+- Deployment guides: 3 files
+- Project overview: 1 file
 
-**Components:**
-- Dashboard (Next.js)
-- Server (Express.js)
-- Player OS (Raspberry Pi 5)
+**Total Code Files with Tenant Filtering:** 6
+- Players, Playlists, Player Groups, Content, Folders, Playlist Templates
 
-**Deployment Targets:**
-- Production: Vercel + DigitalOcean
-- Development: Local + Dev Device (10.111.123.101)
+**Total RBAC Middleware Functions:** 8
+- authMiddleware, requireRole, requireODSStaff, requireCustomer, requireWriteAccess, requireOwner, hasOrgAccess, verifyOrgAccess
+
+**Total Supabase RLS Policies:** 15
+- Organizations (4), Users (4), Tech Assignments (3), Audit Logs (4)
+
+**Total User Roles:** 6
+- Owner, Manager, Viewer, Integrations, ODSAdmin, ODSTech
+
+**Development Phases Completed:** 5
+- Phase 1: Database & Auth Foundation
+- Phase 2: Player Groups & Templates
+- Phase 3: Audit Trail & API Keys
+- Phase 4: Analytics & Polish
+- Phase 5: Authentication & Multi-Tenancy (95% complete)
 
 ---
 
 ## 🔄 Maintenance
 
 ### Adding New Documentation
-1. Create file in appropriate `/kbase/docs/` subdirectory
-2. Follow existing documentation patterns
-3. Update this index with new entry
-4. Commit with descriptive message
+1. Create file in `/kbase/artifacts/current/[system]/`
+2. Add entry to this index under appropriate section
+3. Update cross-references if needed
+4. Archive old versions to `/kbase/artifacts/archive/`
 
-### Archiving
-1. Copy current artifacts to `/kbase/artifacts/archive/YYYY-MM-DD/`
-2. Update `/kbase/artifacts/current/` with new versions
-3. Document changes in this index
+### Updating Existing Documentation
+1. Edit file in `/kbase/artifacts/current/`
+2. Move old version to `/kbase/artifacts/archive/`
+3. Update this index with new information
+4. Update cross-references if changed
 
-### Updating Credentials
-1. Update `/kbase/docs/reference/ssh-access.md`
-2. Never commit passwords to git (use .env files)
-3. Update this index if file locations change
-
----
-
-**Last Updated:** February 9, 2026  
-**Created By:** Development Team  
-**Purpose:** Master navigation for ODS Cloud knowledge base  
-**Files Indexed:** 3 (growing)
+### Archiving Old Versions
+1. Copy to `/kbase/artifacts/archive/` with date
+2. Keep latest in `/kbase/artifacts/current/`
+3. Update this index to reflect archive location
 
 ---
 
-**ODS Cloud - Digital Signage Platform** 🎨✨
+## 🚀 Next Steps
+
+### Immediate (Phase 5 Completion)
+- [ ] Test end-to-end auth flow with all roles
+- [ ] Verify tenant isolation (no data leaks)
+- [ ] Test View As functionality
+- [ ] Verify audit logging
+
+### Future Phases
+- [ ] Phase 6: Production deployment
+- [ ] Phase 7: Advanced analytics
+- [ ] Phase 8: Mobile app
+- [ ] Phase 9: Advanced scheduling
+
+---
+
+**Last Updated:** February 11, 2026, 7:45 PM PST  
+**Created By:** Antigravity (Google Deepmind)  
+**Purpose:** Master navigation for ODS Digital Signage knowledge base  
+**Files Indexed:** 15+ documentation files, 6 tenant-filtered routes, 8 RBAC functions  
+**Status:** Phase 5 (Auth & Multi-Tenancy) - 95% Complete

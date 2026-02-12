@@ -1,8 +1,14 @@
-# ODS Cloud Knowledge Base
+# ODS Digital Signage - Knowledge Base
 
-**Centralized documentation and knowledge repository for the ODS Digital Signage platform**
+**Institutional memory and technical documentation for the ODS Digital Signage platform**
 
-Last Updated: February 9, 2026
+Last Updated: February 11, 2026
+
+---
+
+## 📚 What is this?
+
+This knowledge base (`kbase`) serves as the **permanent institutional memory** for the ODS Digital Signage project. It provides complete context for future iterations (AI agents, developers, team members) to understand the system without starting from scratch.
 
 ---
 
@@ -11,58 +17,75 @@ Last Updated: February 9, 2026
 ```
 kbase/
 ├── README.md                    # This file
-├── kbase_index.md              # Master navigation index
-├── docs/                       # High-level documentation
-│   ├── architecture/           # System architecture docs
-│   ├── deployment/             # Deployment guides
-│   ├── development/            # Development guides
-│   └── reference/              # API and database references
-└── artifacts/                  # Implementation artifacts
-    ├── current/                # Latest production code
-    │   ├── dashboard/          # Dashboard-specific artifacts
-    │   ├── server/             # Server-specific artifacts
-    │   ├── player/             # Player-specific artifacts
-    │   └── deployment/         # Deployment artifacts
-    └── archive/                # Historical versions
-        └── YYYY-MM-DD/         # Date-based archives
+├── kbase_index.md              # Master navigation (START HERE!)
+├── PROJECT_OVERVIEW.md         # Complete system architecture
+│
+├── artifacts/
+│   ├── current/                # Latest documentation
+│   │   ├── auth/              # Authentication & multi-tenancy
+│   │   ├── database/          # Database schema & migrations
+│   │   ├── api/               # API route documentation
+│   │   ├── frontend/          # Frontend components
+│   │   ├── deployment/        # Deployment guides
+│   │   └── task.md            # Master task list
+│   │
+│   └── archive/               # Historical artifacts
+│       └── [phase walkthroughs, plans, etc.]
+│
+└── docs/
+    ├── reference/             # Technical reference
+    ├── guides/                # How-to guides
+    └── milestones/            # Project milestones
 ```
 
 ---
 
-## 🎯 Quick Access
+## 🚀 Quick Start
 
-### For Developers
-- **Getting Started** → `/kbase/docs/development/getting-started.md`
-- **Architecture Overview** → `/kbase/docs/architecture/system-overview.md`
-- **API Reference** → `/kbase/docs/reference/api-reference.md`
-- **Database Schema** → `/kbase/docs/reference/database-schema.md`
+### For New Team Members / AI Iterations
 
-### For Deployment
-- **Production Deployment** → `/kbase/docs/deployment/production.md`
-- **Dev Device Setup** → `/kbase/docs/deployment/dev-device.md`
-- **Environment Configuration** → `/kbase/docs/deployment/environment.md`
+1. **Start here:** Read [`kbase_index.md`](./kbase_index.md) for master navigation
+2. **System overview:** Read [`PROJECT_OVERVIEW.md`](./PROJECT_OVERVIEW.md) for complete architecture
+3. **Current work:** Check [`artifacts/current/task.md`](./artifacts/current/task.md) for status
+4. **Latest docs:** Browse [`artifacts/current/`](./artifacts/current/) for system-specific documentation
 
-### For Operations
-- **SSH Access** → `/kbase/docs/reference/ssh-access.md`
-- **Troubleshooting** → `/kbase/docs/reference/troubleshooting.md`
-- **Monitoring** → `/kbase/docs/reference/monitoring.md`
+### For Specific Tasks
+
+**Setting up authentication:**
+- Quick start: [`artifacts/current/auth/supabase_quick_start.md`](./artifacts/current/auth/supabase_quick_start.md)
+- Comprehensive: [`../server/migrations/SUPABASE_CUSTOM_CLAIMS_GUIDE.md`](../server/migrations/SUPABASE_CUSTOM_CLAIMS_GUIDE.md)
+
+**Understanding tenant isolation:**
+- Read: [`PROJECT_OVERVIEW.md`](./PROJECT_OVERVIEW.md) → Security Model
+- Walkthrough: [`artifacts/current/auth/phase5_tenant_filtering_walkthrough.md`](./artifacts/current/auth/phase5_tenant_filtering_walkthrough.md)
 
 ---
 
-## 🔍 Navigation
+## 🎯 Key Documentation
 
-Use `kbase_index.md` for comprehensive navigation across all documentation and artifacts.
+### Essential Reading
+
+1. **[kbase_index.md](./kbase_index.md)** - Master navigation
+2. **[PROJECT_OVERVIEW.md](./PROJECT_OVERVIEW.md)** - Complete system architecture
+3. **[artifacts/current/task.md](./artifacts/current/task.md)** - Master task list
+
+### Current Phase (Phase 5: Auth & Multi-Tenancy)
+
+- **[phase5_tenant_filtering_walkthrough.md](./artifacts/current/auth/phase5_tenant_filtering_walkthrough.md)** - Implementation walkthrough
+- **[phase5_auth_plan.md](./artifacts/current/auth/phase5_auth_plan.md)** - Implementation plan
+- **[supabase_quick_start.md](./artifacts/current/auth/supabase_quick_start.md)** - 5-minute setup
 
 ---
 
 ## 📝 Contributing
 
 When adding new documentation:
-1. Place in appropriate `/kbase/docs/` subdirectory
-2. Archive old versions to `/kbase/artifacts/archive/YYYY-MM-DD/`
-3. Update `/kbase/kbase_index.md`
-4. Follow existing documentation patterns
+1. Create file in `artifacts/current/[system]/`
+2. Update [`kbase_index.md`](./kbase_index.md) with new entry
+3. Add cross-references to related docs
+4. Archive old versions to `artifacts/archive/`
 
 ---
 
-**ODS Cloud - Digital Signage Platform** 🎨✨
+**ODS Digital Signage Platform** - Multi-Tenant SaaS Digital Signage Management System 🎨✨  
+**Pattern:** Inspired by pds-backbone kbase structure
