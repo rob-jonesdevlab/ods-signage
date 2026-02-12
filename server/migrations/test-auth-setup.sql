@@ -157,16 +157,20 @@ WHERE email = 'tech@ods.com';
 
 -- Step 4: Create Tech Assignment
 -- =============================================
--- Assign ODSTech to Org 1
+-- NOTE: Run this AFTER creating users in Supabase Dashboard
+-- The tech@ods.com user must exist before this can run
 
+-- Uncomment and run this after creating users:
+/*
 INSERT INTO tech_assignments (id, tech_user_id, organization_id, assigned_at)
 VALUES (
   gen_random_uuid(),
   (SELECT id FROM auth.users WHERE email = 'tech@ods.com'),
-  (SELECT id FROM organizations WHERE name = 'Demo Organization 1'),
+  (SELECT id FROM organizations WHERE slug = 'demo-org-1'),
   NOW()
 )
 ON CONFLICT DO NOTHING;
+*/
 
 -- Step 5: Create Test Players
 -- =============================================
@@ -280,9 +284,10 @@ ORDER BY email;
 SELECT 
   ta.id,
   u.email as tech_email,
-  o.name as org_name
+  o.name as org_name,
+  o.slug as org_slug
 FROM tech_assignments ta
-JOIN auth.users u ON ta.tech_id = u.id
+JOIN auth.users u ON ta.tech_user_id = u.id
 JOIN organizations o ON ta.organization_id = o.id;
 
 -- Check players by org
