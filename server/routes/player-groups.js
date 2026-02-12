@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
 
         // Get groups with player counts
         let groups;
-        if (req.user.role === 'ODSAdmin' && !req.user.view_as) {
+        if (req.user.app_role === 'ODSAdmin' && !req.user.view_as) {
             groups = db.prepare(`
                 SELECT 
                     pg.*,
@@ -48,7 +48,7 @@ router.get('/:id', async (req, res) => {
         const orgId = req.user.effective_organization_id;
 
         let group;
-        if (req.user.role === 'ODSAdmin' && !req.user.view_as) {
+        if (req.user.app_role === 'ODSAdmin' && !req.user.view_as) {
             group = db.prepare('SELECT * FROM player_groups WHERE id = ?').get(req.params.id);
         } else {
             group = db.prepare('SELECT * FROM player_groups WHERE id = ? AND organization_id = ?').get(req.params.id, orgId);

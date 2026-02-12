@@ -10,7 +10,7 @@ router.get('/', (req, res) => {
         const orgId = req.user.effective_organization_id;
 
         let templates;
-        if (req.user.role === 'ODSAdmin' && !req.user.view_as) {
+        if (req.user.app_role === 'ODSAdmin' && !req.user.view_as) {
             templates = db.prepare(`
                 SELECT id, name, description, organization_id, 
                        content_items, duration_per_item,
@@ -141,7 +141,7 @@ router.delete('/:id', requireOwner, (req, res) => {
 
         // Verify ownership
         let template;
-        if (req.user.role === 'ODSAdmin' && !req.user.view_as) {
+        if (req.user.app_role === 'ODSAdmin' && !req.user.view_as) {
             template = db.prepare('SELECT id FROM playlist_templates WHERE id = ?').get(req.params.id);
         } else {
             template = db.prepare('SELECT id FROM playlist_templates WHERE id = ? AND organization_id = ?').get(req.params.id, orgId);

@@ -1,4 +1,5 @@
 'use client';
+import { API_URL } from '@/lib/api';
 
 import { useEffect, useState, useCallback } from 'react';
 import Header from '@/components/Header';
@@ -46,15 +47,15 @@ export default function DashboardPage() {
     const fetchDashboardData = useCallback(async () => {
         try {
             // Fetch players
-            const playersRes = await fetch('http://localhost:3001/api/players');
+            const playersRes = await fetch(`${API_URL}/api/players');
             const players = await playersRes.json();
 
             // Fetch content
-            const contentRes = await fetch('http://localhost:3001/api/content');
+            const contentRes = await fetch(`${API_URL}/api/content');
             const content = await contentRes.json();
 
             // Fetch playlists
-            const playlistsRes = await fetch('http://localhost:3001/api/playlists');
+            const playlistsRes = await fetch(`${API_URL}/api/playlists');
             const playlists = await playlistsRes.json();
 
             // Calculate storage from content metadata

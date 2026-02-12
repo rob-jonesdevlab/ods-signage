@@ -50,7 +50,7 @@ router.post('/switch', authMiddleware, requireODSStaff, async (req, res) => {
         }
 
         // For ODSTech, verify they have access to this org
-        if (req.user.role === 'ODSTech') {
+        if (req.user.app_role === 'ODSTech') {
             const { data: assignment, error: assignmentError } = await supabase
                 .from('tech_assignments')
                 .select('id')
@@ -70,7 +70,7 @@ router.post('/switch', authMiddleware, requireODSStaff, async (req, res) => {
         const viewAsContext = {
             mode,
             organization_id,
-            original_role: req.user.role
+            original_role: req.user.app_role
         };
 
         // Log the switch in audit logs
@@ -238,7 +238,7 @@ router.get('/available', authMiddleware, requireODSStaff, async (req, res) => {
     try {
         let organizations;
 
-        if (req.user.role === 'ODSAdmin') {
+        if (req.user.app_role === 'ODSAdmin') {
             // ODSAdmin can view all organizations
             const { data, error } = await supabase
                 .from('organizations')
@@ -247,7 +247,7 @@ router.get('/available', authMiddleware, requireODSStaff, async (req, res) => {
 
             if (error) throw error;
             organizations = data;
-        } else if (req.user.role === 'ODSTech') {
+        } else if (req.user.app_role === 'ODSTech') {
             // ODSTech can only view assigned organizations
             const { data, error } = await supabase
                 .from('tech_assignments')

@@ -1,4 +1,5 @@
 'use client';
+import { API_URL } from '@/lib/api';
 
 import { useState, useEffect } from 'react';
 
@@ -54,7 +55,7 @@ export default function PairDeviceModal({ isOpen, onClose, onSuccess }: PairDevi
         setError('');
 
         try {
-            const response = await fetch('http://localhost:3001/api/pairing/verify', {
+            const response = await fetch(`${API_URL}/api/pairing/verify', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

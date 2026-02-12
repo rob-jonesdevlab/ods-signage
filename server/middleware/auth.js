@@ -32,16 +32,26 @@ async function authMiddleware(req, res, next) {
             });
         }
 
-        // Extract custom claims from user metadata
-        const metadata = user.user_metadata || {};
+        // Extract custom claims from JWT (not metadata)
+        // Custom claims are injected by Supabase custom_access_token_hook
+        // Decode the JWT to access our custom claims
+        let jwtPayload = {};
+        try {
+            const parts = token.split('.');
+            if (parts.length === 3) {
+                jwtPayload = JSON.parse(Buffer.from(parts[1], 'base64').toString('utf8'));
+            }
+        } catch (decodeError) {
+            console.error('Error decoding JWT:', decodeError);
+        }
 
         // Inject user context into request
         req.user = {
             id: user.id,
             email: user.email,
-            organization_id: metadata.organization_id || null,
-            role: metadata.role || 'Viewer',
-            view_as: metadata.view_as || null
+            organization_id: jwtPayload.organization_id || null,
+            app_role: jwtPayload.app_role || 'Viewer',
+            view_as: jwtPayload.view_as || null
         };
 
         // Get effective organization (for "View As" functionality)
@@ -49,7 +59,7 @@ async function authMiddleware(req, res, next) {
         req.user.effective_organization_id = req.user.view_as?.organization_id || req.user.organization_id;
 
         // Log auth success (optional, for debugging)
-        console.log(`[Auth] User ${req.user.email} (${req.user.role}) authenticated for org ${req.user.effective_organization_id}`);
+        console.log(`[Auth] User ${req.user.email} (${req.user.app_role}) authenticated for org ${req.user.effective_organization_id}`);
 
         next();
     } catch (error) {
@@ -81,7 +91,7 @@ function requireRole(...allowedRoles) {
         }
 
         // Use original role if viewing as another org
-        const userRole = req.user.view_as?.original_role || req.user.role;
+        const userRole = req.user.view_as?.original_role || req.user.app_role;
 
         if (!allowedRoles.includes(userRole)) {
             return res.status(403).json({
@@ -139,7 +149,7 @@ function hasOrgAccess(req, orgId) {
     if (!req.user) return false;
 
     // ODSAdmin has access to all orgs (when not in View As mode)
-    if (req.user.role === 'ODSAdmin' && !req.user.view_as) {
+    if (req.user.app_role === 'ODSAdmin' && !req.user.view_as) {
         return true;
     }
 

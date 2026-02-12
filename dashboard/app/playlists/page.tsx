@@ -1,4 +1,5 @@
 'use client';
+import { API_URL } from '@/lib/api';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -99,7 +100,7 @@ export default function PlaylistsPage() {
         if (!newPlaylistName.trim()) return;
 
         try {
-            const response = await fetch('http://localhost:3001/api/playlists', {
+            const response = await fetch(`${API_URL}/api/playlists', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

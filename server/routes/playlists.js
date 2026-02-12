@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
         const orgId = req.user.effective_organization_id;
 
         let playlists;
-        if (req.user.role === 'ODSAdmin' && !req.user.view_as) {
+        if (req.user.app_role === 'ODSAdmin' && !req.user.view_as) {
             playlists = db.prepare('SELECT * FROM playlists_v2 ORDER BY name ASC').all();
         } else {
             playlists = db.prepare('SELECT * FROM playlists_v2 WHERE org_id = ? ORDER BY name ASC').all(orgId);
@@ -30,7 +30,7 @@ router.get('/:id', async (req, res) => {
         const orgId = req.user.effective_organization_id;
 
         let playlist;
-        if (req.user.role === 'ODSAdmin' && !req.user.view_as) {
+        if (req.user.app_role === 'ODSAdmin' && !req.user.view_as) {
             playlist = db.prepare('SELECT * FROM playlists_v2 WHERE id = ?').get(req.params.id);
         } else {
             playlist = db.prepare('SELECT * FROM playlists_v2 WHERE id = ? AND org_id = ?').get(req.params.id, orgId);
@@ -145,7 +145,7 @@ router.put('/:id', requireWriteAccess, async (req, res) => {
 
         // Verify ownership
         let playlist;
-        if (req.user.role === 'ODSAdmin' && !req.user.view_as) {
+        if (req.user.app_role === 'ODSAdmin' && !req.user.view_as) {
             playlist = db.prepare('SELECT * FROM playlists_v2 WHERE id = ?').get(req.params.id);
         } else {
             playlist = db.prepare('SELECT * FROM playlists_v2 WHERE id = ? AND org_id = ?').get(req.params.id, orgId);
@@ -199,7 +199,7 @@ router.delete('/:id', requireOwner, async (req, res) => {
 
         // Verify ownership
         let playlist;
-        if (req.user.role === 'ODSAdmin' && !req.user.view_as) {
+        if (req.user.app_role === 'ODSAdmin' && !req.user.view_as) {
             playlist = db.prepare('SELECT * FROM playlists_v2 WHERE id = ?').get(req.params.id);
         } else {
             playlist = db.prepare('SELECT * FROM playlists_v2 WHERE id = ? AND org_id = ?').get(req.params.id, orgId);

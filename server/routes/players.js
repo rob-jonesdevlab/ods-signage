@@ -15,7 +15,7 @@ module.exports = function (db) {
 
             // ODSAdmin can see all players when not in View As mode
             let players;
-            if (req.user.role === 'ODSAdmin' && !req.user.view_as) {
+            if (req.user.app_role === 'ODSAdmin' && !req.user.view_as) {
                 players = db.prepare('SELECT * FROM players ORDER BY created_at DESC').all();
             } else {
                 players = db.prepare('SELECT * FROM players WHERE org_id = ? ORDER BY created_at DESC').all(orgId);
@@ -82,7 +82,7 @@ module.exports = function (db) {
             const orgId = req.user.effective_organization_id;
 
             let player;
-            if (req.user.role === 'ODSAdmin' && !req.user.view_as) {
+            if (req.user.app_role === 'ODSAdmin' && !req.user.view_as) {
                 player = db.prepare('SELECT * FROM players WHERE id = ?').get(id);
             } else {
                 player = db.prepare('SELECT * FROM players WHERE id = ? AND org_id = ?').get(id, orgId);
@@ -113,7 +113,7 @@ module.exports = function (db) {
 
             // Verify player exists and belongs to user's org
             let player;
-            if (req.user.role === 'ODSAdmin' && !req.user.view_as) {
+            if (req.user.app_role === 'ODSAdmin' && !req.user.view_as) {
                 player = db.prepare('SELECT * FROM players WHERE id = ?').get(id);
             } else {
                 player = db.prepare('SELECT * FROM players WHERE id = ? AND org_id = ?').get(id, orgId);
@@ -171,7 +171,7 @@ module.exports = function (db) {
 
             // Verify player exists and belongs to user's org
             let player;
-            if (req.user.role === 'ODSAdmin' && !req.user.view_as) {
+            if (req.user.app_role === 'ODSAdmin' && !req.user.view_as) {
                 player = db.prepare('SELECT * FROM players WHERE id = ?').get(id);
             } else {
                 player = db.prepare('SELECT * FROM players WHERE id = ? AND org_id = ?').get(id, orgId);

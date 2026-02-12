@@ -1,4 +1,5 @@
 'use client';
+import { API_URL } from '@/lib/api';
 
 import { useState, useEffect, useCallback } from 'react';
 import Header from '@/components/Header';
@@ -78,9 +79,9 @@ export default function AnalyticsPage() {
         try {
             // Fetch all data sources
             const [playersRes, contentRes, playlistsRes] = await Promise.all([
-                fetch('http://localhost:3001/api/players'),
-                fetch('http://localhost:3001/api/content'),
-                fetch('http://localhost:3001/api/playlists')
+                fetch(`${API_URL}/api/players'),
+                fetch(`${API_URL}/api/content'),
+                fetch(`${API_URL}/api/playlists')
             ]);
 
             const players = await playersRes.json();

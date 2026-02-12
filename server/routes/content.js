@@ -105,7 +105,7 @@ module.exports = function (db) {
             const params = [];
 
             // Tenant filtering
-            if (req.user.role !== 'ODSAdmin' || req.user.view_as) {
+            if (req.user.app_role !== 'ODSAdmin' || req.user.view_as) {
                 query += ' AND org_id = ?';
                 params.push(orgId);
             }
@@ -382,7 +382,7 @@ module.exports = function (db) {
 
             // Get content to find file paths and verify ownership
             let content;
-            if (req.user.role === 'ODSAdmin' && !req.user.view_as) {
+            if (req.user.app_role === 'ODSAdmin' && !req.user.view_as) {
                 content = db.prepare('SELECT * FROM content WHERE id = ?').get(id);
             } else {
                 content = db.prepare('SELECT * FROM content WHERE id = ? AND org_id = ?').get(id, orgId);

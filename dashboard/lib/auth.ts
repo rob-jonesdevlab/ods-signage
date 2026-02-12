@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { API_URL } from './api';
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -50,23 +51,38 @@ export async function signOut() {
 }
 
 /**
- * Get current authenticated user with custom claims
+ * Get current authenticated user with custom claims from JWT
  */
 export async function getCurrentUser(): Promise<User | null> {
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) return null;
 
-    const metadata = user.user_metadata || {};
-    const viewAs = metadata.view_as || null;
+    // Get JWT to access custom claims
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (!session) return null;
+
+    // Decode JWT to get custom claims (organization_id, app_role, view_as)
+    let jwtPayload: any = {};
+    try {
+        const parts = session.access_token.split('.');
+        if (parts.length === 3) {
+            jwtPayload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+        }
+    } catch (error) {
+        console.error('Error decoding JWT:', error);
+    }
+
+    const viewAs = jwtPayload.view_as || null;
 
     return {
         id: user.id,
         email: user.email!,
-        organization_id: metadata.organization_id || '',
-        role: metadata.role || 'Viewer',
+        organization_id: jwtPayload.organization_id || '',
+        role: jwtPayload.app_role || 'Viewer',
         view_as: viewAs,
-        effective_organization_id: viewAs?.organization_id || metadata.organization_id || ''
+        effective_organization_id: viewAs?.organization_id || jwtPayload.organization_id || ''
     };
 }
 
@@ -176,7 +192,7 @@ export function isOwner(user: User | null): boolean {
  * Switch to "View As" mode (ODS staff only)
  */
 export async function switchViewAs(mode: 'tech' | 'customer', organizationId: string) {
-    const response = await authenticatedFetch('http://localhost:3001/api/view-as/switch', {
+    const response = await authenticatedFetch(`${API_URL}/api/view-as/switch`, {
         method: 'POST',
         body: JSON.stringify({ mode, organization_id: organizationId })
     });
@@ -198,7 +214,7 @@ export async function switchViewAs(mode: 'tech' | 'customer', organizationId: st
  * Exit "View As" mode (ODS staff only)
  */
 export async function exitViewAs() {
-    const response = await authenticatedFetch('http://localhost:3001/api/view-as/exit', {
+    const response = await authenticatedFetch(`${API_URL}/api/view-as/exit`, {
         method: 'POST'
     });
 
@@ -219,7 +235,7 @@ export async function exitViewAs() {
  * Get available organizations for View As (ODS staff only)
  */
 export async function getAvailableOrganizations(): Promise<Organization[]> {
-    const response = await authenticatedFetch('http://localhost:3001/api/view-as/available');
+    const response = await authenticatedFetch(`${API_URL}/api/view-as/available`);
 
     if (!response.ok) {
         const error = await response.json();
@@ -234,7 +250,7 @@ export async function getAvailableOrganizations(): Promise<Organization[]> {
  * Get current view mode (ODS staff only)
  */
 export async function getCurrentViewMode() {
-    const response = await authenticatedFetch('http://localhost:3001/api/view-as/current');
+    const response = await authenticatedFetch(`${API_URL}/api/view-as/current`);
 
     if (!response.ok) {
         const error = await response.json();

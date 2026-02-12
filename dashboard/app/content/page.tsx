@@ -1,4 +1,5 @@
 'use client';
+import { API_URL } from '@/lib/api';
 
 import { useEffect, useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
@@ -110,7 +111,7 @@ export default function ContentLibraryPage() {
     // Fetch folders
     const fetchFolders = useCallback(async () => {
         try {
-            const res = await fetch('http://localhost:3001/api/folders/tree');
+            const res = await fetch(`${API_URL}/api/folders/tree');
             if (!res.ok) {
                 console.error('Failed to fetch folders:', res.status);
                 setFolders([]);
@@ -202,7 +203,7 @@ export default function ContentLibraryPage() {
     // Create new folder
     const handleCreateFolder = async (name: string, parentId: string | null) => {
         try {
-            const res = await fetch('http://localhost:3001/api/folders', {
+            const res = await fetch(`${API_URL}/api/folders', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, parent_id: parentId }),
@@ -231,7 +232,7 @@ export default function ContentLibraryPage() {
             formData.append('name', file.name);
 
             try {
-                const res = await fetch('http://localhost:3001/api/content', {
+                const res = await fetch(`${API_URL}/api/content', {
                     method: 'POST',
                     body: formData,
                 });
@@ -327,7 +328,7 @@ export default function ContentLibraryPage() {
         }
 
         try {
-            const res = await fetch('http://localhost:3001/api/content/url', {
+            const res = await fetch(`${API_URL}/api/content/url', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

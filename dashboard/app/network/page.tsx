@@ -1,4 +1,5 @@
 'use client';
+import { API_URL } from '@/lib/api';
 
 import { useEffect, useState, useCallback } from 'react';
 import Header from '@/components/Header';
@@ -42,11 +43,11 @@ export default function NetworkPage() {
     const fetchNetworkData = useCallback(async () => {
         try {
             // Fetch players
-            const playersRes = await fetch('http://localhost:3001/api/players');
+            const playersRes = await fetch(`${API_URL}/api/players');
             const players = await playersRes.json();
 
             // Fetch content
-            const contentRes = await fetch('http://localhost:3001/api/content');
+            const contentRes = await fetch(`${API_URL}/api/content');
             const content = await contentRes.json();
 
             // Calculate stats

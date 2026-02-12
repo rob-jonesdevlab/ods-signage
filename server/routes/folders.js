@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
         const orgId = req.user.effective_organization_id;
 
         let folders;
-        if (req.user.role === 'ODSAdmin' && !req.user.view_as) {
+        if (req.user.app_role === 'ODSAdmin' && !req.user.view_as) {
             folders = db.prepare('SELECT * FROM folders ORDER BY name ASC').all();
         } else {
             folders = db.prepare('SELECT * FROM folders WHERE org_id = ? ORDER BY name ASC').all(orgId);
@@ -225,7 +225,7 @@ router.delete('/:id', requireOwner, async (req, res) => {
 
         // Get folder to check ownership and system status
         let folder;
-        if (req.user.role === 'ODSAdmin' && !req.user.view_as) {
+        if (req.user.app_role === 'ODSAdmin' && !req.user.view_as) {
             folder = db.prepare('SELECT is_system FROM folders WHERE id = ?').get(req.params.id);
         } else {
             folder = db.prepare('SELECT is_system FROM folders WHERE id = ? AND org_id = ?').get(req.params.id, orgId);

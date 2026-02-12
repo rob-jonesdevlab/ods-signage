@@ -1,4 +1,5 @@
 'use client';
+import { API_URL } from '@/lib/api';
 
 import { useState, useEffect } from 'react';
 
@@ -31,7 +32,7 @@ export default function AddContentModal({ isOpen, onClose, playlistId, onContent
     // Fetch all content from library
     useEffect(() => {
         if (isOpen) {
-            fetch('http://localhost:3001/api/content')
+            fetch(`${API_URL}/api/content')
                 .then((res) => res.json())
                 .then((data) => setAllContent(data))
                 .catch((err) => console.error('Failed to fetch content:', err));
