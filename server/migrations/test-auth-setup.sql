@@ -21,20 +21,31 @@ DECLARE
   org2_id UUID;
   org3_id UUID;
 BEGIN
-  -- Create organizations and get their IDs
-  INSERT INTO organizations (id, name, created_at, updated_at)
-  VALUES
-    (gen_random_uuid(), 'Demo Organization 1', NOW(), NOW()),
-    (gen_random_uuid(), 'Demo Organization 2', NOW(), NOW()),
-    (gen_random_uuid(), 'Demo Organization 3', NOW(), NOW())
-  ON CONFLICT (name) DO NOTHING;
-  
-  -- Store IDs for reference
+  -- Check if organizations already exist
   SELECT id INTO org1_id FROM organizations WHERE name = 'Demo Organization 1';
   SELECT id INTO org2_id FROM organizations WHERE name = 'Demo Organization 2';
   SELECT id INTO org3_id FROM organizations WHERE name = 'Demo Organization 3';
   
-  RAISE NOTICE 'Organization IDs created:';
+  -- Create organizations only if they don't exist
+  IF org1_id IS NULL THEN
+    INSERT INTO organizations (id, name, created_at, updated_at)
+    VALUES (gen_random_uuid(), 'Demo Organization 1', NOW(), NOW())
+    RETURNING id INTO org1_id;
+  END IF;
+  
+  IF org2_id IS NULL THEN
+    INSERT INTO organizations (id, name, created_at, updated_at)
+    VALUES (gen_random_uuid(), 'Demo Organization 2', NOW(), NOW())
+    RETURNING id INTO org2_id;
+  END IF;
+  
+  IF org3_id IS NULL THEN
+    INSERT INTO organizations (id, name, created_at, updated_at)
+    VALUES (gen_random_uuid(), 'Demo Organization 3', NOW(), NOW())
+    RETURNING id INTO org3_id;
+  END IF;
+  
+  RAISE NOTICE 'Organization IDs:';
   RAISE NOTICE 'Org 1: %', org1_id;
   RAISE NOTICE 'Org 2: %', org2_id;
   RAISE NOTICE 'Org 3: %', org3_id;
