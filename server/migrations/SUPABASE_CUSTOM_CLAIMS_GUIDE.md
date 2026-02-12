@@ -17,33 +17,41 @@ Configure Supabase to inject custom claims (`organization_id`, `role`, `view_as`
 
 ## 🚀 Step 1: Deploy Custom Claims Hook
 
-### Option A: Via Supabase Dashboard (Recommended)
+### Step 1A: Create the Postgres Function (via SQL Editor)
 
-1. **Navigate to Hooks**
+1. **Navigate to SQL Editor**
    - Go to [Supabase Dashboard](https://app.supabase.com)
    - Select your project
-   - Click **Authentication** → **Hooks** (left sidebar)
+   - Click **SQL Editor** (left sidebar)
 
-2. **Create Custom Access Token Hook**
-   - Click **"Add a new hook"**
-   - Select **"Custom Access Token"** hook type
-   - Name: `custom_access_token_hook`
-
-3. **Paste Hook Function**
+2. **Create the Hook Function**
+   - Click **"New query"**
    - Copy the SQL from [supabase-custom-claims-hook.sql](file:///Users/robert.leejones/Documents/GitHub/ods-signage/server/migrations/supabase-custom-claims-hook.sql)
    - Paste into the SQL editor
-   - Click **"Create hook"**
+   - Click **"Run"** to execute
 
-4. **Enable Hook**
-   - Toggle the hook to **"Enabled"**
-   - Verify status shows as **"Active"**
+3. **Verify Function Created**
+   - You should see: `Success. No rows returned`
+   - The function `public.custom_access_token_hook` is now created
 
-### Option B: Via SQL Editor
+### Step 1B: Enable the Hook (via Auth Hooks UI)
 
-1. Open **SQL Editor** in Supabase Dashboard
-2. Copy entire contents of [supabase-custom-claims-hook.sql](file:///Users/robert.leejones/Documents/GitHub/ods-signage/server/migrations/supabase-custom-claims-hook.sql)
-3. Paste and execute
-4. Navigate to **Authentication** → **Hooks** to verify hook is active
+1. **Navigate to Hooks**
+   - Click **Authentication** → **Hooks** (left sidebar)
+
+2. **Add Custom Access Token Hook**
+   - Click **"Add a new hook"** or **"Enable hook"**
+   - **Hook type:** Select **"Postgres"** (should be selected by default)
+   - **Postgres Schema:** `public` (should be selected by default)
+   - **Postgres function:** Select **`custom_access_token_hook`** from dropdown
+   
+3. **Enable the Hook**
+   - Toggle **"Enable Customize Access Token (JWT) Claims hook"** to ON (green)
+   - Click **"Create hook"** or **"Save"**
+
+4. **Verify Hook is Active**
+   - The hook should show as **"Enabled"** in the Hooks list
+   - You should see: `custom_access_token_hook` in the `public` schema
 
 ---
 
