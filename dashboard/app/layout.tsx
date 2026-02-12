@@ -6,6 +6,11 @@ import { AuthProvider } from '@/components/AuthProvider'
 
 const inter = Inter({ subsets: ['latin'] })
 
+// Force dynamic rendering for the entire app
+// This prevents build-time prerendering which fails for auth-dependent pages
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
 export const metadata: Metadata = {
     title: 'ODS Digital Signage',
     description: 'Manage your digital signage players',
