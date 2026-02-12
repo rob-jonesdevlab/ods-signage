@@ -300,13 +300,15 @@ FROM tech_assignments ta
 JOIN auth.users u ON ta.tech_user_id = u.id
 JOIN organizations o ON ta.organization_id = o.id;
 
--- Check players by org
+-- Check players by org (uncomment after creating players)
+/*
 SELECT 
   org_id,
   COUNT(*) as player_count
 FROM players
 GROUP BY org_id
 ORDER BY org_id;
+*/
 
 -- =============================================
 -- TESTING INSTRUCTIONS
