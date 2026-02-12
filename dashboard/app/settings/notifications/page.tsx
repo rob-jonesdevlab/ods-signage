@@ -1,5 +1,9 @@
 'use client';
 
+
+// Force dynamic rendering for authenticated page
+export const dynamic = 'force-dynamic';
+
 import { useState, useEffect } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';

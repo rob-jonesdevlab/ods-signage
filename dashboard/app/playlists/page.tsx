@@ -1,4 +1,8 @@
 'use client';
+
+// Force dynamic rendering for authenticated page
+export const dynamic = 'force-dynamic';
+
 import { API_URL } from '@/lib/api';
 
 import { useState, useEffect } from 'react';

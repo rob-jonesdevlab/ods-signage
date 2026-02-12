@@ -1,3 +1,7 @@
+
+// Force dynamic rendering for authenticated page
+export const dynamic = 'force-dynamic';
+
 import { redirect } from 'next/navigation';
 
 export default function SettingsPage() {

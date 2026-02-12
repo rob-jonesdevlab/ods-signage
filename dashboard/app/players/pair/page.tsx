@@ -1,5 +1,9 @@
 'use client';
 
+
+// Force dynamic rendering for authenticated page
+export const dynamic = 'force-dynamic';
+
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
