@@ -15,7 +15,7 @@ interface AuthContextType {
     refetch: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextContextType>({
+const AuthContext = createContext<AuthContextType>({
     user: null,
     loading: true,
     refetch: async () => { }

@@ -79,9 +79,9 @@ export default function AnalyticsPage() {
         try {
             // Fetch all data sources
             const [playersRes, contentRes, playlistsRes] = await Promise.all([
-                fetch(`${API_URL}/api/players'),
-                fetch(`${API_URL}/api/content'),
-                fetch(`${API_URL}/api/playlists')
+                fetch(`${API_URL}/api/players`),
+                fetch(`${API_URL}/api/content`),
+                fetch(`${API_URL}/api/playlists`)
             ]);
 
             const players = await playersRes.json();

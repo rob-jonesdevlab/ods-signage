@@ -32,7 +32,7 @@ export default function AddContentModal({ isOpen, onClose, playlistId, onContent
     // Fetch all content from library
     useEffect(() => {
         if (isOpen) {
-            fetch(`${API_URL}/api/content')
+            fetch(`${API_URL}/api/content`)
                 .then((res) => res.json())
                 .then((data) => setAllContent(data))
                 .catch((err) => console.error('Failed to fetch content:', err));

@@ -65,7 +65,7 @@ export default function PlayersPage() {
     // Fetch groups
     const fetchGroups = async () => {
         try {
-            const res = await fetch(`${API_URL}/api/player-groups');
+            const res = await fetch(`${API_URL}/api/player-groups`);
             const data = await res.json();
             setGroups(data);
         } catch (error) {
@@ -76,7 +76,7 @@ export default function PlayersPage() {
     // Fetch players
     const fetchPlayers = async () => {
         try {
-            const res = await fetch(`${API_URL}/api/players');
+            const res = await fetch(`${API_URL}/api/players`);
             const data = await res.json();
             setPlayers(data);
         } catch (error) {
@@ -89,7 +89,7 @@ export default function PlayersPage() {
         fetchGroups();
 
         // Connect to WebSocket
-        const newSocket = io(`${API_URL}');
+        const newSocket = io(`${API_URL}`);
 
         newSocket.on('connect', () => {
             console.log('✅ Connected to server');
@@ -137,7 +137,7 @@ export default function PlayersPage() {
     // Group handlers
     const handleCreateGroup = async (name: string, description: string, location: string) => {
         try {
-            const res = await fetch(`${API_URL}/api/player-groups', {
+            const res = await fetch(`${API_URL}/api/player-groups`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, description, location })

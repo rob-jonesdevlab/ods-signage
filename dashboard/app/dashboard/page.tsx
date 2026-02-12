@@ -47,15 +47,15 @@ export default function DashboardPage() {
     const fetchDashboardData = useCallback(async () => {
         try {
             // Fetch players
-            const playersRes = await fetch(`${API_URL}/api/players');
+            const playersRes = await fetch(`${API_URL}/api/players`);
             const players = await playersRes.json();
 
             // Fetch content
-            const contentRes = await fetch(`${API_URL}/api/content');
+            const contentRes = await fetch(`${API_URL}/api/content`);
             const content = await contentRes.json();
 
             // Fetch playlists
-            const playlistsRes = await fetch(`${API_URL}/api/playlists');
+            const playlistsRes = await fetch(`${API_URL}/api/playlists`);
             const playlists = await playlistsRes.json();
 
             // Calculate storage from content metadata

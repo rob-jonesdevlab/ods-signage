@@ -55,7 +55,7 @@ export default function PairDeviceModal({ isOpen, onClose, onSuccess }: PairDevi
         setError('');
 
         try {
-            const response = await fetch(`${API_URL}/api/pairing/verify', {
+            const response = await fetch(`${API_URL}/api/pairing/verify`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

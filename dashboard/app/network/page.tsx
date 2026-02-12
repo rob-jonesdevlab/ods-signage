@@ -43,11 +43,11 @@ export default function NetworkPage() {
     const fetchNetworkData = useCallback(async () => {
         try {
             // Fetch players
-            const playersRes = await fetch(`${API_URL}/api/players');
+            const playersRes = await fetch(`${API_URL}/api/players`);
             const players = await playersRes.json();
 
             // Fetch content
-            const contentRes = await fetch(`${API_URL}/api/content');
+            const contentRes = await fetch(`${API_URL}/api/content`);
             const content = await contentRes.json();
 
             // Calculate stats

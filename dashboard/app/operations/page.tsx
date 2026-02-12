@@ -44,11 +44,11 @@ export default function OperationsPage() {
     const fetchOperationsData = useCallback(async () => {
         try {
             // Fetch players for system metrics
-            const playersRes = await fetch(`${API_URL}/api/players');
+            const playersRes = await fetch(`${API_URL}/api/players`);
             const players = await playersRes.json();
 
             // Fetch content for storage metrics
-            const contentRes = await fetch(`${API_URL}/api/content');
+            const contentRes = await fetch(`${API_URL}/api/content`);
             const content = await contentRes.json();
 
             // Calculate storage from content metadata
@@ -96,7 +96,7 @@ export default function OperationsPage() {
 
             // Fetch audit logs
             try {
-                const auditRes = await fetch(`${API_URL}/api/audit-logs?limit=10');
+                const auditRes = await fetch(`${API_URL}/api/audit-logs?limit=10`);
                 const auditData = await auditRes.json();
                 setAuditLogs(auditData);
             } catch (error) {

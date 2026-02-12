@@ -100,7 +100,7 @@ export default function PlaylistsPage() {
         if (!newPlaylistName.trim()) return;
 
         try {
-            const response = await fetch(`${API_URL}/api/playlists', {
+            const response = await fetch(`${API_URL}/api/playlists`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
