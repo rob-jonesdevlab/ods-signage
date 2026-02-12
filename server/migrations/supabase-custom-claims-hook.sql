@@ -40,14 +40,19 @@ BEGIN
   user_role := user_metadata->>'role';
   view_as := user_metadata->'view_as';
   
-  -- Build claims object
-  claims := jsonb_build_object(
+  -- Get existing claims from event (preserves all standard JWT fields including 'role')
+  claims := COALESCE(event->'claims', '{}'::jsonb);
+  
+  -- Merge our custom claims into existing claims
+  -- IMPORTANT: Use 'app_role' instead of 'role' to avoid PostgreSQL role conflict
+  -- Supabase uses 'role' claim for PostgreSQL roles (authenticated, anon, service_role)
+  claims := claims || jsonb_build_object(
     'organization_id', organization_id,
-    'role', COALESCE(user_role, 'Viewer'),
+    'app_role', COALESCE(user_role, 'Viewer'),
     'view_as', view_as
   );
   
-  -- Inject claims into JWT
+  -- Return event with merged claims
   RETURN jsonb_set(event, '{claims}', claims);
 END;
 $$;
