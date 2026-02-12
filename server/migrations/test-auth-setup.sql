@@ -159,7 +159,7 @@ WHERE email = 'tech@ods.com';
 -- =============================================
 -- Assign ODSTech to Org 1
 
-INSERT INTO tech_assignments (id, tech_id, organization_id, created_at)
+INSERT INTO tech_assignments (id, tech_user_id, organization_id, assigned_at)
 VALUES (
   gen_random_uuid(),
   (SELECT id FROM auth.users WHERE email = 'tech@ods.com'),
