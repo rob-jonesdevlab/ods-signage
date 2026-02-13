@@ -339,10 +339,10 @@ export default function OperationsPage() {
                         </div>
                     </div>
 
-                    {/* Right Column - Recent Activity & Deployment Center */}
-                    <div className="lg:col-span-4 flex flex-col gap-6">
+                    {/* Right Column - Audit Trail */}
+                    <div className="lg:col-span-4 flex flex-col">
                         {/* Audit Trail */}
-                        <div className="bg-slate-800/50 rounded-xl border border-slate-700 shadow-sm flex flex-col max-h-[600px]">
+                        <div className="bg-slate-800/50 rounded-xl border border-slate-700 shadow-sm flex flex-col h-full">
                             <div className="p-5 border-b border-slate-700 flex justify-between items-center">
                                 <h3 className="font-semibold text-white flex items-center gap-2">
                                     <span className="material-symbols-outlined text-blue-400 text-[20px]">history</span>
@@ -366,9 +366,9 @@ export default function OperationsPage() {
                                                         {log.user_email?.substring(0, 2).toUpperCase() || 'SY'}
                                                     </div>
                                                     <div className={`absolute -bottom-1 -right-1 p-0.5 rounded-full ring-2 ring-slate-800 ${log.action.includes('create') ? 'bg-green-500' :
-                                                            log.action.includes('delete') ? 'bg-red-500' :
-                                                                log.action.includes('update') ? 'bg-blue-500' :
-                                                                    'bg-slate-500'
+                                                        log.action.includes('delete') ? 'bg-red-500' :
+                                                            log.action.includes('update') ? 'bg-blue-500' :
+                                                                'bg-slate-500'
                                                         }`}>
                                                         <span className="material-symbols-outlined text-[10px] block text-white">
                                                             {log.action.includes('create') ? 'add' :
@@ -404,23 +404,6 @@ export default function OperationsPage() {
                                         <p className="text-sm">No audit logs yet</p>
                                     </div>
                                 )}
-                            </div>
-                        </div>
-
-                        {/* Deployment Center */}
-                        <div className="p-5 rounded-xl bg-gradient-to-br from-blue-600 to-purple-700 text-white shadow-lg shadow-blue-500/20 relative overflow-hidden group cursor-pointer">
-                            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                                <span className="material-symbols-outlined text-9xl -mr-8 -mt-8 rotate-12">rocket_launch</span>
-                            </div>
-                            <div className="relative z-10">
-                                <div className="h-10 w-10 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center mb-4">
-                                    <span className="material-symbols-outlined text-white">rocket_launch</span>
-                                </div>
-                                <h3 className="text-lg font-bold mb-1">Deployment Center</h3>
-                                <p className="text-sm text-white/80 mb-4">Push updates to 50+ screens instantly.</p>
-                                <button className="w-full py-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-lg text-sm font-medium transition-colors border border-white/20">
-                                    Start Deployment
-                                </button>
                             </div>
                         </div>
                     </div>
