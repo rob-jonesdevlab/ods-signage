@@ -4,6 +4,7 @@
 export const dynamic = 'force-dynamic';
 
 import { API_URL } from '@/lib/api';
+import { authenticatedFetch } from '@/lib/auth';
 
 import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
@@ -69,22 +70,34 @@ export default function PlayersPage() {
     // Fetch groups
     const fetchGroups = async () => {
         try {
-            const res = await fetch(`${API_URL}/api/player-groups`);
+            const res = await authenticatedFetch(`${API_URL}/api/player-groups`);
+            if (!res.ok) {
+                console.error('Failed to fetch groups:', res.status);
+                setGroups([]);
+                return;
+            }
             const data = await res.json();
-            setGroups(data);
+            setGroups(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error('Error fetching groups:', error);
+            setGroups([]);
         }
     };
 
     // Fetch players
     const fetchPlayers = async () => {
         try {
-            const res = await fetch(`${API_URL}/api/players`);
+            const res = await authenticatedFetch(`${API_URL}/api/players`);
+            if (!res.ok) {
+                console.error('Failed to fetch players:', res.status);
+                setPlayers([]);
+                return;
+            }
             const data = await res.json();
-            setPlayers(data);
+            setPlayers(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error('Error fetching players:', error);
+            setPlayers([]);
         }
     };
 
