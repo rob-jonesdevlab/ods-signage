@@ -1,10 +1,6 @@
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from './supabase';
 import { API_URL } from './api';
 
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 export interface User {
     id: string;
@@ -38,7 +34,10 @@ export async function signIn(email: string, password: string) {
         password
     });
 
-    if (error) throw error;
+    if (error) {
+        console.error('Supabase auth error:', error);
+        throw new Error(error.message || 'Invalid email or password');
+    }
     return data;
 }
 

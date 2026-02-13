@@ -26,11 +26,20 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      await signIn(email, password)
+      console.log('Attempting sign in for:', email)
+      const result = await signIn(email, password)
+      console.log('Sign in successful:', result)
       router.push('/dashboard')
     } catch (err: any) {
-      setError(err.message || 'Failed to sign in')
+      console.error('Sign in error:', err)
+      const errorMessage = err?.message || err?.error_description || 'Failed to sign in. Please check your credentials.'
+      setError(errorMessage)
       setLoading(false)
+    } finally {
+      // Ensure loading is always reset after 10 seconds as a failsafe
+      setTimeout(() => {
+        setLoading(false)
+      }, 10000)
     }
   }
 
