@@ -77,10 +77,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 .eq('id', userId)
                 .single()
 
-            if (error) throw error
-            setProfile(data)
+            if (error) {
+                console.warn('Profile fetch failed (this is OK if profiles table does not exist):', error)
+                setProfile(null)
+            } else {
+                setProfile(data)
+            }
         } catch (error) {
-            console.error('Error fetching profile:', error)
+            console.warn('Error fetching profile (this is OK if profiles table does not exist):', error)
+            setProfile(null)
         } finally {
             setLoading(false)
         }
