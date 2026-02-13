@@ -4,6 +4,8 @@
 export const dynamic = 'force-dynamic';
 
 import { API_URL } from '@/lib/api';
+import DOMPurify from 'isomorphic-dompurify';
+import { supabase } from '@/lib/supabase';
 
 import { useEffect, useState, useCallback } from 'react';
 import Header from '@/components/Header';
@@ -50,16 +52,28 @@ export default function DashboardPage() {
 
     const fetchDashboardData = useCallback(async () => {
         try {
+            // Get Supabase session for authentication
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                console.error('No session found');
+                return;
+            }
+
+            const headers = {
+                'Authorization': `Bearer ${session.access_token}`,
+                'Content-Type': 'application/json'
+            };
+
             // Fetch players
-            const playersRes = await fetch(`${API_URL}/api/players`);
+            const playersRes = await fetch(`${API_URL}/api/players`, { headers });
             const players = await playersRes.json();
 
             // Fetch content
-            const contentRes = await fetch(`${API_URL}/api/content`);
+            const contentRes = await fetch(`${API_URL}/api/content`, { headers });
             const content = await contentRes.json();
 
             // Fetch playlists
-            const playlistsRes = await fetch(`${API_URL}/api/playlists`);
+            const playlistsRes = await fetch(`${API_URL}/api/playlists`, { headers });
             const playlists = await playlistsRes.json();
 
             // Calculate storage from content metadata
