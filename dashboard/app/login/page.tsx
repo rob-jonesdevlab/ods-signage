@@ -14,11 +14,8 @@ export default function LoginPage() {
   const { user } = useAuth()
   const router = useRouter()
 
-  useEffect(() => {
-    if (user) {
-      router.push('/dashboard')
-    }
-  }, [user, router])
+  // Don't auto-redirect on mount - let the login flow handle it
+  // This prevents redirect loops and conflicts with manual navigation
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -29,7 +26,9 @@ export default function LoginPage() {
       console.log('Attempting sign in for:', email)
       const result = await signIn(email, password)
       console.log('Sign in successful:', result)
-      router.push('/dashboard')
+
+      // Use window.location for reliable redirect after login
+      window.location.href = '/dashboard'
     } catch (err: any) {
       console.error('Sign in error:', err)
       const errorMessage = err?.message || err?.error_description || 'Failed to sign in. Please check your credentials.'
