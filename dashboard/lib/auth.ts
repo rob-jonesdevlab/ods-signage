@@ -87,10 +87,50 @@ export async function getCurrentUser(): Promise<User | null> {
 
 /**
  * Get current session access token (JWT)
+ * Reads from the base64-encoded cookie set by @supabase/ssr
  */
 export async function getAccessToken(): Promise<string | null> {
+    // First try to get from Supabase session (works for SSR)
     const { data: { session } } = await supabase.auth.getSession();
-    return session?.access_token || null;
+    if (session?.access_token) {
+        return session.access_token;
+    }
+
+    // Fallback: read from cookie directly (for client-side)
+    // The @supabase/ssr package stores tokens in cookies with base64- prefix
+    const cookieName = 'sb-dimcecmdkoaxakknftwg-auth-token';
+    const getCookie = (name: string) => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop()?.split(';').shift();
+        return null;
+    };
+
+    const cookieValue = getCookie(cookieName);
+    if (!cookieValue) {
+        console.warn('No auth cookie found');
+        return null;
+    }
+
+    // Decode base64-encoded cookie
+    if (cookieValue.startsWith('base64-')) {
+        try {
+            const decoded = JSON.parse(atob(cookieValue.replace('base64-', '')));
+            return decoded.access_token || null;
+        } catch (error) {
+            console.error('Failed to decode auth cookie:', error);
+            return null;
+        }
+    }
+
+    // If not base64-encoded, try to parse as JSON
+    try {
+        const parsed = JSON.parse(cookieValue);
+        return parsed.access_token || null;
+    } catch {
+        // Cookie might be the token itself
+        return cookieValue;
+    }
 }
 
 /**
