@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/components/AuthProvider'
 import { signIn } from '@/lib/auth'
+import Image from 'next/image'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -46,29 +47,13 @@ export default function LoginPage() {
       <div className="login-card">
         <div className="login-header">
           <div className="logo-container">
-            {/* Otter-style O logo with white circle and ODS cloud icon */}
-            <div className="otter-logo">
-              {/* White circle background */}
-              <div className="white-circle">
-                {/* ODS cloud + screens icon */}
-                <svg className="ods-icon" width="40" height="40" viewBox="0 0 64 64" fill="none">
-                  {/* Cloud with gradient */}
-                  <path d="M48 28C46.5 22 41.5 18 36 18C31.5 18 27.5 20.5 25.5 24C20.5 24.5 17 28.5 17 33C17 38 21 42 26 42H47C51 42 54 39 54 35C54 31.5 51.5 28.5 48 28Z" fill="url(#cloudGradient)" />
-                  {/* Screen squares inside cloud */}
-                  <rect x="30" y="28" width="6" height="6" rx="1" fill="white" opacity="0.9" />
-                  <rect x="38" y="28" width="6" height="6" rx="1" fill="white" opacity="0.9" />
-                  <rect x="30" y="36" width="6" height="6" rx="1" fill="white" opacity="0.9" />
-                  <rect x="38" y="36" width="6" height="6" rx="1" fill="white" opacity="0.9" />
-                  <defs>
-                    <linearGradient id="cloudGradient" x1="17" y1="18" x2="54" y2="42" gradientUnits="userSpaceOnUse">
-                      <stop stopColor="#3b82f6" />
-                      <stop offset="1" stopColor="#8b5cf6" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-              </div>
-            </div>
-            <span className="logo-text">ODS Cloud</span>
+            <Image
+              src="/ods-logo.png"
+              alt="ODS Cloud"
+              width={48}
+              height={48}
+              priority
+            />
           </div>
           <h1>Welcome to ODS Cloud</h1>
           <p>Sign in to manage your digital signage network</p>
@@ -162,43 +147,15 @@ export default function LoginPage() {
         }
 
         .logo-container {
-          display: flex;
+          display: inline-flex;
           align-items: center;
           justify-content: center;
-          gap: 1rem;
-          margin-bottom: 1.5rem;
-        }
-
-        .otter-logo {
           width: 80px;
           height: 80px;
           background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
           border-radius: 20px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+          margin-bottom: 1.5rem;
           box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
-        }
-
-        .white-circle {
-          width: 56px;
-          height: 56px;
-          background: white;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .ods-icon {
-          width: 40px;
-          height: 40px;
-        }
-
-        .logo-text {
-          font-size: 1.875rem;
-          font-weight: 700;
-          color: #f1f5f9;
         }
 
         h1 {
