@@ -46,15 +46,6 @@ export default function LoginPage() {
     <div className="login-container">
       <div className="login-card">
         <div className="login-header">
-          <div className="logo-container">
-            <Image
-              src="/ods-logo-final.png"
-              alt="ODS Cloud"
-              width={80}
-              height={80}
-              priority
-            />
-          </div>
           <h1>Welcome to ODS Cloud</h1>
           <p>Sign in to manage your digital signage network</p>
         </div>
@@ -126,14 +117,14 @@ export default function LoginPage() {
           display: flex;
           align-items: center;
           justify-content: center;
-          background: #000000;
+          background: url('/ODS_Background.png') center/cover no-repeat;
           padding: 2rem;
         }
 
         .login-card {
           background: #ffffff;
           border-radius: 24px;
-          padding: 3rem;
+          padding: 2.5rem;
           width: 100%;
           max-width: 480px;
           box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
@@ -141,14 +132,7 @@ export default function LoginPage() {
 
         .login-header {
           text-align: center;
-          margin-bottom: 2.5rem;
-        }
-
-        .logo-container {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          margin-bottom: 1.5rem;
+          margin-bottom: 2rem;
         }
 
         h1 {
