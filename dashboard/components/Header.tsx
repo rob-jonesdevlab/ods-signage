@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useState } from 'react';
+import AppsMenu from '@/components/AppsMenu';
+import { BellIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 
 export default function Header() {
     const pathname = usePathname();
@@ -11,83 +13,57 @@ export default function Header() {
     const { signOut, profile } = useAuth();
     const [showDropdown, setShowDropdown] = useState(false);
 
-    const navLinks = [
-        { href: '/dashboard', label: 'Dashboard' },
-        { href: '/players', label: 'Players' },
-        { href: '/playlists', label: 'Playlists' },
-        { href: '/content', label: 'Content Library' },
-        { href: '/analytics', label: 'Analytics' },
-        { href: '/network', label: 'Network' },
-        { href: '/operations', label: 'Operations' },
-    ];
-
-    const isActive = (href: string) => pathname === href;
-
     const handleLogout = async () => {
         await signOut();
-        // Use window.location.href for immediate redirect after session clear
         window.location.href = '/login';
     };
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-slate-800 bg-slate-950/80 backdrop-blur-md">
-            <div className="px-6 h-16 flex items-center justify-between">
-                {/* Left side: Logo + Navigation */}
-                <div className="flex items-center gap-8">
+        <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur-md h-16">
+            <div className="px-6 h-full flex items-center justify-between">
+                {/* Left side: Apps Menu + Logo */}
+                <div className="flex items-center gap-4">
+                    {/* Apps Menu */}
+                    <AppsMenu />
+
                     {/* Logo */}
-                    <Link href="/dashboard" className="flex items-center gap-3 group">
-                        <div className="size-8 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+                    <Link href="/dashboard" className="flex items-center gap-3 group ml-2">
+                        <div className="size-8 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-sm">
                             <span className="material-symbols-outlined text-white text-lg">bolt</span>
                         </div>
-                        <span className="text-lg font-bold tracking-tight text-white">
-                            ODS <span className="text-slate-400 font-medium">Cloud</span>
+                        <span className="text-lg font-bold tracking-tight text-gray-900">
+                            ODS <span className="text-gray-500 font-medium">Cloud</span>
                         </span>
                     </Link>
-
-                    {/* Navigation Links */}
-                    <nav className="hidden md:flex items-center gap-1">
-                        {navLinks.map((link) => (
-                            <Link
-                                key={link.href}
-                                href={link.href}
-                                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${isActive(link.href)
-                                    ? 'text-blue-400 bg-blue-500/10 border border-blue-500/20'
-                                    : 'text-slate-400 hover:text-white hover:bg-slate-800'
-                                    }`}
-                            >
-                                {link.label}
-                            </Link>
-                        ))}
-                    </nav>
                 </div>
 
-                {/* Right side: Status + Actions + Profile */}
-                <div className="flex items-center gap-5">
+                {/* Right side: Status + Notifications + Profile */}
+                <div className="flex items-center gap-4">
                     {/* System Status */}
-                    <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/5 border border-emerald-500/20">
+                    <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200">
                         <span className="relative flex h-2 w-2">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                         </span>
-                        <span className="text-xs font-semibold text-emerald-500 uppercase tracking-wider">Online</span>
+                        <span className="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Online</span>
                     </div>
 
                     {/* Divider */}
-                    <div className="h-6 w-px bg-slate-800"></div>
+                    <div className="h-6 w-px bg-gray-200"></div>
 
                     {/* Notification Bell */}
-                    <button className="text-slate-400 hover:text-white transition-colors relative">
-                        <span className="material-symbols-outlined text-[20px]">notifications</span>
-                        <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border border-slate-950"></span>
+                    <button className="text-gray-500 hover:text-gray-700 transition-colors relative p-2 rounded-lg hover:bg-gray-100">
+                        <BellIcon className="w-5 h-5" />
+                        <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
                     </button>
 
                     {/* User Menu */}
                     <div className="relative">
                         <button
                             onClick={() => setShowDropdown(!showDropdown)}
-                            className="flex items-center gap-3 group"
+                            className="flex items-center gap-3 group p-1 rounded-lg hover:bg-gray-100 transition-colors"
                         >
-                            <div className="h-9 w-9 rounded-full bg-gradient-to-tr from-slate-700 to-slate-600 border border-slate-700 overflow-hidden ring-offset-2 ring-offset-slate-950 group-hover:ring-2 ring-blue-500 transition-all">
+                            <div className="h-8 w-8 rounded-full overflow-hidden ring-2 ring-transparent group-hover:ring-blue-500 transition-all">
                                 <img
                                     alt="User Avatar"
                                     className="h-full w-full object-cover"
@@ -98,18 +74,18 @@ export default function Header() {
 
                         {/* Dropdown Menu */}
                         {showDropdown && (
-                            <div className="absolute right-0 mt-2 w-56 rounded-xl bg-slate-900 border border-slate-800 shadow-xl shadow-black/20 overflow-hidden z-50">
+                            <div className="absolute right-0 mt-2 w-56 rounded-lg bg-white border border-gray-200 shadow-lg overflow-hidden z-50">
                                 {/* User Info */}
-                                <div className="px-4 py-3 border-b border-slate-800">
-                                    <p className="text-sm font-medium text-white">{profile?.full_name || 'User'}</p>
-                                    <p className="text-xs text-slate-400 mt-0.5">{profile?.email}</p>
+                                <div className="px-4 py-3 border-b border-gray-200">
+                                    <p className="text-sm font-medium text-gray-900">{profile?.full_name || 'User'}</p>
+                                    <p className="text-xs text-gray-500 mt-0.5">{profile?.email}</p>
                                 </div>
 
                                 {/* Menu Items */}
                                 <div className="py-2">
                                     <Link
                                         href="/settings/profile"
-                                        className="flex items-center gap-3 px-4 py-2 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors"
+                                        className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                                         onClick={() => setShowDropdown(false)}
                                     >
                                         <span className="material-symbols-outlined text-[18px]">settings</span>
@@ -117,7 +93,7 @@ export default function Header() {
                                     </Link>
                                     <button
                                         onClick={handleLogout}
-                                        className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-400 hover:bg-slate-800 hover:text-red-300 transition-colors"
+                                        className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
                                     >
                                         <span className="material-symbols-outlined text-[18px]">logout</span>
                                         Sign Out
@@ -131,3 +107,4 @@ export default function Header() {
         </header>
     );
 }
+

@@ -209,15 +209,13 @@ export default function AnalyticsPage() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-950 text-white flex flex-col">
-            <Header />
-
+        <div className="min-h-screen">
             <main className="flex-1 w-full max-w-[1600px] mx-auto p-6 md:p-8 flex flex-col gap-6">
                 {/* Page Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                     <div>
-                        <h1 className="text-3xl font-bold tracking-tight text-white">Analytics</h1>
-                        <p className="text-slate-400 mt-1">Comprehensive insights into content performance and network health</p>
+                        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Analytics</h1>
+                        <p className="text-gray-500 mt-1">Comprehensive insights into content performance and network health</p>
                     </div>
                     <div className="flex flex-wrap gap-3">
                         {/* Date Range Filter */}
@@ -266,90 +264,90 @@ export default function AnalyticsPage() {
                 {/* KPI Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     {/* Total Impressions */}
-                    <div className="p-5 rounded-xl glass-card bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 flex flex-col justify-between shadow-sm relative overflow-hidden group">
+                    <div className="p-5 rounded-lg bg-white border border-gray-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
                         <div className="flex items-start justify-between mb-2">
                             <div>
-                                <span className="text-sm font-medium text-slate-400">Total Impressions</span>
-                                <h3 className="text-3xl font-bold text-white mt-1">
+                                <span className="text-sm font-medium text-gray-500">Total Impressions</span>
+                                <h3 className="text-3xl font-bold text-gray-900 mt-1">
                                     {loading ? '...' : formatNumber(stats.totalImpressions)}
                                 </h3>
                             </div>
-                            <div className="p-2 bg-blue-600/20 rounded-lg text-blue-500">
+                            <div className="p-2 bg-blue-50 rounded-lg text-blue-600">
                                 <span className="material-symbols-outlined text-[20px]">visibility</span>
                             </div>
                         </div>
                         <div className="flex items-center gap-2 mt-2">
-                            <span className="text-xs font-medium text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded flex items-center gap-1">
+                            <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded flex items-center gap-1">
                                 <span className="material-symbols-outlined text-[12px]">trending_up</span>
                                 {stats.impressionsTrend.toFixed(1)}%
                             </span>
-                            <span className="text-xs text-slate-500">vs last period</span>
+                            <span className="text-xs text-gray-500">vs last period</span>
                         </div>
                     </div>
 
                     {/* Network Uptime */}
-                    <div className="p-5 rounded-xl glass-card bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 flex flex-col justify-between shadow-sm relative overflow-hidden">
+                    <div className="p-5 rounded-lg bg-white border border-gray-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
                         <div className="flex items-start justify-between mb-2">
                             <div>
-                                <span className="text-sm font-medium text-slate-400">Network Uptime</span>
-                                <h3 className="text-3xl font-bold text-white mt-1">
+                                <span className="text-sm font-medium text-gray-500">Network Uptime</span>
+                                <h3 className="text-3xl font-bold text-gray-900 mt-1">
                                     {loading ? '...' : `${stats.networkUptime.toFixed(1)}%`}
                                 </h3>
                             </div>
-                            <div className="p-2 bg-emerald-500/20 rounded-lg text-emerald-500">
+                            <div className="p-2 bg-emerald-50 rounded-lg text-emerald-600">
                                 <span className="material-symbols-outlined text-[20px]">router</span>
                             </div>
                         </div>
                         <div className="flex items-center gap-2 mt-2">
-                            <span className="text-xs font-medium text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded flex items-center gap-1">
+                            <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded flex items-center gap-1">
                                 <span className="material-symbols-outlined text-[12px]">trending_up</span>
                                 {stats.uptimeTrend.toFixed(1)}%
                             </span>
-                            <span className="text-xs text-slate-500">vs last period</span>
+                            <span className="text-xs text-gray-500">vs last period</span>
                         </div>
                     </div>
 
                     {/* Content Utilization */}
-                    <div className="p-5 rounded-xl glass-card bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 flex flex-col justify-between shadow-sm relative overflow-hidden">
+                    <div className="p-5 rounded-lg bg-white border border-gray-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
                         <div className="flex items-start justify-between mb-2">
                             <div>
-                                <span className="text-sm font-medium text-slate-400">Content Utilization</span>
-                                <h3 className="text-3xl font-bold text-white mt-1">
+                                <span className="text-sm font-medium text-gray-500">Content Utilization</span>
+                                <h3 className="text-3xl font-bold text-gray-900 mt-1">
                                     {loading ? '...' : `${stats.contentUtilization.toFixed(0)}%`}
                                 </h3>
                             </div>
-                            <div className="p-2 bg-purple-500/20 rounded-lg text-purple-500">
+                            <div className="p-2 bg-purple-50 rounded-lg text-purple-600">
                                 <span className="material-symbols-outlined text-[20px]">pie_chart</span>
                             </div>
                         </div>
                         <div className="flex items-center gap-2 mt-2">
-                            <span className="text-xs font-medium text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded flex items-center gap-1">
+                            <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded flex items-center gap-1">
                                 <span className="material-symbols-outlined text-[12px]">trending_up</span>
                                 {stats.utilizationTrend.toFixed(1)}%
                             </span>
-                            <span className="text-xs text-slate-500">vs last period</span>
+                            <span className="text-xs text-gray-500">vs last period</span>
                         </div>
                     </div>
 
                     {/* Storage Efficiency */}
-                    <div className="p-5 rounded-xl glass-card bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 flex flex-col justify-between shadow-sm relative overflow-hidden">
+                    <div className="p-5 rounded-lg bg-white border border-gray-200 shadow-sm flex flex-col justify-between relative overflow-hidden">
                         <div className="flex items-start justify-between mb-2">
                             <div>
-                                <span className="text-sm font-medium text-slate-400">Storage Efficiency</span>
-                                <h3 className="text-3xl font-bold text-white mt-1">
+                                <span className="text-sm font-medium text-gray-500">Storage Efficiency</span>
+                                <h3 className="text-3xl font-bold text-gray-900 mt-1">
                                     {loading ? '...' : `${stats.storageEfficiency.toFixed(1)}GB`}
                                 </h3>
                             </div>
-                            <div className="p-2 bg-amber-500/20 rounded-lg text-amber-500">
+                            <div className="p-2 bg-amber-50 rounded-lg text-amber-600">
                                 <span className="material-symbols-outlined text-[20px]">storage</span>
                             </div>
                         </div>
                         <div className="flex items-center gap-2 mt-2">
-                            <span className="text-xs font-medium text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded flex items-center gap-1">
+                            <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded flex items-center gap-1">
                                 <span className="material-symbols-outlined text-[12px]">trending_down</span>
                                 {Math.abs(stats.storageTrend).toFixed(1)}%
                             </span>
-                            <span className="text-xs text-slate-500">vs last period</span>
+                            <span className="text-xs text-gray-500">vs last period</span>
                         </div>
                     </div>
                 </div>
@@ -357,26 +355,26 @@ export default function AnalyticsPage() {
                 {/* Main Content Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     {/* Top Content Sidebar */}
-                    <div className="lg:col-span-3 glass-card bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl flex flex-col max-h-[600px]">
-                        <div className="p-4 border-b border-slate-700/50 flex items-center justify-between sticky top-0 bg-slate-800/95 backdrop-blur z-10 rounded-t-xl">
-                            <h3 className="font-semibold text-white">Top Content</h3>
-                            <button className="text-xs text-blue-400 hover:text-blue-300 font-medium">View All</button>
+                    <div className="lg:col-span-3 bg-white border border-gray-200 rounded-lg flex flex-col max-h-[600px] shadow-sm">
+                        <div className="p-4 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white z-10 rounded-t-lg">
+                            <h3 className="font-semibold text-gray-900">Top Content</h3>
+                            <button className="text-xs text-blue-600 hover:text-blue-500 font-medium">View All</button>
                         </div>
                         <div className="overflow-y-auto flex-1 p-2 space-y-1">
                             {loading ? (
                                 <>
-                                    <div className="h-16 bg-slate-700/50 rounded animate-pulse"></div>
-                                    <div className="h-16 bg-slate-700/50 rounded animate-pulse"></div>
-                                    <div className="h-16 bg-slate-700/50 rounded animate-pulse"></div>
+                                    <div className="h-16 bg-gray-100 rounded animate-pulse"></div>
+                                    <div className="h-16 bg-gray-100 rounded animate-pulse"></div>
+                                    <div className="h-16 bg-gray-100 rounded animate-pulse"></div>
                                 </>
                             ) : (
                                 topContent.map((item, index) => (
-                                    <div key={item.id} className="flex items-center gap-3 p-2 hover:bg-white/5 rounded-lg group cursor-pointer transition-colors">
-                                        <div className="relative w-12 h-12 rounded overflow-hidden flex-shrink-0 bg-slate-700">
+                                    <div key={item.id} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg group cursor-pointer transition-colors">
+                                        <div className="relative w-12 h-12 rounded overflow-hidden flex-shrink-0 bg-gray-200">
                                             {item.thumbnail ? (
                                                 <img alt={item.filename} className="w-full h-full object-cover" src={item.thumbnail} />
                                             ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-slate-500">
+                                                <div className="w-full h-full flex items-center justify-center text-gray-400">
                                                     <span className="material-symbols-outlined text-[20px]">
                                                         {item.type === 'video' ? 'movie' : 'image'}
                                                     </span>
@@ -384,14 +382,14 @@ export default function AnalyticsPage() {
                                             )}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <h4 className="text-sm font-medium text-slate-200 truncate">{item.filename}</h4>
-                                            <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
-                                                <span className="text-emerald-500 font-medium">{formatNumber(item.plays)} plays</span>
+                                            <h4 className="text-sm font-medium text-gray-900 truncate">{item.filename}</h4>
+                                            <div className="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
+                                                <span className="text-emerald-600 font-medium">{formatNumber(item.plays)} plays</span>
                                                 <span>•</span>
                                                 <span>{item.totalHours}h</span>
                                             </div>
                                         </div>
-                                        <div className="text-xs font-bold text-slate-400 group-hover:text-white">#{index + 1}</div>
+                                        <div className="text-xs font-bold text-gray-400 group-hover:text-gray-700">#{index + 1}</div>
                                     </div>
                                 ))
                             )}
@@ -399,30 +397,30 @@ export default function AnalyticsPage() {
                     </div>
 
                     {/* Upload & Sync Activity Chart */}
-                    <div className="lg:col-span-9 glass-card bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-6 flex flex-col shadow-lg relative overflow-hidden">
+                    <div className="lg:col-span-9 bg-white border border-gray-200 rounded-lg p-6 flex flex-col shadow-sm relative overflow-hidden">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 z-10">
                             <div>
-                                <h3 className="text-lg font-bold text-white">Upload & Sync Activity</h3>
-                                <p className="text-sm text-slate-400">Content uploads and player synchronization events over time</p>
+                                <h3 className="text-lg font-bold text-gray-900">Upload & Sync Activity</h3>
+                                <p className="text-sm text-gray-500">Content uploads and player synchronization events over time</p>
                             </div>
                             <div className="flex items-center gap-2 mt-2 sm:mt-0">
-                                <div className="flex items-center gap-2 px-3 py-1 bg-slate-900/50 rounded-full border border-slate-700/50">
+                                <div className="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full border border-gray-200">
                                     <span className="w-2 h-2 rounded-full bg-blue-500"></span>
-                                    <span className="text-xs text-slate-300">Uploads</span>
+                                    <span className="text-xs text-gray-700">Uploads</span>
                                 </div>
-                                <div className="flex items-center gap-2 px-3 py-1 bg-slate-900/50 rounded-full border border-slate-700/50">
+                                <div className="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full border border-gray-200">
                                     <span className="w-2 h-2 rounded-full bg-purple-500"></span>
-                                    <span className="text-xs text-slate-300">Syncs</span>
+                                    <span className="text-xs text-gray-700">Syncs</span>
                                 </div>
                             </div>
                         </div>
                         <div className="flex-1 relative w-full min-h-[300px]">
                             {loading ? (
                                 <div className="w-full h-full flex items-center justify-center">
-                                    <div className="text-slate-500">Loading chart...</div>
+                                    <div className="text-gray-400">Loading chart...</div>
                                 </div>
                             ) : (
-                                <div className="w-full h-full flex items-center justify-center text-slate-500">
+                                <div className="w-full h-full flex items-center justify-center text-gray-400">
                                     <div className="text-center">
                                         <span className="material-symbols-outlined text-[48px] mb-2">show_chart</span>
                                         <p className="text-sm">Activity chart visualization</p>
@@ -436,21 +434,21 @@ export default function AnalyticsPage() {
                 {/* Content Type Distribution & Network Health */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Content Type Distribution */}
-                    <div className="glass-card bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-6">
-                        <h3 className="text-lg font-bold text-white mb-4">Content Type Distribution</h3>
+                    <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                        <h3 className="text-lg font-bold text-gray-900 mb-4">Content Type Distribution</h3>
                         <div className="flex items-center justify-center min-h-[250px]">
                             {loading ? (
-                                <div className="text-slate-500">Loading...</div>
+                                <div className="text-gray-400">Loading...</div>
                             ) : (
                                 <div className="flex flex-col items-center gap-4 w-full">
                                     {/* Simple bar representation */}
                                     {contentTypes.map((type) => (
                                         <div key={type.type} className="w-full">
                                             <div className="flex items-center justify-between mb-1">
-                                                <span className="text-sm font-medium text-slate-300">{type.type}</span>
-                                                <span className="text-xs text-slate-500">{type.count} ({type.percentage.toFixed(0)}%)</span>
+                                                <span className="text-sm font-medium text-gray-700">{type.type}</span>
+                                                <span className="text-xs text-gray-500">{type.count} ({type.percentage.toFixed(0)}%)</span>
                                             </div>
-                                            <div className="w-full bg-slate-700 h-2 rounded-full overflow-hidden">
+                                            <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
                                                 <div
                                                     className="h-full rounded-full transition-all duration-500"
                                                     style={{
@@ -467,30 +465,30 @@ export default function AnalyticsPage() {
                     </div>
 
                     {/* Geographic Distribution */}
-                    <div className="glass-card bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-6">
-                        <h3 className="text-lg font-bold text-white mb-4">Geographic Distribution</h3>
+                    <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                        <h3 className="text-lg font-bold text-gray-900 mb-4">Geographic Distribution</h3>
                         <div className="space-y-3">
                             {loading ? (
                                 <>
-                                    <div className="h-12 bg-slate-700/50 rounded animate-pulse"></div>
-                                    <div className="h-12 bg-slate-700/50 rounded animate-pulse"></div>
-                                    <div className="h-12 bg-slate-700/50 rounded animate-pulse"></div>
+                                    <div className="h-12 bg-gray-100 rounded animate-pulse"></div>
+                                    <div className="h-12 bg-gray-100 rounded animate-pulse"></div>
+                                    <div className="h-12 bg-gray-100 rounded animate-pulse"></div>
                                 </>
                             ) : (
                                 geoData.map((region) => (
-                                    <div key={region.region} className="flex items-center justify-between p-3 bg-slate-900/30 rounded-lg hover:bg-slate-900/50 transition-colors">
+                                    <div key={region.region} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                                         <div className="flex items-center gap-3">
-                                            <div className="p-2 bg-blue-600/20 rounded-lg text-blue-500">
+                                            <div className="p-2 bg-blue-50 rounded-lg text-blue-600">
                                                 <span className="material-symbols-outlined text-[20px]">location_on</span>
                                             </div>
                                             <div>
-                                                <h4 className="text-sm font-medium text-white">{region.region}</h4>
-                                                <p className="text-xs text-slate-500">{region.playerCount} players</p>
+                                                <h4 className="text-sm font-medium text-gray-900">{region.region}</h4>
+                                                <p className="text-xs text-gray-500">{region.playerCount} players</p>
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <div className="text-sm font-medium text-emerald-500">{region.uptime.toFixed(1)}%</div>
-                                            <div className="text-xs text-slate-500">uptime</div>
+                                            <div className="text-sm font-medium text-emerald-600">{region.uptime.toFixed(1)}%</div>
+                                            <div className="text-xs text-gray-500">uptime</div>
                                         </div>
                                     </div>
                                 ))
@@ -500,19 +498,19 @@ export default function AnalyticsPage() {
                 </div>
 
                 {/* Playlist Deployment Status Table */}
-                <div className="glass-card bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl overflow-hidden shadow-lg">
-                    <div className="p-6 border-b border-slate-700/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                    <div className="p-6 border-b border-gray-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div>
-                            <h3 className="text-lg font-bold text-white">Playlist Deployment Status</h3>
-                            <p className="text-sm text-slate-400">Active content sequences across player groups</p>
+                            <h3 className="text-lg font-bold text-gray-900">Playlist Deployment Status</h3>
+                            <p className="text-sm text-gray-500">Active content sequences across player groups</p>
                         </div>
                         <div className="flex items-center gap-3">
                             <div className="relative">
-                                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
+                                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
                                     <span className="material-symbols-outlined text-[18px]">search</span>
                                 </span>
                                 <input
-                                    className="bg-slate-900/50 border border-slate-700/50 text-sm text-white rounded-lg pl-9 pr-4 py-2 outline-none focus:border-blue-600 w-64"
+                                    className="bg-gray-50 border border-gray-200 text-sm text-gray-900 rounded-lg pl-9 pr-4 py-2 outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 w-64"
                                     placeholder="Search playlists..."
                                     type="text"
                                 />
@@ -520,8 +518,8 @@ export default function AnalyticsPage() {
                         </div>
                     </div>
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left text-sm text-slate-400">
-                            <thead className="bg-slate-900/50 text-xs uppercase font-semibold text-slate-500">
+                        <table className="w-full text-left text-sm text-gray-600">
+                            <thead className="bg-gray-50 text-xs uppercase font-semibold text-gray-500">
                                 <tr>
                                     <th className="px-6 py-4">Playlist Name</th>
                                     <th className="px-6 py-4">Status</th>
@@ -531,39 +529,39 @@ export default function AnalyticsPage() {
                                     <th className="px-6 py-4 text-right">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-700/50">
+                            <tbody className="divide-y divide-gray-200">
                                 {loading ? (
                                     <tr>
-                                        <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
+                                        <td colSpan={6} className="px-6 py-12 text-center text-gray-400">
                                             Loading playlists...
                                         </td>
                                     </tr>
                                 ) : playlists.length === 0 ? (
                                     <tr>
-                                        <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
+                                        <td colSpan={6} className="px-6 py-12 text-center text-gray-400">
                                             No playlists found
                                         </td>
                                     </tr>
                                 ) : (
                                     playlists.map((playlist) => (
-                                        <tr key={playlist.id} className="hover:bg-white/5 transition-colors">
+                                        <tr key={playlist.id} className="hover:bg-gray-50 transition-colors">
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 rounded bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center text-blue-500 font-bold border border-white/5">
+                                                    <div className="w-10 h-10 rounded bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center text-blue-600 font-bold border border-gray-200">
                                                         {playlist.name.substring(0, 2).toUpperCase()}
                                                     </div>
                                                     <div>
-                                                        <div className="font-medium text-white">{playlist.name}</div>
-                                                        <div className="text-xs text-slate-500">Updated {getTimeAgo(playlist.updatedAt)}</div>
+                                                        <div className="font-medium text-gray-900">{playlist.name}</div>
+                                                        <div className="text-xs text-gray-500">Updated {getTimeAgo(playlist.updatedAt)}</div>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${playlist.status === 'active'
-                                                    ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
-                                                    : 'bg-slate-700/50 text-slate-400 border border-slate-600/50'
+                                                    ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
+                                                    : 'bg-gray-100 text-gray-600 border border-gray-200'
                                                     }`}>
-                                                    <span className={`w-1.5 h-1.5 rounded-full ${playlist.status === 'active' ? 'bg-emerald-500' : 'bg-slate-400'
+                                                    <span className={`w-1.5 h-1.5 rounded-full ${playlist.status === 'active' ? 'bg-emerald-500' : 'bg-gray-400'
                                                         }`}></span>
                                                     {playlist.status.charAt(0).toUpperCase() + playlist.status.slice(1)}
                                                 </span>
@@ -573,24 +571,24 @@ export default function AnalyticsPage() {
                                                     {playlist.targetGroups.slice(0, 3).map((group, idx) => (
                                                         <div
                                                             key={group}
-                                                            className="w-6 h-6 rounded-full bg-slate-700 border-2 border-slate-800 flex items-center justify-center text-[10px] text-white"
+                                                            className="w-6 h-6 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-[10px] text-gray-700"
                                                             title={group}
                                                         >
                                                             {group}
                                                         </div>
                                                     ))}
                                                     {playlist.targetGroups.length > 3 && (
-                                                        <div className="w-6 h-6 rounded-full bg-slate-800 border-2 border-slate-800 flex items-center justify-center text-[10px] text-slate-400">
+                                                        <div className="w-6 h-6 rounded-full bg-gray-100 border-2 border-white flex items-center justify-center text-[10px] text-gray-500">
                                                             +{playlist.targetGroups.length - 3}
                                                         </div>
                                                     )}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 text-white font-medium">
+                                            <td className="px-6 py-4 text-gray-900 font-medium">
                                                 {playlist.activePlayers} / {playlist.totalPlayers}
                                             </td>
                                             <td className="px-6 py-4">
-                                                <div className="w-full max-w-[100px] bg-slate-700 h-1.5 rounded-full overflow-hidden">
+                                                <div className="w-full max-w-[100px] bg-gray-200 h-1.5 rounded-full overflow-hidden">
                                                     <div
                                                         className="h-full rounded-full"
                                                         style={{
@@ -606,7 +604,7 @@ export default function AnalyticsPage() {
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 text-right">
-                                                <button className="p-1.5 hover:bg-slate-700 rounded text-slate-400 hover:text-white transition-colors">
+                                                <button className="p-1.5 hover:bg-gray-100 rounded text-gray-400 hover:text-gray-700 transition-colors">
                                                     <span className="material-symbols-outlined text-[20px]">more_vert</span>
                                                 </button>
                                             </td>

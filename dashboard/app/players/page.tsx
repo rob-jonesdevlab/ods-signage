@@ -339,18 +339,16 @@ export default function PlayersPage() {
     const selectedGroup = groups.find(g => g.id === contextMenu?.groupId);
 
     return (
-        <div className="min-h-screen bg-slate-950 text-white flex flex-col">
-            <Header />
-
-            <main className="flex-1 w-full max-w-[1600px] mx-auto p-6 md:p-8 flex gap-6">
+        <div className="min-h-screen">
+            <main className="w-full max-w-[1600px] mx-auto p-6 md:p-8 flex gap-6">
                 {/* Sidebar */}
                 <aside className="w-64 flex-shrink-0">
-                    <div className="glass-card p-4 rounded-2xl border border-slate-700/50 bg-slate-800/50 backdrop-blur-sm sticky top-6">
+                    <div className="p-4 rounded-lg border border-gray-200 bg-white shadow-sm sticky top-6">
                         <div className="flex items-center justify-between mb-4">
-                            <h3 className="font-semibold text-white">Groups</h3>
+                            <h3 className="font-semibold text-gray-900">Groups</h3>
                             <button
                                 onClick={() => setShowNewGroupModal(true)}
-                                className="p-1 hover:bg-slate-700 rounded transition-colors"
+                                className="p-1 hover:bg-gray-100 rounded transition-colors"
                                 title="New Group"
                             >
                                 <span className="material-symbols-outlined text-[20px]">add</span>
@@ -376,10 +374,10 @@ export default function PlayersPage() {
                     {/* Page Header */}
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                         <div>
-                            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white">
+                            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">
                                 {selectedGroupId ? groups.find(g => g.id === selectedGroupId)?.name : 'All Players'}
                             </h1>
-                            <p className="text-slate-400 mt-1 text-sm md:text-base">
+                            <p className="text-gray-500 mt-1 text-sm md:text-base">
                                 {selectedGroupId
                                     ? `${filteredPlayers.length} player${filteredPlayers.length !== 1 ? 's' : ''} in this group`
                                     : 'Manage your digital signage players'
@@ -389,7 +387,7 @@ export default function PlayersPage() {
                         <div className="flex gap-2">
                             <button
                                 onClick={() => setIsPairingModalOpen(true)}
-                                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center gap-2 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40"
+                                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors flex items-center gap-2 shadow-sm"
                             >
                                 <span className="material-symbols-outlined text-xl">add_circle</span>
                                 Pair Device
@@ -421,28 +419,28 @@ export default function PlayersPage() {
 
                     {/* Stats */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="glass-card p-6 rounded-2xl relative overflow-hidden group hover:border-blue-500/30 transition-colors bg-slate-800/50 backdrop-blur-sm border border-slate-700/50">
-                            <div className="text-3xl font-bold mb-2 text-white">{filteredPlayers.length}</div>
-                            <div className="text-slate-400">{selectedGroupId ? 'Players in Group' : 'Total Players'}</div>
+                        <div className="p-6 rounded-lg relative overflow-hidden group hover:border-blue-300 transition-colors bg-white border border-gray-200 shadow-sm">
+                            <div className="text-3xl font-bold mb-2 text-gray-900">{filteredPlayers.length}</div>
+                            <div className="text-gray-500">{selectedGroupId ? 'Players in Group' : 'Total Players'}</div>
                         </div>
-                        <div className="glass-card p-6 rounded-2xl relative overflow-hidden group hover:border-emerald-500/30 transition-colors bg-slate-800/50 backdrop-blur-sm border border-slate-700/50">
-                            <div className="text-3xl font-bold mb-2 text-emerald-400">
+                        <div className="p-6 rounded-lg relative overflow-hidden group hover:border-emerald-300 transition-colors bg-white border border-gray-200 shadow-sm">
+                            <div className="text-3xl font-bold mb-2 text-emerald-600">
                                 {filteredPlayers.filter((p) => p.status === 'online').length}
                             </div>
-                            <div className="text-slate-400">Online</div>
+                            <div className="text-gray-500">Online</div>
                         </div>
-                        <div className="glass-card p-6 rounded-2xl relative overflow-hidden group hover:border-slate-500/30 transition-colors bg-slate-800/50 backdrop-blur-sm border border-slate-700/50">
-                            <div className="text-3xl font-bold mb-2 text-slate-400">
+                        <div className="p-6 rounded-lg relative overflow-hidden group hover:border-gray-300 transition-colors bg-white border border-gray-200 shadow-sm">
+                            <div className="text-3xl font-bold mb-2 text-gray-500">
                                 {filteredPlayers.filter((p) => p.status === 'offline').length}
                             </div>
-                            <div className="text-slate-400">Offline</div>
+                            <div className="text-gray-500">Offline</div>
                         </div>
                     </div>
 
                     {/* Players List */}
-                    <div className="glass-card rounded-2xl border border-slate-700/50 overflow-hidden bg-slate-800/50 backdrop-blur-sm">
+                    <div className="rounded-lg border border-gray-200 overflow-hidden bg-white shadow-sm">
                         {filteredPlayers.length === 0 ? (
-                            <div className="p-12 text-center text-slate-400">
+                            <div className="p-12 text-center text-gray-500">
                                 <div className="text-6xl mb-4">📱</div>
                                 <div className="text-xl mb-2">
                                     {selectedGroupId ? 'No players in this group' : 'No players registered'}
@@ -454,41 +452,41 @@ export default function PlayersPage() {
                         ) : (
                             <div className="overflow-x-auto">
                                 <table className="w-full">
-                                    <thead className="bg-slate-900/50">
+                                    <thead className="bg-gray-50">
                                         <tr>
                                             <th className="px-6 py-3 text-left">
                                                 <input
                                                     type="checkbox"
                                                     checked={selectAll}
                                                     onChange={handleSelectAll}
-                                                    className="w-4 h-4 rounded border-slate-600 bg-slate-700 text-blue-600 focus:ring-blue-500 focus:ring-offset-slate-900"
+                                                    className="w-4 h-4 rounded border-gray-300 bg-white text-blue-600 focus:ring-blue-500 focus:ring-offset-white"
                                                 />
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Status
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Pairing
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Name
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 CPU Serial
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Last Seen
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Created
                                             </th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-slate-700/50">
+                                    <tbody className="divide-y divide-gray-200">
                                         {filteredPlayers.map((player) => (
                                             <tr
                                                 key={player.id}
-                                                className="hover:bg-slate-800/50 transition-colors cursor-move"
+                                                className="hover:bg-gray-50 transition-colors cursor-move"
                                                 draggable
                                                 onDragStart={() => handlePlayerDragStart(player.id)}
                                                 onDragEnd={() => setDraggedPlayerId(null)}
@@ -498,44 +496,44 @@ export default function PlayersPage() {
                                                         type="checkbox"
                                                         checked={selectedPlayers.includes(player.id)}
                                                         onChange={() => handleTogglePlayer(player.id)}
-                                                        className="w-4 h-4 rounded border-slate-600 bg-slate-700 text-blue-600 focus:ring-blue-500 focus:ring-offset-slate-900"
+                                                        className="w-4 h-4 rounded border-gray-300 bg-white text-blue-600 focus:ring-blue-500 focus:ring-offset-white"
                                                         onClick={(e) => e.stopPropagation()}
                                                     />
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex items-center gap-2">
                                                         <div className={`w-3 h-3 rounded-full ${getStatusColor(player.status)}`} />
-                                                        <span className="text-sm capitalize text-white">{player.status}</span>
+                                                        <span className="text-sm capitalize text-gray-900">{player.status}</span>
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     {player.paired_at ? (
                                                         <div className="flex items-center gap-2">
-                                                            <span className="material-symbols-outlined text-emerald-500 text-lg">check_circle</span>
-                                                            <span className="text-sm text-emerald-400 font-medium">Paired</span>
+                                                            <span className="material-symbols-outlined text-emerald-600 text-lg">check_circle</span>
+                                                            <span className="text-sm text-emerald-600 font-medium">Paired</span>
                                                         </div>
                                                     ) : player.pairing_code ? (
                                                         <div className="flex items-center gap-2">
                                                             <span className="material-symbols-outlined text-amber-500 text-lg animate-pulse">pending</span>
-                                                            <span className="text-sm text-amber-400 font-medium font-mono">{player.pairing_code}</span>
+                                                            <span className="text-sm text-amber-600 font-medium font-mono">{player.pairing_code}</span>
                                                         </div>
                                                     ) : (
                                                         <div className="flex items-center gap-2">
-                                                            <span className="material-symbols-outlined text-slate-500 text-lg">radio_button_unchecked</span>
-                                                            <span className="text-sm text-slate-500">Not initiated</span>
+                                                            <span className="material-symbols-outlined text-gray-400 text-lg">radio_button_unchecked</span>
+                                                            <span className="text-sm text-gray-500">Not initiated</span>
                                                         </div>
                                                     )}
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap font-medium text-white">
+                                                <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
                                                     {player.name}
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400 font-mono">
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
                                                     {player.cpu_serial}
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                     {formatDate(player.last_seen)}
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-400">
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                     {formatDate(player.created_at)}
                                                 </td>
                                             </tr>
@@ -589,22 +587,22 @@ export default function PlayersPage() {
             {/* Bulk Actions Toolbar */}
             {selectedPlayers.length > 0 && (
                 <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
-                    <div className="glass-card p-4 rounded-2xl border border-slate-700/50 bg-slate-800/95 backdrop-blur-md shadow-2xl">
+                    <div className="p-4 rounded-lg border border-gray-200 bg-white shadow-2xl">
                         <div className="flex items-center gap-4">
-                            <span className="text-sm text-slate-300 font-medium">
+                            <span className="text-sm text-gray-700 font-medium">
                                 {selectedPlayers.length} player{selectedPlayers.length > 1 ? 's' : ''} selected
                             </span>
-                            <div className="h-6 w-px bg-slate-700"></div>
+                            <div className="h-6 w-px bg-gray-200"></div>
                             <button
                                 onClick={() => setShowBulkAssignModal(true)}
-                                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+                                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
                             >
                                 <span className="material-symbols-outlined text-[18px]">folder</span>
                                 Assign to Group
                             </button>
                             <button
                                 onClick={handleBulkDelete}
-                                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+                                className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
                             >
                                 <span className="material-symbols-outlined text-[18px]">delete</span>
                                 Delete
@@ -614,7 +612,7 @@ export default function PlayersPage() {
                                     setSelectedPlayers([]);
                                     setSelectAll(false);
                                 }}
-                                className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-medium transition-colors"
+                                className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-medium transition-colors"
                             >
                                 Clear
                             </button>
@@ -626,9 +624,9 @@ export default function PlayersPage() {
             {/* Bulk Assign Modal */}
             {showBulkAssignModal && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="glass-card bg-slate-800/95 backdrop-blur-md rounded-2xl border border-slate-700/50 p-6 w-full max-w-md">
-                        <h2 className="text-2xl font-bold text-white mb-6">Assign to Group</h2>
-                        <p className="text-slate-300 mb-6">
+                    <div className="bg-white rounded-lg border border-gray-200 p-6 w-full max-w-md shadow-xl">
+                        <h2 className="text-2xl font-bold text-gray-900 mb-6">Assign to Group</h2>
+                        <p className="text-gray-600 mb-6">
                             Select a group to assign {selectedPlayers.length} player{selectedPlayers.length > 1 ? 's' : ''}:
                         </p>
                         <div className="space-y-2 max-h-64 overflow-y-auto mb-6">
@@ -636,18 +634,18 @@ export default function PlayersPage() {
                                 <button
                                     key={group.id}
                                     onClick={() => handleBulkAssignGroup(group.id)}
-                                    className="w-full px-4 py-3 bg-slate-900/50 hover:bg-slate-700/50 border border-slate-700/50 rounded-lg text-left transition-colors"
+                                    className="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-left transition-colors"
                                 >
                                     <div className="flex items-center justify-between">
-                                        <span className="text-white font-medium">{group.name}</span>
-                                        <span className="text-sm text-slate-400">{group.playerCount || 0} players</span>
+                                        <span className="text-gray-900 font-medium">{group.name}</span>
+                                        <span className="text-sm text-gray-500">{group.playerCount || 0} players</span>
                                     </div>
                                 </button>
                             ))}
                         </div>
                         <button
                             onClick={() => setShowBulkAssignModal(false)}
-                            className="w-full px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-medium transition-colors"
+                            className="w-full px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-medium transition-colors"
                         >
                             Cancel
                         </button>

@@ -124,22 +124,20 @@ export default function OperationsPage() {
     }, [fetchOperationsData]);
 
     return (
-        <div className="min-h-screen bg-slate-950 text-white flex flex-col">
-            <Header />
-
+        <div className="min-h-screen">
             <main className="flex-1 w-full max-w-[1400px] mx-auto p-6 md:p-8 lg:px-12 flex flex-col gap-8">
                 {/* Page Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                     <div>
-                        <h1 className="text-3xl font-bold tracking-tight text-white">System Operations</h1>
-                        <p className="text-slate-400 mt-1">Monitor infrastructure health and manage scheduled deployments.</p>
+                        <h1 className="text-3xl font-bold tracking-tight text-gray-900">System Operations</h1>
+                        <p className="text-gray-500 mt-1">Monitor infrastructure health and manage scheduled deployments.</p>
                     </div>
                     <div className="flex gap-3">
-                        <button className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-sm font-medium transition-colors border border-slate-700 shadow-sm">
+                        <button className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 rounded-lg text-sm font-medium transition-colors border border-gray-200 shadow-sm">
                             <span className="material-symbols-outlined text-[18px]">refresh</span>
                             Refresh Data
                         </button>
-                        <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-colors shadow-lg shadow-blue-500/25">
+                        <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-colors shadow-md shadow-blue-500/20">
                             <span className="material-symbols-outlined text-[18px]">add_circle</span>
                             New Schedule
                         </button>
@@ -149,64 +147,64 @@ export default function OperationsPage() {
                 {/* Status Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {/* Server Status */}
-                    <div className="glass-panel p-5 rounded-xl border-l-4 border-l-emerald-500 bg-slate-800/50 shadow-sm hover:shadow-md transition-all">
+                    <div className="glass-panel p-5 rounded-lg border-l-4 border-l-emerald-600 bg-white shadow-sm hover:shadow-md transition-all">
                         <div className="flex items-center justify-between mb-4">
-                            <span className="text-sm font-medium text-slate-400">Server Status</span>
-                            <span className="material-symbols-outlined text-emerald-500">dns</span>
+                            <span className="text-sm font-medium text-gray-500">Server Status</span>
+                            <span className="material-symbols-outlined text-emerald-600">dns</span>
                         </div>
                         <div className="flex items-end gap-2">
                             {loading ? (
-                                <div className="h-8 bg-slate-700/50 rounded animate-pulse w-24"></div>
+                                <div className="h-8 bg-gray-100 rounded animate-pulse w-24"></div>
                             ) : (
                                 <>
-                                    <span className="text-2xl font-bold text-white">{stats.serverUptime}%</span>
-                                    <span className="text-xs text-emerald-500 mb-1">Uptime</span>
+                                    <span className="text-2xl font-bold text-gray-900">{stats.serverUptime}%</span>
+                                    <span className="text-xs text-emerald-600 mb-1">Uptime</span>
                                 </>
                             )}
                         </div>
-                        <div className="mt-3 text-xs text-slate-400 flex items-center gap-1">
+                        <div className="mt-3 text-xs text-gray-500 flex items-center gap-1">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> All regions operational
                         </div>
                     </div>
 
                     {/* Database Load */}
-                    <div className="glass-panel p-5 rounded-xl border-l-4 border-l-emerald-500 bg-slate-800/50 shadow-sm hover:shadow-md transition-all">
+                    <div className="glass-panel p-5 rounded-lg border-l-4 border-l-emerald-600 bg-white shadow-sm hover:shadow-md transition-all">
                         <div className="flex items-center justify-between mb-4">
-                            <span className="text-sm font-medium text-slate-400">Database Load</span>
-                            <span className="material-symbols-outlined text-emerald-500">database</span>
+                            <span className="text-sm font-medium text-gray-500">Database Load</span>
+                            <span className="material-symbols-outlined text-emerald-600">database</span>
                         </div>
                         <div className="flex items-end gap-2">
                             {loading ? (
-                                <div className="h-8 bg-slate-700/50 rounded animate-pulse w-20"></div>
+                                <div className="h-8 bg-gray-100 rounded animate-pulse w-20"></div>
                             ) : (
                                 <>
-                                    <span className="text-2xl font-bold text-white">{stats.databaseLatency}ms</span>
-                                    <span className="text-xs text-emerald-500 mb-1">Latency</span>
+                                    <span className="text-2xl font-bold text-gray-900">{stats.databaseLatency}ms</span>
+                                    <span className="text-xs text-emerald-600 mb-1">Latency</span>
                                 </>
                             )}
                         </div>
-                        <div className="mt-3 w-full bg-slate-700 rounded-full h-1.5">
+                        <div className="mt-3 w-full bg-gray-200 rounded-full h-1.5">
                             <div className="bg-emerald-500 h-1.5 rounded-full" style={{ width: `${Math.min((stats.databaseLatency / 100) * 100, 100)}%` }}></div>
                         </div>
                     </div>
 
                     {/* Storage Usage */}
-                    <div className="glass-panel p-5 rounded-xl border-l-4 border-l-amber-500 bg-amber-500/5 shadow-sm hover:shadow-md transition-all">
+                    <div className="glass-panel p-5 rounded-lg border-l-4 border-l-amber-600 bg-amber-50 shadow-sm hover:shadow-md transition-all">
                         <div className="flex items-center justify-between mb-4">
-                            <span className="text-sm font-medium text-amber-500">Storage Usage</span>
-                            <span className="material-symbols-outlined text-amber-500">hard_drive</span>
+                            <span className="text-sm font-medium text-amber-600">Storage Usage</span>
+                            <span className="material-symbols-outlined text-amber-600">hard_drive</span>
                         </div>
                         <div className="flex items-end gap-2">
                             {loading ? (
-                                <div className="h-8 bg-slate-700/50 rounded animate-pulse w-20"></div>
+                                <div className="h-8 bg-gray-100 rounded animate-pulse w-20"></div>
                             ) : (
                                 <>
-                                    <span className="text-2xl font-bold text-white">{stats.storagePercentage.toFixed(0)}%</span>
-                                    <span className="text-xs text-amber-500 mb-1">{stats.storagePercentage > 75 ? 'Warning' : 'Normal'}</span>
+                                    <span className="text-2xl font-bold text-gray-900">{stats.storagePercentage.toFixed(0)}%</span>
+                                    <span className="text-xs text-amber-600 mb-1">{stats.storagePercentage > 75 ? 'Warning' : 'Normal'}</span>
                                 </>
                             )}
                         </div>
-                        <div className="mt-3 w-full bg-slate-700 rounded-full h-1.5">
+                        <div className="mt-3 w-full bg-gray-200 rounded-full h-1.5">
                             <div className="bg-amber-500 h-1.5 rounded-full" style={{ width: `${stats.storagePercentage}%` }}></div>
                         </div>
                     </div>
@@ -217,74 +215,74 @@ export default function OperationsPage() {
                     {/* Left Column - Scheduled Updates & Active Alerts */}
                     <div className="lg:col-span-8 flex flex-col gap-6">
                         {/* Scheduled Updates */}
-                        <div className="bg-slate-800/50 rounded-xl border border-slate-700 p-6 shadow-sm">
+                        <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
                             <div className="flex items-center justify-between mb-6">
-                                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-blue-400">calendar_month</span>
+                                <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                                    <span className="material-symbols-outlined text-blue-600">calendar_month</span>
                                     Scheduled Updates
                                 </h2>
-                                <button className="text-sm text-blue-400 hover:text-blue-300 font-medium">View Calendar</button>
+                                <button className="text-sm text-blue-600 hover:text-blue-500 font-medium">View Calendar</button>
                             </div>
-                            <div className="relative pl-4 border-l border-slate-700 space-y-8">
+                            <div className="relative pl-4 border-l border-gray-200 space-y-8">
                                 {/* Update 1 */}
                                 <div className="relative group">
-                                    <div className="absolute -left-[21px] top-1 h-3 w-3 rounded-full border-2 border-blue-500 bg-slate-950 group-hover:bg-blue-500 transition-colors"></div>
-                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg bg-slate-800/50 hover:bg-slate-800 transition-colors border border-transparent hover:border-slate-700">
+                                    <div className="absolute -left-[21px] top-1 h-3 w-3 rounded-full border-2 border-blue-500 bg-white group-hover:bg-blue-500 transition-colors"></div>
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors border border-transparent hover:border-gray-200">
                                         <div>
                                             <div className="flex items-center gap-2 mb-1">
-                                                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/10 text-purple-400 uppercase">Playlist</span>
-                                                <h3 className="text-sm font-semibold text-white">Q3 Marketing Campaign</h3>
+                                                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-600 uppercase">Playlist</span>
+                                                <h3 className="text-sm font-semibold text-gray-900">Q3 Marketing Campaign</h3>
                                             </div>
-                                            <p className="text-xs text-slate-400">Target: All Retail Displays (North America)</p>
+                                            <p className="text-xs text-gray-500">Target: All Retail Displays (North America)</p>
                                         </div>
                                         <div className="flex items-center gap-4 text-xs">
-                                            <div className="flex items-center gap-1 text-slate-400">
+                                            <div className="flex items-center gap-1 text-gray-500">
                                                 <span className="material-symbols-outlined text-[16px]">schedule</span>
                                                 Today, 14:00 PM
                                             </div>
-                                            <button className="px-3 py-1.5 rounded-md bg-slate-900 border border-slate-600 text-slate-300 hover:text-blue-400 transition-colors">Edit</button>
+                                            <button className="px-3 py-1.5 rounded-md bg-white border border-gray-200 text-gray-700 hover:text-blue-600 transition-colors">Edit</button>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Update 2 */}
                                 <div className="relative group">
-                                    <div className="absolute -left-[21px] top-1 h-3 w-3 rounded-full border-2 border-slate-600 bg-slate-950 group-hover:bg-slate-400 transition-colors"></div>
-                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg bg-slate-800/50 hover:bg-slate-800 transition-colors border border-transparent hover:border-slate-700">
+                                    <div className="absolute -left-[21px] top-1 h-3 w-3 rounded-full border-2 border-gray-300 bg-white group-hover:bg-gray-400 transition-colors"></div>
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors border border-transparent hover:border-gray-200">
                                         <div>
                                             <div className="flex items-center gap-2 mb-1">
-                                                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/10 text-blue-400 uppercase">Firmware</span>
-                                                <h3 className="text-sm font-semibold text-white">Player OS Update v4.2.1</h3>
+                                                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-600 uppercase">Firmware</span>
+                                                <h3 className="text-sm font-semibold text-gray-900">Player OS Update v4.2.1</h3>
                                             </div>
-                                            <p className="text-xs text-slate-400">Target: Lobby Screens (Group B)</p>
+                                            <p className="text-xs text-gray-500">Target: Lobby Screens (Group B)</p>
                                         </div>
                                         <div className="flex items-center gap-4 text-xs">
-                                            <div className="flex items-center gap-1 text-slate-400">
+                                            <div className="flex items-center gap-1 text-gray-500">
                                                 <span className="material-symbols-outlined text-[16px]">schedule</span>
                                                 Tomorrow, 02:00 AM
                                             </div>
-                                            <button className="px-3 py-1.5 rounded-md bg-slate-900 border border-slate-600 text-slate-300 hover:text-blue-400 transition-colors">Edit</button>
+                                            <button className="px-3 py-1.5 rounded-md bg-white border border-gray-200 text-gray-700 hover:text-blue-600 transition-colors">Edit</button>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Update 3 */}
                                 <div className="relative group">
-                                    <div className="absolute -left-[21px] top-1 h-3 w-3 rounded-full border-2 border-slate-600 bg-slate-950 group-hover:bg-slate-400 transition-colors"></div>
-                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg bg-slate-800/50 hover:bg-slate-800 transition-colors border border-transparent hover:border-slate-700">
+                                    <div className="absolute -left-[21px] top-1 h-3 w-3 rounded-full border-2 border-gray-300 bg-white group-hover:bg-gray-400 transition-colors"></div>
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors border border-transparent hover:border-gray-200">
                                         <div>
                                             <div className="flex items-center gap-2 mb-1">
-                                                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 uppercase">Maint</span>
-                                                <h3 className="text-sm font-semibold text-white">Database Optimization</h3>
+                                                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-600 uppercase">Maint</span>
+                                                <h3 className="text-sm font-semibold text-gray-900">Database Optimization</h3>
                                             </div>
-                                            <p className="text-xs text-slate-400">System-wide performance tune</p>
+                                            <p className="text-xs text-gray-500">System-wide performance tune</p>
                                         </div>
                                         <div className="flex items-center gap-4 text-xs">
-                                            <div className="flex items-center gap-1 text-slate-400">
+                                            <div className="flex items-center gap-1 text-gray-500">
                                                 <span className="material-symbols-outlined text-[16px]">schedule</span>
                                                 Sat, 23:00 PM
                                             </div>
-                                            <button className="px-3 py-1.5 rounded-md bg-slate-900 border border-slate-600 text-slate-300 hover:text-blue-400 transition-colors">Edit</button>
+                                            <button className="px-3 py-1.5 rounded-md bg-white border border-gray-200 text-gray-700 hover:text-blue-600 transition-colors">Edit</button>
                                         </div>
                                     </div>
                                 </div>
@@ -292,46 +290,46 @@ export default function OperationsPage() {
                         </div>
 
                         {/* Active Alerts */}
-                        <div className="bg-slate-800/50 rounded-xl border border-slate-700 p-6 shadow-sm">
+                        <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
                             <div className="flex items-center justify-between mb-4">
-                                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-rose-500">warning</span>
+                                <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                                    <span className="material-symbols-outlined text-rose-600">warning</span>
                                     Active Alerts
                                 </h2>
-                                <span className="text-xs font-medium px-2 py-1 bg-rose-500/10 text-rose-400 rounded-full">2 Critical</span>
+                                <span className="text-xs font-medium px-2 py-1 bg-rose-100 text-rose-600 rounded-full">2 Critical</span>
                             </div>
                             <div className="space-y-3">
                                 {loading ? (
                                     <>
-                                        <div className="h-16 bg-slate-700/50 rounded-lg animate-pulse"></div>
-                                        <div className="h-16 bg-slate-700/50 rounded-lg animate-pulse"></div>
+                                        <div className="h-16 bg-gray-100 rounded-lg animate-pulse"></div>
+                                        <div className="h-16 bg-gray-100 rounded-lg animate-pulse"></div>
                                     </>
                                 ) : alerts.length > 0 ? (
                                     alerts.map((alert) => (
                                         <div key={alert.id} className={`flex items-center justify-between p-3 rounded-lg border ${alert.type === 'critical'
-                                            ? 'border-rose-900/30 bg-rose-900/10'
-                                            : 'border-amber-900/30 bg-amber-900/10'
+                                            ? 'border-rose-200 bg-rose-50'
+                                            : 'border-amber-200 bg-amber-50'
                                             }`}>
                                             <div className="flex items-center gap-3">
-                                                <span className={`material-symbols-outlined ${alert.type === 'critical' ? 'text-rose-500' : 'text-amber-500'
+                                                <span className={`material-symbols-outlined ${alert.type === 'critical' ? 'text-rose-600' : 'text-amber-600'
                                                     }`}>
                                                     {alert.type === 'critical' ? 'wifi_off' : 'sd_card_alert'}
                                                 </span>
                                                 <div>
-                                                    <p className={`text-sm font-medium ${alert.type === 'critical' ? 'text-rose-100' : 'text-amber-100'
+                                                    <p className={`text-sm font-medium ${alert.type === 'critical' ? 'text-rose-900' : 'text-amber-900'
                                                         }`}>{alert.message}</p>
-                                                    <p className={`text-xs ${alert.type === 'critical' ? 'text-rose-300/70' : 'text-amber-300/70'
+                                                    <p className={`text-xs ${alert.type === 'critical' ? 'text-rose-600' : 'text-amber-600'
                                                         }`}>{alert.details}</p>
                                                 </div>
                                             </div>
-                                            <button className={`text-xs font-medium hover:underline ${alert.type === 'critical' ? 'text-rose-400' : 'text-amber-400'
+                                            <button className={`text-xs font-medium hover:underline ${alert.type === 'critical' ? 'text-rose-600' : 'text-amber-600'
                                                 }`}>
                                                 {alert.type === 'critical' ? 'Troubleshoot' : 'Manage'}
                                             </button>
                                         </div>
                                     ))
                                 ) : (
-                                    <div className="flex items-center justify-center h-20 text-slate-500 text-sm">
+                                    <div className="flex items-center justify-center h-20 text-gray-500 text-sm">
                                         No active alerts
                                     </div>
                                 )}
@@ -342,33 +340,33 @@ export default function OperationsPage() {
                     {/* Right Column - Audit Trail */}
                     <div className="lg:col-span-4 flex flex-col">
                         {/* Audit Trail */}
-                        <div className="bg-slate-800/50 rounded-xl border border-slate-700 shadow-sm flex flex-col h-full">
-                            <div className="p-5 border-b border-slate-700 flex justify-between items-center">
-                                <h3 className="font-semibold text-white flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-blue-400 text-[20px]">history</span>
+                        <div className="bg-white rounded-lg border border-gray-200 shadow-sm flex flex-col h-full">
+                            <div className="p-5 border-b border-gray-200 flex justify-between items-center">
+                                <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+                                    <span className="material-symbols-outlined text-blue-600 text-[20px]">history</span>
                                     Audit Trail
                                 </h3>
-                                <button className="text-xs text-slate-400 hover:text-blue-400 transition-colors">View All</button>
+                                <button className="text-xs text-gray-500 hover:text-blue-600 transition-colors">View All</button>
                             </div>
                             <div className="flex-1 overflow-y-auto p-2 scrollbar-hide">
                                 {loading ? (
                                     <div className="space-y-2 p-2">
                                         {[1, 2, 3].map(i => (
-                                            <div key={i} className="h-16 bg-slate-700/50 rounded-lg animate-pulse"></div>
+                                            <div key={i} className="h-16 bg-gray-100 rounded-lg animate-pulse"></div>
                                         ))}
                                     </div>
                                 ) : auditLogs.length > 0 ? (
                                     <ul className="space-y-1">
                                         {auditLogs.map((log) => (
-                                            <li key={log.id} className="flex items-start gap-3 p-3 hover:bg-slate-800/50 rounded-lg transition-colors group">
+                                            <li key={log.id} className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors group">
                                                 <div className="relative shrink-0">
-                                                    <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-300 ring-2 ring-slate-800">
+                                                    <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-600 ring-2 ring-white">
                                                         {log.user_email?.substring(0, 2).toUpperCase() || 'SY'}
                                                     </div>
-                                                    <div className={`absolute -bottom-1 -right-1 p-0.5 rounded-full ring-2 ring-slate-800 ${log.action.includes('create') ? 'bg-green-500' :
+                                                    <div className={`absolute -bottom-1 -right-1 p-0.5 rounded-full ring-2 ring-white ${log.action.includes('create') ? 'bg-green-500' :
                                                         log.action.includes('delete') ? 'bg-red-500' :
                                                             log.action.includes('update') ? 'bg-blue-500' :
-                                                                'bg-slate-500'
+                                                                'bg-gray-400'
                                                         }`}>
                                                         <span className="material-symbols-outlined text-[10px] block text-white">
                                                             {log.action.includes('create') ? 'add' :
@@ -379,14 +377,14 @@ export default function OperationsPage() {
                                                     </div>
                                                 </div>
                                                 <div className="flex-1 min-w-0">
-                                                    <p className="text-xs text-slate-400 mb-0.5">
-                                                        <span className="font-medium text-white">{log.user_email || 'System'}</span>
+                                                    <p className="text-xs text-gray-600 mb-0.5">
+                                                        <span className="font-medium text-gray-900">{log.user_email || 'System'}</span>
                                                         {' '}{log.action} {log.resource_type}
                                                     </p>
                                                     {log.details && (
-                                                        <p className="text-[10px] text-slate-500 truncate">{log.details}</p>
+                                                        <p className="text-[10px] text-gray-500 truncate">{log.details}</p>
                                                     )}
-                                                    <p className="text-[10px] text-slate-600 mt-0.5">
+                                                    <p className="text-[10px] text-gray-400 mt-0.5">
                                                         {new Date(log.created_at).toLocaleString('en-US', {
                                                             month: 'short',
                                                             day: 'numeric',
@@ -399,7 +397,7 @@ export default function OperationsPage() {
                                         ))}
                                     </ul>
                                 ) : (
-                                    <div className="flex flex-col items-center justify-center h-40 text-slate-500">
+                                    <div className="flex flex-col items-center justify-center h-40 text-gray-500">
                                         <span className="material-symbols-outlined text-4xl mb-2">history</span>
                                         <p className="text-sm">No audit logs yet</p>
                                     </div>

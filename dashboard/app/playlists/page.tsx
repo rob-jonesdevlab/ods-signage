@@ -270,19 +270,17 @@ export default function PlaylistsPage() {
     );
 
     return (
-        <div className="min-h-screen bg-slate-950 text-white flex flex-col">
-            <Header />
-
+        <div className="min-h-screen">
             {/* Main Content */}
-            <main className="flex-1 w-full max-w-[1600px] mx-auto p-6 md:p-8 flex gap-6">
+            <main className="w-full max-w-[1600px] mx-auto p-6 md:p-8 flex gap-6">
                 {/* Sidebar */}
                 <aside className="w-64 flex-shrink-0">
-                    <div className="glass-card p-4 rounded-2xl border border-slate-700/50 bg-slate-800/50 backdrop-blur-sm sticky top-6">
+                    <div className="p-4 rounded-lg border border-gray-200 bg-white shadow-sm sticky top-6">
                         <div className="flex items-center justify-between mb-4">
-                            <h3 className="font-semibold text-white">Templates</h3>
+                            <h3 className="font-semibold text-gray-900">Templates</h3>
                             <button
                                 onClick={() => setShowNewTemplateModal(true)}
-                                className="w-8 h-8 rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors flex items-center justify-center shadow-lg shadow-blue-500/20"
+                                className="w-8 h-8 rounded-lg bg-blue-600 hover:bg-blue-500 transition-colors flex items-center justify-center shadow-sm"
                                 title="New Template"
                             >
                                 <span className="material-symbols-outlined text-[20px]">add</span>
@@ -301,8 +299,8 @@ export default function PlaylistsPage() {
                 <div className="flex-1 flex flex-col gap-8">
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                         <div>
-                            <h1 className="text-3xl font-bold tracking-tight text-white">Playlists</h1>
-                            <p className="text-slate-400 mt-1">Create and manage content sequences for your players</p>
+                            <h1 className="text-3xl font-bold tracking-tight text-gray-900">Playlists</h1>
+                            <p className="text-gray-500 mt-1">Create and manage content sequences for your players</p>
                         </div>
                         <div className="flex flex-wrap gap-3">
                             {/* Date Range Filter */}
@@ -339,7 +337,7 @@ export default function PlaylistsPage() {
                             {/* Action Button */}
                             <button
                                 onClick={() => setShowNewPlaylistModal(true)}
-                                className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-all shadow-lg shadow-blue-600/20 hover:shadow-blue-600/40"
+                                className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-all shadow-sm"
                             >
                                 <span className="text-xl">+</span>
                                 New Playlist
@@ -357,7 +355,7 @@ export default function PlaylistsPage() {
 
                     {/* Loading State */}
                     {loading ? (
-                        <div className="text-center py-12 text-slate-400">Loading playlists...</div>
+                        <div className="text-center py-12 text-gray-500">Loading playlists...</div>
                     ) : filteredPlaylists.length === 0 && searchQuery === '' ? (
                         /* Empty State */
                         <EmptyState
@@ -371,7 +369,7 @@ export default function PlaylistsPage() {
                     ) : filteredPlaylists.length === 0 ? (
                         /* No Search Results */
                         <div className="text-center py-12">
-                            <p className="text-slate-400">No playlists found matching "{searchQuery}"</p>
+                            <p className="text-gray-500">No playlists found matching "{searchQuery}"</p>
                         </div>
                     ) : (
                         /* Playlists Grid */
@@ -380,39 +378,39 @@ export default function PlaylistsPage() {
                                 <Link
                                     key={playlist.id}
                                     href={`/playlists/${playlist.id}`}
-                                    className={`group relative rounded-xl p-6 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer bg-slate-800/70 backdrop-blur-xl border border-white/5 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/15 ${index === 0 ? 'ring-1 ring-blue-500/50 shadow-lg shadow-blue-500/10' : ''
+                                    className={`group relative rounded-lg p-6 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer bg-white border border-gray-200 hover:border-blue-300 hover:shadow-md ${index === 0 ? 'ring-1 ring-blue-300 shadow-sm' : ''
                                         }`}
                                 >
                                     <div className="flex justify-between items-start mb-4">
-                                        <div className={`h-12 w-12 rounded-lg flex items-center justify-center transition-colors duration-300 ${index === 0 ? 'bg-blue-500/10 text-blue-500 group-hover:bg-blue-600 group-hover:text-white' : 'bg-slate-700/50 text-slate-400 group-hover:bg-blue-600 group-hover:text-white'
+                                        <div className={`h-12 w-12 rounded-lg flex items-center justify-center transition-colors duration-300 ${index === 0 ? 'bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white' : 'bg-gray-100 text-gray-500 group-hover:bg-blue-600 group-hover:text-white'
                                             }`}>
                                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
                                             </svg>
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            <span className="px-2 py-1 rounded text-[10px] font-bold bg-slate-700/50 text-slate-300 border border-white/5 uppercase tracking-wide">
+                                            <span className="px-2 py-1 rounded text-[10px] font-bold bg-gray-100 text-gray-600 border border-gray-200 uppercase tracking-wide">
                                                 {playlist.created_by}
                                             </span>
                                         </div>
                                     </div>
-                                    <h3 className="text-lg font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">
+                                    <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
                                         {playlist.name}
                                     </h3>
                                     {playlist.description && (
-                                        <p className="text-sm text-slate-400 mb-6 line-clamp-2">
+                                        <p className="text-sm text-gray-500 mb-6 line-clamp-2">
                                             {playlist.description}
                                         </p>
                                     )}
-                                    <div className="flex items-center justify-between pt-4 border-t border-white/5">
+                                    <div className="flex items-center justify-between pt-4 border-t border-gray-200">
                                         <div className="flex items-center gap-2">
                                             <div className="flex -space-x-2">
-                                                <div className="h-6 w-6 rounded-full bg-slate-600 border border-slate-800"></div>
-                                                <div className="h-6 w-6 rounded-full bg-slate-500 border border-slate-800"></div>
+                                                <div className="h-6 w-6 rounded-full bg-gray-300 border border-white"></div>
+                                                <div className="h-6 w-6 rounded-full bg-gray-200 border border-white"></div>
                                             </div>
-                                            <span className="text-xs text-slate-500">0 items</span>
+                                            <span className="text-xs text-gray-500">0 items</span>
                                         </div>
-                                        <span className="text-xs text-slate-500">Created {formatDate(playlist.created_at)}</span>
+                                        <span className="text-xs text-gray-500">Created {formatDate(playlist.created_at)}</span>
                                     </div>
                                 </Link>
                             ))}
@@ -424,18 +422,18 @@ export default function PlaylistsPage() {
             {/* New Playlist Modal */}
             {showNewPlaylistModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" onClick={() => setShowNewPlaylistModal(false)}></div>
-                    <div className="relative w-full max-w-lg transform rounded-2xl bg-slate-800 border border-slate-700 shadow-2xl transition-all p-6 sm:p-8">
+                    <div className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onClick={() => setShowNewPlaylistModal(false)}></div>
+                    <div className="relative w-full max-w-lg transform rounded-lg bg-white border border-gray-200 shadow-2xl transition-all p-6 sm:p-8">
                         <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center gap-3">
-                                <div className="p-2 rounded-lg bg-blue-600/20 text-blue-500">
+                                <div className="p-2 rounded-lg bg-blue-50 text-blue-600">
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                     </svg>
                                 </div>
-                                <h3 className="text-xl font-bold text-white">Create New Playlist</h3>
+                                <h3 className="text-xl font-bold text-gray-900">Create New Playlist</h3>
                             </div>
-                            <button onClick={() => setShowNewPlaylistModal(false)} className="text-slate-400 hover:text-white transition-colors">
+                            <button onClick={() => setShowNewPlaylistModal(false)} className="text-gray-400 hover:text-gray-600 transition-colors">
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                                 </svg>
@@ -443,9 +441,9 @@ export default function PlaylistsPage() {
                         </div>
                         <div className="space-y-5">
                             <div className="space-y-1.5">
-                                <label className="block text-sm font-medium text-slate-300" htmlFor="playlist-name">Name</label>
+                                <label className="block text-sm font-medium text-gray-700" htmlFor="playlist-name">Name</label>
                                 <input
-                                    className="block w-full rounded-lg border-slate-700 bg-slate-900 text-white shadow-sm focus:border-blue-600 focus:ring-blue-600 sm:text-sm px-4 py-2.5 placeholder-slate-500"
+                                    className="block w-full rounded-lg border-gray-300 bg-white text-gray-900 shadow-sm focus:border-blue-600 focus:ring-blue-600 sm:text-sm px-4 py-2.5 placeholder-gray-400"
                                     id="playlist-name"
                                     placeholder="e.g. Main Lobby Loop"
                                     type="text"
@@ -455,11 +453,11 @@ export default function PlaylistsPage() {
                                 />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="block text-sm font-medium text-slate-300" htmlFor="playlist-desc">
-                                    Description <span className="text-slate-500 font-normal ml-1">(Optional)</span>
+                                <label className="block text-sm font-medium text-gray-700" htmlFor="playlist-desc">
+                                    Description <span className="text-gray-500 font-normal ml-1">(Optional)</span>
                                 </label>
                                 <textarea
-                                    className="block w-full rounded-lg border-slate-700 bg-slate-900 text-white shadow-sm focus:border-blue-600 focus:ring-blue-600 sm:text-sm px-4 py-2.5 placeholder-slate-500 resize-none"
+                                    className="block w-full rounded-lg border-gray-300 bg-white text-gray-900 shadow-sm focus:border-blue-600 focus:ring-blue-600 sm:text-sm px-4 py-2.5 placeholder-gray-400 resize-none"
                                     id="playlist-desc"
                                     placeholder="Briefly describe the purpose of this playlist..."
                                     rows={4}
@@ -471,13 +469,13 @@ export default function PlaylistsPage() {
                                 <div className="flex items-center h-5">
                                     <input
                                         checked={setAsActive}
-                                        className="h-4 w-4 rounded border-slate-600 bg-slate-900 text-blue-600 focus:ring-blue-600 focus:ring-offset-slate-800"
+                                        className="h-4 w-4 rounded border-gray-300 bg-white text-blue-600 focus:ring-blue-600 focus:ring-offset-white"
                                         id="active-toggle"
                                         type="checkbox"
                                         onChange={(e) => setSetAsActive(e.target.checked)}
                                     />
                                 </div>
-                                <label className="text-sm font-medium text-slate-300 select-none" htmlFor="active-toggle">
+                                <label className="text-sm font-medium text-gray-700 select-none" htmlFor="active-toggle">
                                     Set as active playlist immediately
                                 </label>
                             </div>
@@ -490,14 +488,14 @@ export default function PlaylistsPage() {
                                     setNewPlaylistDescription('');
                                     setSetAsActive(true);
                                 }}
-                                className="px-4 py-2.5 rounded-lg text-sm font-medium text-white bg-slate-700 hover:bg-slate-600 border border-slate-600 hover:border-slate-500 transition-all focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 focus:ring-offset-slate-800"
+                                className="px-4 py-2.5 rounded-lg text-sm font-medium text-gray-700 bg-gray-200 hover:bg-gray-300 border border-gray-300 hover:border-gray-400 transition-all focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-white"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={handleCreatePlaylist}
                                 disabled={!newPlaylistName.trim()}
-                                className="px-6 py-2.5 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-600/20 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-800 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="px-6 py-2.5 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-500 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />

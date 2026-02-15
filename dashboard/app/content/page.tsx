@@ -458,7 +458,7 @@ export default function ContentLibraryPage() {
         if (!confirmed) return;
 
         try {
-            await Promise.all(selectedItems.map(item => 
+            await Promise.all(selectedItems.map(item =>
                 fetch(`http://localhost:3001/api/content/${item.id}`, { method: 'DELETE' })
             ));
 
@@ -527,17 +527,15 @@ export default function ContentLibraryPage() {
     const totalCount = content.length;
 
     return (
-        <div className="min-h-screen bg-slate-950 text-white flex flex-col">
-            <Header />
-
+        <div className="min-h-screen">
             {/* Main Content - Two Column Layout */}
             <div className="flex-1 flex overflow-hidden">
                 {/* Folder Sidebar */}
-                <aside className="w-72 border-r border-slate-800 bg-slate-900/50 overflow-y-auto p-4">
+                <aside className="w-72 border-r border-gray-200 bg-gray-50 overflow-y-auto p-4">
                     <div className="mb-4">
                         <button
                             onClick={() => setShowNewFolderModal(true)}
-                            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-all shadow-lg shadow-blue-600/20 hover:shadow-blue-600/40"
+                            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-all shadow-sm"
                         >
                             <span className="material-symbols-outlined text-[18px]">create_new_folder</span>
                             New Folder
@@ -560,8 +558,8 @@ export default function ContentLibraryPage() {
                         {/* Page Header */}
                         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                             <div>
-                                <h1 className="text-3xl font-bold tracking-tight text-white">Content Library</h1>
-                                <p className="text-slate-400 mt-1">Manage and organize your digital signage assets.</p>
+                                <h1 className="text-3xl font-bold tracking-tight text-gray-900">Content Library</h1>
+                                <p className="text-gray-500 mt-1">Manage and organize your digital signage assets.</p>
                             </div>
                             <div className="flex gap-3">
                                 <ExportButton
@@ -578,14 +576,14 @@ export default function ContentLibraryPage() {
                                 />
                                 <button
                                     onClick={() => setShowUrlModal(true)}
-                                    className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-colors shadow-lg shadow-purple-600/25"
+                                    className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
                                 >
                                     <span className="material-symbols-outlined text-[18px]">link</span>
                                     Add URL
                                 </button>
                                 <button
                                     {...getRootProps()}
-                                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-colors shadow-lg shadow-blue-500/20"
+                                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
                                 >
                                     <span className="material-symbols-outlined text-[18px]">cloud_upload</span>
                                     Upload Media
@@ -599,29 +597,29 @@ export default function ContentLibraryPage() {
                         {/* Upload Zone */}
                         <div {...getRootProps()} className="relative group cursor-pointer">
                             <input {...getInputProps()} />
-                            <div className={`absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl opacity-20 group-hover:opacity-40 blur transition duration-500 ${isDragActive ? 'opacity-60' : ''}`}></div>
-                            <div className={`relative flex flex-col items-center justify-center w-full h-48 rounded-xl border-2 border-dashed bg-slate-800/50 backdrop-blur-sm transition-all duration-300 ${isDragActive
-                                ? 'border-blue-500 bg-blue-500/10'
-                                : 'border-slate-700 hover:border-blue-500/50 hover:bg-slate-800/70'
+                            <div className={`absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg opacity-10 group-hover:opacity-20 blur transition duration-500 ${isDragActive ? 'opacity-30' : ''}`}></div>
+                            <div className={`relative flex flex-col items-center justify-center w-full h-48 rounded-lg border-2 border-dashed bg-white transition-all duration-300 ${isDragActive
+                                ? 'border-blue-500 bg-blue-50'
+                                : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'
                                 }`}>
                                 <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center">
-                                    <div className="p-3 rounded-full bg-blue-500/10 text-blue-400 mb-3 group-hover:scale-110 transition-transform duration-300">
+                                    <div className="p-3 rounded-full bg-blue-50 text-blue-600 mb-3 group-hover:scale-110 transition-transform duration-300">
                                         <span className="material-symbols-outlined text-[32px]">cloud_upload</span>
                                     </div>
                                     {uploading ? (
                                         <>
-                                            <p className="mb-1 text-base text-white font-semibold">Uploading...</p>
-                                            <p className="text-sm text-slate-400">Please wait</p>
+                                            <p className="mb-1 text-base text-gray-900 font-semibold">Uploading...</p>
+                                            <p className="text-sm text-gray-500">Please wait</p>
                                         </>
                                     ) : isDragActive ? (
                                         <>
-                                            <p className="mb-1 text-base text-white font-semibold">Drop files here</p>
-                                            <p className="text-sm text-slate-400">Release to upload</p>
+                                            <p className="mb-1 text-base text-gray-900 font-semibold">Drop files here</p>
+                                            <p className="text-sm text-gray-500">Release to upload</p>
                                         </>
                                     ) : (
                                         <>
-                                            <p className="mb-1 text-base text-white font-semibold">Drag & drop media here</p>
-                                            <p className="text-sm text-slate-400">Supports JPG, PNG, MP4 <span className="text-slate-600">|</span> Max 100MB</p>
+                                            <p className="mb-1 text-base text-gray-900 font-semibold">Drag & drop media here</p>
+                                            <p className="text-sm text-gray-500">Supports JPG, PNG, MP4 <span className="text-gray-400">|</span> Max 100MB</p>
                                         </>
                                     )}
                                 </div>
@@ -631,59 +629,59 @@ export default function ContentLibraryPage() {
                         {/* Stats Cards - 4 in a row */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                             {/* Folders */}
-                            <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 backdrop-blur-sm flex flex-col shadow-sm hover:shadow-md transition-shadow">
+                            <div className="p-4 rounded-lg bg-white border border-gray-200 shadow-sm flex flex-col hover:shadow-md transition-shadow">
                                 <div className="flex items-center justify-between mb-2">
-                                    <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Folders</span>
-                                    <span className="material-symbols-outlined text-slate-400 text-[18px]">folder</span>
+                                    <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Folders</span>
+                                    <span className="material-symbols-outlined text-gray-400 text-[18px]">folder</span>
                                 </div>
                                 <div className="flex items-end justify-between">
-                                    <span className="text-2xl font-bold text-white">{folderCount}</span>
-                                    <span className="text-xs text-emerald-400 font-medium">Active</span>
+                                    <span className="text-2xl font-bold text-gray-900">{folderCount}</span>
+                                    <span className="text-xs text-emerald-600 font-medium">Active</span>
                                 </div>
-                                <div className="w-full bg-slate-700/50 rounded-full h-1 mt-2">
+                                <div className="w-full bg-gray-200 rounded-full h-1 mt-2">
                                     <div className="bg-emerald-500 h-1 rounded-full" style={{ width: '100%' }}></div>
                                 </div>
                             </div>
 
                             {/* Images */}
-                            <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 backdrop-blur-sm flex flex-col shadow-sm hover:shadow-md transition-shadow">
+                            <div className="p-4 rounded-lg bg-white border border-gray-200 shadow-sm flex flex-col hover:shadow-md transition-shadow">
                                 <div className="flex items-center justify-between mb-2">
-                                    <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Images</span>
-                                    <span className="material-symbols-outlined text-yellow-400 text-[18px]">image</span>
+                                    <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Images</span>
+                                    <span className="material-symbols-outlined text-yellow-500 text-[18px]">image</span>
                                 </div>
                                 <div className="flex items-end justify-between">
-                                    <span className="text-2xl font-bold text-white">{imageCount}</span>
+                                    <span className="text-2xl font-bold text-gray-900">{imageCount}</span>
                                 </div>
-                                <div className="w-full bg-slate-700/50 rounded-full h-1 mt-2">
+                                <div className="w-full bg-gray-200 rounded-full h-1 mt-2">
                                     <div className="bg-yellow-500 h-1 rounded-full" style={{ width: `${totalCount > 0 ? (imageCount / totalCount) * 100 : 0}%` }}></div>
                                 </div>
                             </div>
 
                             {/* URLs */}
-                            <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 backdrop-blur-sm flex flex-col shadow-sm hover:shadow-md transition-shadow">
+                            <div className="p-4 rounded-lg bg-white border border-gray-200 shadow-sm flex flex-col hover:shadow-md transition-shadow">
                                 <div className="flex items-center justify-between mb-2">
-                                    <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">URLs</span>
-                                    <span className="material-symbols-outlined text-slate-400 text-[18px]">link</span>
+                                    <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">URLs</span>
+                                    <span className="material-symbols-outlined text-gray-400 text-[18px]">link</span>
                                 </div>
                                 <div className="flex items-end justify-between">
-                                    <span className="text-2xl font-bold text-white">{urlCount}</span>
+                                    <span className="text-2xl font-bold text-gray-900">{urlCount}</span>
                                 </div>
-                                <div className="w-full bg-slate-700/50 rounded-full h-1 mt-2">
-                                    <div className="bg-slate-500 h-1 rounded-full" style={{ width: `${totalCount > 0 ? (urlCount / totalCount) * 100 : 0}%` }}></div>
+                                <div className="w-full bg-gray-200 rounded-full h-1 mt-2">
+                                    <div className="bg-gray-400 h-1 rounded-full" style={{ width: `${totalCount > 0 ? (urlCount / totalCount) * 100 : 0}%` }}></div>
                                 </div>
                             </div>
 
                             {/* Videos */}
-                            <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 backdrop-blur-sm flex flex-col shadow-sm hover:shadow-md transition-shadow">
+                            <div className="p-4 rounded-lg bg-white border border-gray-200 shadow-sm flex flex-col hover:shadow-md transition-shadow">
                                 <div className="flex items-center justify-between mb-2">
-                                    <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Videos</span>
-                                    <span className="material-symbols-outlined text-slate-400 text-[18px]">movie</span>
+                                    <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Videos</span>
+                                    <span className="material-symbols-outlined text-gray-400 text-[18px]">movie</span>
                                 </div>
                                 <div className="flex items-end justify-between">
-                                    <span className="text-2xl font-bold text-white">{videoCount}</span>
+                                    <span className="text-2xl font-bold text-gray-900">{videoCount}</span>
                                 </div>
-                                <div className="w-full bg-slate-700/50 rounded-full h-1 mt-2">
-                                    <div className="bg-slate-500 h-1 rounded-full" style={{ width: `${totalCount > 0 ? (videoCount / totalCount) * 100 : 0}%` }}></div>
+                                <div className="w-full bg-gray-200 rounded-full h-1 mt-2">
+                                    <div className="bg-gray-400 h-1 rounded-full" style={{ width: `${totalCount > 0 ? (videoCount / totalCount) * 100 : 0}%` }}></div>
                                 </div>
                             </div>
                         </div>
@@ -751,11 +749,11 @@ export default function ContentLibraryPage() {
                                                 setPreviewMedia(item);
                                             }
                                         }}
-                                        className={`group relative flex flex-col bg-slate-800/50 rounded-xl overflow-hidden shadow-sm hover:shadow-xl hover:shadow-blue-500/10 border transition-all duration-300 hover:scale-[1.02] cursor-pointer ${draggedContent === item.id
+                                        className={`group relative flex flex-col bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md border transition-all duration-300 hover:scale-[1.02] cursor-pointer ${draggedContent === item.id
                                             ? 'opacity-50 cursor-grabbing scale-95'
                                             : isSelected(item.id)
-                                                ? 'border-blue-500 ring-2 ring-blue-500/50'
-                                                : 'border-slate-700/50 hover:border-blue-500/50'
+                                                ? 'border-blue-500 ring-2 ring-blue-300'
+                                                : 'border-gray-200 hover:border-blue-300'
                                             }`}
                                     >
                                         {/* Selection Checkbox */}
@@ -768,7 +766,7 @@ export default function ContentLibraryPage() {
                                         >
                                             <div className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-all cursor-pointer ${isSelected(item.id)
                                                 ? 'bg-blue-600 border-blue-600'
-                                                : 'bg-slate-900/60 border-slate-600 hover:border-blue-500 backdrop-blur-sm'
+                                                : 'bg-white/90 border-gray-400 hover:border-blue-500 backdrop-blur-sm'
                                                 }`}>
                                                 {isSelected(item.id) && (
                                                     <span className="material-symbols-outlined text-white text-[16px] fill-1">check</span>
@@ -776,7 +774,7 @@ export default function ContentLibraryPage() {
                                             </div>
                                         </div>
                                         {/* Thumbnail */}
-                                        <div className="relative aspect-video bg-slate-800 overflow-hidden">
+                                        <div className="relative aspect-video bg-gray-100 overflow-hidden">
                                             {item.metadata.thumbnail ? (
                                                 <img
                                                     src={`http://localhost:3001${item.metadata.thumbnail}`}
@@ -785,13 +783,13 @@ export default function ContentLibraryPage() {
                                                 />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center">
-                                                    <span className="material-symbols-outlined text-6xl text-slate-600">
+                                                    <span className="material-symbols-outlined text-6xl text-gray-300">
                                                         {item.type === 'image' ? 'image' : item.type === 'video' ? 'movie' : 'link'}
                                                     </span>
                                                 </div>
                                             )}
                                             {/* Type badge */}
-                                            <div className="absolute top-2 right-2 px-2 py-1 bg-black/60 backdrop-blur-sm rounded text-[10px] font-bold text-white uppercase tracking-wider flex items-center gap-1">
+                                            <div className="absolute top-2 right-2 px-2 py-1 bg-gray-900/70 backdrop-blur-sm rounded text-[10px] font-bold text-white uppercase tracking-wider flex items-center gap-1">
                                                 <span className="material-symbols-outlined text-[12px] text-blue-400">
                                                     {item.type === 'image' ? 'image' : item.type === 'video' ? 'videocam' : 'link'}
                                                 </span>
@@ -799,7 +797,7 @@ export default function ContentLibraryPage() {
                                             </div>
                                             {item.type === 'video' && (
                                                 <>
-                                                    <div className="absolute bottom-2 right-2 px-1.5 py-0.5 bg-black/70 rounded text-[10px] font-medium text-white">
+                                                    <div className="absolute bottom-2 right-2 px-1.5 py-0.5 bg-gray-900/80 rounded text-[10px] font-medium text-white">
                                                         {item.duration}s
                                                     </div>
                                                     {/* Play overlay on hover */}
@@ -814,14 +812,14 @@ export default function ContentLibraryPage() {
                                         {/* Info */}
                                         <div className="p-4 flex flex-col flex-1">
                                             <div className="flex justify-between items-start mb-2">
-                                                <h3 className="text-sm font-semibold text-slate-900 dark:text-white truncate pr-2 group-hover:text-blue-500 transition-colors">
+                                                <h3 className="text-sm font-semibold text-gray-900 truncate pr-2 group-hover:text-blue-600 transition-colors">
                                                     {item.name}
                                                 </h3>
-                                                <button className="text-slate-400 hover:text-white">
+                                                <button className="text-gray-400 hover:text-gray-700">
                                                     <span className="material-symbols-outlined text-[18px]">more_vert</span>
                                                 </button>
                                             </div>
-                                            <div className="mt-auto flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                                            <div className="mt-auto flex items-center justify-between text-xs text-gray-500">
                                                 <span>{formatFileSize(item.metadata.size)}</span>
                                                 <span>{formatDate(item.metadata.uploadedAt)}</span>
                                             </div>

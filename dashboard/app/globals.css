@@ -2,22 +2,62 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Otter Manager Design System - Light Theme */
 :root {
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
-}
+  /* Primary Colors */
+  --otter-primary-blue: #1C69E8;
+  --otter-alert-red: #C5232B;
+  --otter-alert-red-bg: rgba(218, 37, 47, 0.08);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-  }
+  /* Neutral Colors */
+  --otter-white: #FFFFFF;
+  --otter-gray-50: #F9FAFB;
+  --otter-gray-100: #F3F4F6;
+  --otter-gray-200: #E5E7EB;
+  --otter-gray-300: #D1D5DB;
+  --otter-gray-400: #9CA3AF;
+  --otter-gray-500: #6B7280;
+  --otter-gray-600: #4B5563;
+  --otter-gray-700: #374151;
+  --otter-gray-800: #1F2937;
+  --otter-gray-900: #111827;
+  --otter-black: #000000;
+
+  /* Specific Use Cases */
+  --otter-border: #E0E0E0;
+  --otter-hover-bg: #F9FAFB;
+  --otter-active-bg: var(--otter-primary-blue);
+  --otter-active-text: var(--otter-white);
+
+  /* Success/Warning/Error (for badges, alerts) */
+  --otter-success: #10B981;
+  --otter-warning: #F59E0B;
+  --otter-error: var(--otter-alert-red);
+
+  /* Shadows */
+  --otter-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --otter-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --otter-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --otter-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+  /* Spacing (8px base) */
+  --spacing-1: 8px;
+  --spacing-2: 16px;
+  --spacing-3: 24px;
+  --spacing-4: 32px;
+  --spacing-5: 40px;
+  --spacing-6: 48px;
 }
 
 body {
-  color: rgb(var(--foreground));
-  background: #020617;
-  /* slate-950 */
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--otter-gray-50);
+  color: var(--otter-gray-900);
 }
 
 @keyframes slide-up {
