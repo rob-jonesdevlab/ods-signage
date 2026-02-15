@@ -83,7 +83,7 @@ export default function FilterBar({ filters, activeFilters, onFilterChange, onCl
     };
 
     return (
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+        <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
             <div className="flex flex-wrap items-center gap-3">
                 {/* Filter Dropdowns */}
                 {filters.map(filter => {
@@ -94,14 +94,14 @@ export default function FilterBar({ filters, activeFilters, onFilterChange, onCl
                         <div key={filter.id} className="relative" ref={el => { dropdownRefs.current[filter.id] = el; }}>
                             <button
                                 onClick={() => setOpenDropdown(openDropdown === filter.id ? null : filter.id)}
-                                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-colors text-sm font-medium ${isActive
-                                    ? 'bg-blue-50 border-blue-300 text-blue-700'
-                                    : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+                                className={`flex items-center gap-2 px-4 py-2 rounded-xl border-2 transition-all text-sm font-semibold ${isActive
+                                        ? 'bg-blue-50 border-blue-500 text-blue-700 shadow-sm'
+                                        : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100 hover:border-gray-300'
                                     }`}
                             >
                                 {filter.label}
                                 {isActive && (
-                                    <span className="ml-1 px-1.5 py-0.5 bg-blue-600 text-white text-xs rounded-full">
+                                    <span className="ml-1 px-2 py-0.5 bg-blue-600 text-white text-xs font-bold rounded-full">
                                         {activeFilters[filter.id].length}
                                     </span>
                                 )}
@@ -110,7 +110,7 @@ export default function FilterBar({ filters, activeFilters, onFilterChange, onCl
 
                             {/* Dropdown Menu */}
                             {openDropdown === filter.id && (
-                                <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 z-50 max-h-80 overflow-y-auto">
+                                <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-200 z-50 max-h-80 overflow-y-auto">
                                     <div className="p-2">
                                         {filter.options.map(option => {
                                             const isChecked = activeFilters[filter.id]?.includes(option.value);
@@ -118,23 +118,23 @@ export default function FilterBar({ filters, activeFilters, onFilterChange, onCl
                                             return (
                                                 <label
                                                     key={option.value}
-                                                    className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-50 cursor-pointer text-sm"
+                                                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 cursor-pointer text-sm transition-colors"
                                                 >
                                                     <input
                                                         type={isSingle ? 'radio' : 'checkbox'}
                                                         checked={isChecked}
                                                         onChange={() => toggleFilterValue(filter.id, option.value, isSingle)}
-                                                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
                                                     />
-                                                    <span className="text-gray-700">{option.label}</span>
+                                                    <span className="text-gray-700 font-medium">{option.label}</span>
                                                 </label>
                                             );
                                         })}
                                     </div>
-                                    <div className="border-t border-gray-200 p-2 flex justify-end">
+                                    <div className="border-t border-gray-200 p-2 flex justify-end bg-gray-50">
                                         <button
                                             onClick={() => setOpenDropdown(null)}
-                                            className="px-3 py-1.5 text-sm font-medium text-blue-600 hover:text-blue-500"
+                                            className="px-4 py-2 text-sm font-semibold text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
                                         >
                                             Done
                                         </button>
@@ -154,14 +154,14 @@ export default function FilterBar({ filters, activeFilters, onFilterChange, onCl
                     return (
                         <div
                             key={filterId}
-                            className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm"
+                            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl text-sm font-semibold shadow-sm"
                         >
                             <span>{label}</span>
                             <button
                                 onClick={() => removeFilter(filterId)}
-                                className="hover:bg-blue-700 rounded-full p-0.5 transition-colors"
+                                className="hover:bg-blue-700 rounded-full p-1 transition-colors"
                             >
-                                <XMarkIcon className="w-3 h-3" />
+                                <XMarkIcon className="w-3.5 h-3.5" />
                             </button>
                         </div>
                     );
@@ -170,12 +170,12 @@ export default function FilterBar({ filters, activeFilters, onFilterChange, onCl
                 {/* Active Filter Count & Clear All */}
                 {getActiveFilterCount() > 0 && (
                     <>
-                        <span className="text-sm text-gray-600">
+                        <span className="text-sm text-gray-600 font-medium">
                             {getActiveFilterCount()} filter{getActiveFilterCount() > 1 ? 's' : ''} active
                         </span>
                         <button
                             onClick={onClearAll}
-                            className="text-sm text-gray-600 hover:text-blue-600 font-medium transition-colors"
+                            className="text-sm text-blue-600 hover:text-blue-700 font-semibold transition-colors hover:underline"
                         >
                             Clear All
                         </button>
