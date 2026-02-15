@@ -310,54 +310,54 @@ export default function AnalyticsPage() {
                             </span>
                             <span className="text-xs text-gray-500">vs last period</span>
                         </div>
+                    </div>
+                </div>
 
-                        {/* Search + Filters */}
-                        <div className="flex flex-col md:flex-row gap-3">
-                            <SearchBar
-                                value={searchQuery}
-                                onChange={setSearchQuery}
-                                placeholder="Search playlists..."
-                                className="flex-1"
-                            />
-                            <div className="flex gap-2">
-                                <DateRangePicker
-                                    value={dateRange}
-                                    onChange={setDateRange}
-                                />
-                                <FilterDropdown
-                                    label="Metric"
-                                    options={[
-                                        { label: 'All Metrics', value: 'all', icon: 'analytics', color: 'text-blue-400' },
-                                        { label: 'Impressions', value: 'impressions', icon: 'visibility', color: 'text-blue-400' },
-                                        { label: 'Uptime', value: 'uptime', icon: 'router', color: 'text-emerald-400' },
-                                        { label: 'Utilization', value: 'utilization', icon: 'pie_chart', color: 'text-purple-400' },
-                                    ]}
-                                    value={metricFilters}
-                                    onChange={setMetricFilters}
-                                    icon="filter_list"
-                                />
-                                <SortDropdown
-                                    options={[
-                                        { label: 'Highest First', value: 'highest', direction: 'desc' },
-                                        { label: 'Lowest First', value: 'lowest', direction: 'asc' },
-                                        { label: 'Name (A-Z)', value: 'name-asc', direction: 'asc' },
-                                    ]}
-                                    value={sortBy}
-                                    onChange={setSortBy}
-                                />
-                                <ExportButton
-                                    data={playlists.map(playlist => ({
-                                        Name: playlist.name,
-                                        Status: playlist.status,
-                                        'Active Players': `${playlist.activePlayers}/${playlist.totalPlayers}`,
-                                        'Engagement Score': `${playlist.engagementScore}%`,
-                                        'Updated': getTimeAgo(playlist.updatedAt),
-                                    }))}
-                                    filename="analytics_report"
-                                    title="Analytics Export"
-                                />
-                            </div>
-                        </div>
+                {/* Search + Filters */}
+                <div className="flex flex-col md:flex-row gap-3 mb-6">
+                    <SearchBar
+                        value={searchQuery}
+                        onChange={setSearchQuery}
+                        placeholder="Search content and playlists..."
+                        className="flex-1"
+                    />
+                    <div className="flex gap-2">
+                        <DateRangePicker
+                            value={dateRange}
+                            onChange={setDateRange}
+                        />
+                        <FilterDropdown
+                            label="Metric"
+                            options={[
+                                { label: 'All Metrics', value: 'all', icon: 'analytics', color: 'text-blue-400' },
+                                { label: 'Impressions', value: 'impressions', icon: 'visibility', color: 'text-blue-400' },
+                                { label: 'Uptime', value: 'uptime', icon: 'router', color: 'text-emerald-400' },
+                                { label: 'Utilization', value: 'utilization', icon: 'pie_chart', color: 'text-purple-400' },
+                            ]}
+                            value={metricFilters}
+                            onChange={setMetricFilters}
+                            icon="filter_list"
+                        />
+                        <SortDropdown
+                            options={[
+                                { label: 'Highest First', value: 'highest', direction: 'desc' },
+                                { label: 'Lowest First', value: 'lowest', direction: 'asc' },
+                                { label: 'Name (A-Z)', value: 'name-asc', direction: 'asc' },
+                            ]}
+                            value={sortBy}
+                            onChange={setSortBy}
+                        />
+                        <ExportButton
+                            data={playlists.map(playlist => ({
+                                Name: playlist.name,
+                                Status: playlist.status,
+                                'Active Players': `${playlist.activePlayers}/${playlist.totalPlayers}`,
+                                'Engagement Score': `${playlist.engagementScore}%`,
+                                'Updated': getTimeAgo(playlist.updatedAt),
+                            }))}
+                            filename="analytics_report"
+                            title="Analytics Export"
+                        />
                     </div>
                 </div>
 
