@@ -58,7 +58,18 @@ export default function AppsMenu() {
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex items-center gap-3 px-5 py-3 text-base font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-xl hover:bg-gray-100 transition-colors"
             >
-                <Squares2X2Icon className="w-6 h-6" />
+                {/* 3x3 solid grid icon matching Otter BM */}
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="w-6 h-6">
+                    <rect x="3" y="3" width="5" height="5" rx="1" fill="currentColor" />
+                    <rect x="10" y="3" width="5" height="5" rx="1" fill="currentColor" />
+                    <rect x="17" y="3" width="5" height="5" rx="1" fill="currentColor" />
+                    <rect x="3" y="10" width="5" height="5" rx="1" fill="currentColor" />
+                    <rect x="10" y="10" width="5" height="5" rx="1" fill="currentColor" />
+                    <rect x="17" y="10" width="5" height="5" rx="1" fill="currentColor" />
+                    <rect x="3" y="17" width="5" height="5" rx="1" fill="currentColor" />
+                    <rect x="10" y="17" width="5" height="5" rx="1" fill="currentColor" />
+                    <rect x="17" y="17" width="5" height="5" rx="1" fill="currentColor" />
+                </svg>
                 <span>Apps</span>
                 <ChevronDownIcon
                     className={`w-5 h-5 transition-transform ${isOpen ? 'rotate-180' : ''
@@ -88,9 +99,20 @@ export default function AppsMenu() {
                             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
                                 Digital Signage
                             </p>
-                            {visibleApps.map((app) => {
+                            {visibleApps.map((app, index) => {
                                 const Icon = app.icon;
                                 const isActive = pathname === app.href;
+
+                                // Colorful icon backgrounds matching Otter BM style
+                                const iconColors = [
+                                    'bg-blue-500',    // Players
+                                    'bg-purple-500',  // Playlists
+                                    'bg-amber-500',   // Content Library
+                                    'bg-emerald-500', // Analytics
+                                    'bg-orange-500',  // Network
+                                    'bg-pink-500',    // Operations
+                                ];
+                                const iconColor = iconColors[index % iconColors.length];
 
                                 return (
                                     <Link
@@ -98,17 +120,12 @@ export default function AppsMenu() {
                                         href={app.href}
                                         onClick={() => setIsOpen(false)}
                                         className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isActive
-                                            ? 'bg-blue-50 text-blue-600'
-                                            : 'text-gray-700 hover:bg-gray-50'
+                                                ? 'bg-blue-50 text-blue-600'
+                                                : 'text-gray-700 hover:bg-gray-50'
                                             }`}
                                     >
-                                        <div
-                                            className={`w-8 h-8 rounded-lg flex items-center justify-center ${isActive
-                                                ? 'bg-blue-100'
-                                                : 'bg-gray-100'
-                                                }`}
-                                        >
-                                            <Icon className="w-5 h-5" />
+                                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${iconColor}`}>
+                                            <Icon className="w-5 h-5 text-white" />
                                         </div>
                                         <span className="text-sm font-medium">{app.name}</span>
                                     </Link>

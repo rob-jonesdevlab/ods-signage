@@ -126,19 +126,17 @@ export default function LoginPage() {
           display: flex;
           align-items: center;
           justify-content: center;
-          background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+          background: #000000;
           padding: 2rem;
         }
 
         .login-card {
-          background: rgba(30, 41, 59, 0.8);
-          backdrop-filter: blur(20px);
-          border: 1px solid rgba(148, 163, 184, 0.1);
+          background: #ffffff;
           border-radius: 24px;
           padding: 3rem;
           width: 100%;
           max-width: 480px;
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
         }
 
         .login-header {
@@ -156,12 +154,12 @@ export default function LoginPage() {
         h1 {
           font-size: 1.875rem;
           font-weight: 700;
-          color: #f1f5f9;
+          color: #0f172a;
           margin: 0 0 0.5rem 0;
         }
 
         .login-header p {
-          color: #94a3b8;
+          color: #64748b;
           font-size: 0.9375rem;
           margin: 0;
         }
