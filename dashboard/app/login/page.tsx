@@ -152,10 +152,25 @@ export default function LoginPage() {
           justify-content: center;
           width: 80px;
           height: 80px;
-          background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+          background: #000000;
           border-radius: 20px;
           margin-bottom: 1.5rem;
-          box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+          position: relative;
+        }
+
+        .logo-container::before {
+          content: '';
+          position: absolute;
+          width: 56px;
+          height: 56px;
+          background: white;
+          border-radius: 50%;
+        }
+
+        .logo-container :global(img) {
+          position: relative;
+          z-index: 1;
         }
 
         h1 {

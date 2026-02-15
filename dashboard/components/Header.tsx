@@ -27,7 +27,7 @@ export default function Header() {
                         <img
                             src="/ods-cloud-logo.png"
                             alt="ODS Cloud"
-                            className="h-20 w-auto"
+                            className="h-32 w-auto"
                         />
                     </Link>
                 </div>
