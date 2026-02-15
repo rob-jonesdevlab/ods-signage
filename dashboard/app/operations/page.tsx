@@ -5,10 +5,11 @@ export const dynamic = 'force-dynamic';
 
 import { API_URL } from '@/lib/api';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import Header from '@/components/Header';
 import NewScheduleModal, { ScheduleFormData } from '@/components/NewScheduleModal';
 import AuditTrailModal, { AuditLogDetail } from '@/components/AuditTrailModal';
+import FilterBar, { FilterConfig } from '@/components/FilterBar';
 
 interface OperationsStats {
     serverUptime: number;
@@ -48,6 +49,16 @@ export default function OperationsPage() {
     const [loading, setLoading] = useState(true);
     const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
     const [selectedAuditLog, setSelectedAuditLog] = useState<AuditLogDetail | null>(null);
+
+    // Filter states
+    const [alertFilters, setAlertFilters] = useState<Record<string, string[]>>({
+        type: []
+    });
+    const [auditFilters, setAuditFilters] = useState<Record<string, string[]>>({
+        action: [],
+        resourceType: [],
+        timeRange: ['24h']  // Default to 24h
+    });
 
     const fetchOperationsData = useCallback(async () => {
         try {
@@ -148,6 +159,95 @@ export default function OperationsPage() {
             alert('Failed to create schedule. Please try again.');
         }
     };
+
+    // Alert filter configuration
+    const alertFilterConfig: FilterConfig[] = [
+        {
+            id: 'type',
+            label: 'Alert Type',
+            options: [
+                { value: 'critical', label: 'Critical' },
+                { value: 'warning', label: 'Warning' }
+            ]
+        }
+    ];
+
+    // Audit log filter configuration
+    const auditFilterConfig: FilterConfig[] = [
+        {
+            id: 'action',
+            label: 'Action',
+            options: [
+                { value: 'create', label: 'Create' },
+                { value: 'update', label: 'Update' },
+                { value: 'delete', label: 'Delete' },
+                { value: 'login', label: 'Login' }
+            ]
+        },
+        {
+            id: 'resourceType',
+            label: 'Resource',
+            options: [
+                { value: 'player', label: 'Player' },
+                { value: 'playlist', label: 'Playlist' },
+                { value: 'content', label: 'Content' },
+                { value: 'schedule', label: 'Schedule' }
+            ]
+        },
+        {
+            id: 'timeRange',
+            label: 'Time Range',
+            type: 'single',
+            options: [
+                { value: '1h', label: 'Last Hour' },
+                { value: '24h', label: 'Last 24 Hours' },
+                { value: '7d', label: 'Last 7 Days' },
+                { value: '30d', label: 'Last 30 Days' },
+                { value: 'all', label: 'All Time' }
+            ]
+        }
+    ];
+
+    // Filter alerts
+    const filteredAlerts = useMemo(() => {
+        return alerts.filter(alert => {
+            if (alertFilters.type.length && !alertFilters.type.includes(alert.type)) return false;
+            return true;
+        });
+    }, [alerts, alertFilters]);
+
+    // Filter audit logs
+    const filteredAuditLogs = useMemo(() => {
+        return auditLogs.filter(log => {
+            // Action filter
+            if (auditFilters.action.length && !auditFilters.action.some(a => log.action.toLowerCase().includes(a))) {
+                return false;
+            }
+
+            // Resource type filter
+            if (auditFilters.resourceType.length && !auditFilters.resourceType.includes(log.resource_type)) {
+                return false;
+            }
+
+            // Time range filter
+            if (auditFilters.timeRange.length > 0 && auditFilters.timeRange[0] !== 'all') {
+                const logTime = new Date(log.created_at).getTime();
+                const now = Date.now();
+                const timeRange = auditFilters.timeRange[0];
+                const ranges: Record<string, number> = {
+                    '1h': 3600000,
+                    '24h': 86400000,
+                    '7d': 604800000,
+                    '30d': 2592000000
+                };
+                if (ranges[timeRange] && now - logTime > ranges[timeRange]) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
+    }, [auditLogs, auditFilters]);
 
     return (
         <div className="min-h-screen">
@@ -352,14 +452,22 @@ export default function OperationsPage() {
 
                         {/* Active Alerts */}
                         <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-                            <div className="flex items-center justify-between mb-4">
+                            {/* Alert Filter Bar */}
+                            <FilterBar
+                                filters={alertFilterConfig}
+                                activeFilters={alertFilters}
+                                onFilterChange={(filterId, values) => setAlertFilters(prev => ({ ...prev, [filterId]: values }))}
+                                onClearAll={() => setAlertFilters({ type: [] })}
+                            />
+
+                            <div className="flex items-center justify-between mb-4 mt-4">
                                 <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                                     <span className="material-symbols-outlined text-rose-600">warning</span>
                                     Active Alerts
                                 </h2>
-                                {alerts.filter(a => a.type === 'critical').length > 0 && (
+                                {filteredAlerts.filter(a => a.type === 'critical').length > 0 && (
                                     <span className="text-xs font-medium px-2 py-1 bg-rose-100 text-rose-600 rounded-full">
-                                        {alerts.filter(a => a.type === 'critical').length} Critical
+                                        {filteredAlerts.filter(a => a.type === 'critical').length} Critical
                                     </span>
                                 )}
                             </div>
@@ -369,8 +477,8 @@ export default function OperationsPage() {
                                         <div className="h-16 bg-gray-100 rounded-lg animate-pulse"></div>
                                         <div className="h-16 bg-gray-100 rounded-lg animate-pulse"></div>
                                     </>
-                                ) : alerts.length > 0 ? (
-                                    alerts.map((alert) => (
+                                ) : filteredAlerts.length > 0 ? (
+                                    filteredAlerts.map((alert) => (
                                         <div key={alert.id} className={`flex items-center justify-between p-3 rounded-lg border ${alert.type === 'critical'
                                             ? 'border-rose-200 bg-rose-50'
                                             : 'border-amber-200 bg-amber-50'
@@ -406,6 +514,16 @@ export default function OperationsPage() {
                     <div className="lg:col-span-4 flex flex-col">
                         {/* Audit Trail */}
                         <div className="bg-white rounded-lg border border-gray-200 shadow-sm flex flex-col h-full">
+                            {/* Audit Trail Filter Bar */}
+                            <div className="p-4 border-b border-gray-200">
+                                <FilterBar
+                                    filters={auditFilterConfig}
+                                    activeFilters={auditFilters}
+                                    onFilterChange={(filterId, values) => setAuditFilters(prev => ({ ...prev, [filterId]: values }))}
+                                    onClearAll={() => setAuditFilters({ action: [], resourceType: [], timeRange: ['24h'] })}
+                                />
+                            </div>
+
                             <div className="p-5 border-b border-gray-200 flex justify-between items-center">
                                 <h3 className="font-semibold text-gray-900 flex items-center gap-2">
                                     <span className="material-symbols-outlined text-blue-600 text-[20px]">history</span>
@@ -420,9 +538,9 @@ export default function OperationsPage() {
                                             <div key={i} className="h-16 bg-gray-100 rounded-lg animate-pulse"></div>
                                         ))}
                                     </div>
-                                ) : auditLogs.length > 0 ? (
+                                ) : filteredAuditLogs.length > 0 ? (
                                     <ul className="space-y-1">
-                                        {auditLogs.map((log) => (
+                                        {filteredAuditLogs.map((log) => (
                                             <li
                                                 key={log.id}
                                                 onClick={() => setSelectedAuditLog(log as AuditLogDetail)}
