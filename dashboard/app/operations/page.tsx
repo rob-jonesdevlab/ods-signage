@@ -295,7 +295,7 @@ export default function OperationsPage() {
                         {/* Active Alerts */}
                         <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
                             <div className="flex items-center justify-between mb-4">
-                                <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                                <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                                     <span className="material-symbols-outlined text-rose-600">warning</span>
                                     Active Alerts
                                 </h2>
