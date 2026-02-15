@@ -303,27 +303,14 @@ export default function PlaylistsPage() {
                             <h1 className="text-3xl font-bold tracking-tight text-gray-900">Playlists</h1>
                             <p className="text-gray-500 mt-1">Create and manage content sequences for your players</p>
                         </div>
-                        <div className="flex flex-wrap gap-3">
-                            {/* Date Range Filter */}
-                            <DateRangePicker
-                                value={dateRange}
-                                onChange={setDateRange}
-                            />
-                            {/* Status Filter */}
-                            <FilterDropdown
-                                label="Status"
-                                options={statusFilterOptions}
-                                value={statusFilters}
-                                onChange={setStatusFilters}
-                                icon="filter_list"
-                            />
-                            {/* Sort Filter */}
-                            <SortDropdown
-                                options={sortOptions}
-                                value={sortBy}
-                                onChange={setSortBy}
-                            />
-                            {/* Export Button */}
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => setShowNewPlaylistModal(true)}
+                                className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-all shadow-sm"
+                            >
+                                <span className="text-xl">+</span>
+                                New Playlist
+                            </button>
                             <ExportButton
                                 data={playlists.map(playlist => ({
                                     Name: playlist.name,
@@ -335,24 +322,56 @@ export default function PlaylistsPage() {
                                 filename="playlists"
                                 title="Playlists Export"
                             />
-                            {/* Action Button */}
-                            <button
-                                onClick={() => setShowNewPlaylistModal(true)}
-                                className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-all shadow-sm"
-                            >
-                                <span className="text-xl">+</span>
-                                New Playlist
-                            </button>
                         </div>
                     </div>
 
-                    {/* Search Bar */}
-                    <SearchBar
-                        value={searchQuery}
-                        onChange={setSearchQuery}
-                        placeholder="Search playlists..."
-                        className="w-full"
-                    />
+                    {/* Stats Cards */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="p-6 rounded-lg relative overflow-hidden group hover:border-blue-300 transition-colors bg-white border border-gray-200 shadow-sm">
+                            <div className="text-3xl font-bold mb-2 text-gray-900">{filteredPlaylists.length}</div>
+                            <div className="text-gray-500">Total Playlists</div>
+                        </div>
+                        <div className="p-6 rounded-lg relative overflow-hidden group hover:border-emerald-300 transition-colors bg-white border border-gray-200 shadow-sm">
+                            <div className="text-3xl font-bold mb-2 text-emerald-600">
+                                {filteredPlaylists.filter((p) => (p as any).status === 'active').length}
+                            </div>
+                            <div className="text-gray-500">Active</div>
+                        </div>
+                        <div className="p-6 rounded-lg relative overflow-hidden group hover:border-purple-300 transition-colors bg-white border border-gray-200 shadow-sm">
+                            <div className="text-3xl font-bold mb-2 text-purple-600">
+                                {filteredPlaylists.filter((p) => (p as any).status === 'scheduled').length}
+                            </div>
+                            <div className="text-gray-500">Scheduled</div>
+                        </div>
+                    </div>
+
+                    {/* Search + Filters */}
+                    <div className="flex flex-col md:flex-row gap-3">
+                        <SearchBar
+                            value={searchQuery}
+                            onChange={setSearchQuery}
+                            placeholder="Search playlists..."
+                            className="flex-1"
+                        />
+                        <div className="flex gap-2">
+                            <DateRangePicker
+                                value={dateRange}
+                                onChange={setDateRange}
+                            />
+                            <FilterDropdown
+                                label="Status"
+                                options={statusFilterOptions}
+                                value={statusFilters}
+                                onChange={setStatusFilters}
+                                icon="filter_list"
+                            />
+                            <SortDropdown
+                                options={sortOptions}
+                                value={sortBy}
+                                onChange={setSortBy}
+                            />
+                        </div>
+                    </div>
 
                     {/* Loading State */}
                     {loading ? (
