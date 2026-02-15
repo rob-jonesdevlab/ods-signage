@@ -25,7 +25,7 @@ export default function Header() {
                 {/* Logo: Complete Otter O design */}
                 <Link href="/dashboard" className="flex items-center gap-3 group">
                     <img
-                        src="/ods-logo-complete.png"
+                        src="/ods-logo-final.png"
                         alt="ODS Cloud"
                         className="w-12 h-12"
                     />
