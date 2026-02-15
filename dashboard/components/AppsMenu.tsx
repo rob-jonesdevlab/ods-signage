@@ -56,7 +56,8 @@ export default function AppsMenu() {
             {/* Apps Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-3 px-5 py-3 text-base font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-xl hover:bg-gray-100 transition-colors"
+                className={`flex items-center gap-3 px-5 py-3 text-base font-medium text-gray-700 rounded-xl transition-colors ${isOpen ? 'bg-gray-100' : 'hover:bg-gray-100'
+                    }`}
             >
                 {/* 3x3 solid grid icon matching Otter BM */}
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="w-6 h-6">
@@ -120,8 +121,8 @@ export default function AppsMenu() {
                                         href={app.href}
                                         onClick={() => setIsOpen(false)}
                                         className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isActive
-                                                ? 'bg-blue-50 text-blue-600'
-                                                : 'text-gray-700 hover:bg-gray-50'
+                                            ? 'bg-blue-50 text-blue-600'
+                                            : 'text-gray-700 hover:bg-gray-50'
                                             }`}
                                     >
                                         <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${iconColor}`}>

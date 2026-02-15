@@ -95,6 +95,13 @@ export default function DashboardPage() {
             // Count active playlists (is_active === 1)
             const activePlaylists = playlists.filter((p: any) => p.is_active === 1).length;
 
+            // Calculate network uptime from player data
+            const totalPlayers = players.length;
+            const onlinePlayers = players.filter((p: any) => p.status === 'online').length;
+            const networkUptime = totalPlayers > 0
+                ? Number(((onlinePlayers / totalPlayers) * 100).toFixed(1))
+                : 0;
+
             setStats({
                 activePlayers,
                 totalPlayers: players.length,
@@ -104,7 +111,7 @@ export default function DashboardPage() {
                 storagePercentage,
                 activePlaylists,
                 scheduledPlaylists: playlists.length - activePlaylists,
-                networkUptime: 99.8 // TODO: Calculate from player uptime data
+                networkUptime
             });
 
             // Generate recent activity from API data
@@ -272,146 +279,146 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Stats Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-                        {/* Active Players */}
-                        <div className="p-6 rounded-lg relative overflow-hidden group hover:border-blue-300 transition-colors bg-white border border-gray-200 shadow-sm">
-                            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                                <span className="material-symbols-outlined text-6xl text-blue-500">monitor</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+                    {/* Active Players */}
+                    <div className="p-6 rounded-lg relative overflow-hidden group hover:border-blue-300 transition-colors bg-white border border-gray-200 shadow-sm">
+                        <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                            <span className="material-symbols-outlined text-6xl text-blue-500">monitor</span>
+                        </div>
+                        <div className="flex justify-between items-start mb-4">
+                            <div className="p-2 bg-blue-50 rounded-lg border border-blue-100 text-blue-600">
+                                <span className="material-symbols-outlined text-xl">monitor</span>
                             </div>
-                            <div className="flex justify-between items-start mb-4">
-                                <div className="p-2 bg-blue-50 rounded-lg border border-blue-100 text-blue-600">
-                                    <span className="material-symbols-outlined text-xl">monitor</span>
-                                </div>
-                                <div className="flex items-center text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-200">
-                                    <span className="material-symbols-outlined text-sm mr-0.5">trending_up</span>
-                                    +3
-                                </div>
-                            </div>
-                            <div className="mb-2">
-                                <p className="text-sm font-medium text-gray-500">Active Players</p>
-                                {loading ? (
-                                    <div className="h-9 bg-gray-100 rounded animate-pulse mt-1"></div>
-                                ) : (
-                                    <h3 className="text-3xl font-bold text-gray-900 mt-1">{stats.activePlayers}<span className="text-lg text-gray-400 font-normal ml-1">/ {stats.totalPlayers}</span></h3>
-                                )}
-                            </div>
-                            <div className="flex items-end gap-1 h-8 mt-4">
-                                <div className="w-1/6 bg-blue-100 h-[40%] rounded-sm"></div>
-                                <div className="w-1/6 bg-blue-100 h-[60%] rounded-sm"></div>
-                                <div className="w-1/6 bg-blue-100 h-[50%] rounded-sm"></div>
-                                <div className="w-1/6 bg-blue-200 h-[80%] rounded-sm"></div>
-                                <div className="w-1/6 bg-blue-300 h-[70%] rounded-sm"></div>
-                                <div className="w-1/6 bg-blue-500 h-[90%] rounded-sm shadow-sm"></div>
+                            <div className="flex items-center text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-200">
+                                <span className="material-symbols-outlined text-sm mr-0.5">trending_up</span>
+                                +3
                             </div>
                         </div>
-
-                        {/* Total Content */}
-                        <div className="p-6 rounded-lg relative overflow-hidden group hover:border-purple-300 transition-colors bg-white border border-gray-200 shadow-sm">
-                            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                                <span className="material-symbols-outlined text-6xl text-purple-500">perm_media</span>
-                            </div>
-                            <div className="flex justify-between items-start mb-4">
-                                <div className="p-2 bg-purple-50 rounded-lg border border-purple-100 text-purple-600">
-                                    <span className="material-symbols-outlined text-xl">perm_media</span>
-                                </div>
-                                <div className="text-xs font-medium text-gray-500">
-                                    75% Used
-                                </div>
-                            </div>
-                            <div className="mb-2">
-                                <p className="text-sm font-medium text-gray-500">Total Content</p>
-                                {loading ? (
-                                    <div className="h-9 bg-gray-100 rounded animate-pulse mt-1"></div>
-                                ) : (
-                                    <h3 className="text-3xl font-bold text-gray-900 mt-1">{stats.totalContent.toLocaleString()}</h3>
-                                )}
-                            </div>
-                            <div className="mt-5">
-                                <div className="flex justify-between text-xs text-gray-500 mb-1">
-                                    <span>Storage</span>
-                                    {loading ? (
-                                        <div className="h-3 w-20 bg-gray-100 rounded animate-pulse"></div>
-                                    ) : (
-                                        <span>{stats.storageUsed.toFixed(1)}GB / {stats.storageTotal}GB</span>
-                                    )}
-                                </div>
-                                <div className="w-full bg-gray-200 rounded-full h-2">
-                                    <div className="bg-gradient-to-r from-purple-600 to-indigo-500 h-2 rounded-full shadow-sm" style={{ width: `${stats.storagePercentage}%` }}></div>
-                                </div>
-                            </div>
+                        <div className="mb-2">
+                            <p className="text-sm font-medium text-gray-500">Active Players</p>
+                            {loading ? (
+                                <div className="h-9 bg-gray-100 rounded animate-pulse mt-1"></div>
+                            ) : (
+                                <h3 className="text-3xl font-bold text-gray-900 mt-1">{stats.activePlayers}<span className="text-lg text-gray-400 font-normal ml-1">/ {stats.totalPlayers}</span></h3>
+                            )}
                         </div>
-
-                        {/* Active Playlists */}
-                        <div className="p-6 rounded-lg relative overflow-hidden group hover:border-orange-300 transition-colors bg-white border border-gray-200 shadow-sm">
-                            <div className="flex justify-between items-start mb-4">
-                                <div className="p-2 bg-orange-50 rounded-lg border border-orange-100 text-orange-600">
-                                    <span className="material-symbols-outlined text-xl">featured_play_list</span>
-                                </div>
-                            </div>
-                            <div className="flex justify-between items-end">
-                                <div className="mb-2">
-                                    <p className="text-sm font-medium text-gray-500">Active Playlists</p>
-                                    {loading ? (
-                                        <div className="h-9 bg-gray-100 rounded animate-pulse mt-1"></div>
-                                    ) : (
-                                        <>
-                                            <h3 className="text-3xl font-bold text-gray-900 mt-1">{stats.activePlaylists}</h3>
-                                            <p className="text-xs text-gray-500 mt-1">{stats.scheduledPlaylists} scheduled for later</p>
-                                        </>
-                                    )}
-                                </div>
-                                <div className="relative size-12 mr-2">
-                                    <svg className="size-full -rotate-90" viewBox="0 0 36 36">
-                                        <path className="text-gray-200" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="4"></path>
-                                        <path className="text-orange-500" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeDasharray="75, 100" strokeLinecap="round" strokeWidth="4"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Network Uptime */}
-                        <div className="p-6 rounded-lg relative overflow-hidden group hover:border-emerald-300 transition-colors bg-white border border-gray-200 shadow-sm">
-                            <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-emerald-50 rounded-full blur-2xl group-hover:bg-emerald-100 transition-colors"></div>
-                            <div className="flex justify-between items-start mb-4">
-                                <div className="p-2 bg-emerald-50 rounded-lg border border-emerald-100 text-emerald-600">
-                                    <span className="material-symbols-outlined text-xl">check_circle</span>
-                                </div>
-                                <div className="p-1 bg-emerald-100 rounded-full">
-                                    <span className="material-symbols-outlined text-emerald-600 text-sm">check</span>
-                                </div>
-                            </div>
-                            <div className="mb-2">
-                                <p className="text-sm font-medium text-gray-500">Network Uptime</p>
-                                {loading ? (
-                                    <div className="h-9 bg-gray-100 rounded animate-pulse mt-1"></div>
-                                ) : (
-                                    <h3 className="text-3xl font-bold text-gray-900 mt-1">{stats.networkUptime}%</h3>
-                                )}
-                            </div>
-                            <p className="text-xs text-emerald-600 mt-4 flex items-center gap-1">
-                                <span className="material-symbols-outlined text-sm">verified</span>
-                                System is healthy
-                            </p>
+                        <div className="flex items-end gap-1 h-8 mt-4">
+                            <div className="w-1/6 bg-blue-100 h-[40%] rounded-sm"></div>
+                            <div className="w-1/6 bg-blue-100 h-[60%] rounded-sm"></div>
+                            <div className="w-1/6 bg-blue-100 h-[50%] rounded-sm"></div>
+                            <div className="w-1/6 bg-blue-200 h-[80%] rounded-sm"></div>
+                            <div className="w-1/6 bg-blue-300 h-[70%] rounded-sm"></div>
+                            <div className="w-1/6 bg-blue-500 h-[90%] rounded-sm shadow-sm"></div>
                         </div>
                     </div>
 
-    {/* Recent Activity & Performance */}
+                    {/* Total Content */}
+                    <div className="p-6 rounded-lg relative overflow-hidden group hover:border-purple-300 transition-colors bg-white border border-gray-200 shadow-sm">
+                        <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                            <span className="material-symbols-outlined text-6xl text-purple-500">perm_media</span>
+                        </div>
+                        <div className="flex justify-between items-start mb-4">
+                            <div className="p-2 bg-purple-50 rounded-lg border border-purple-100 text-purple-600">
+                                <span className="material-symbols-outlined text-xl">perm_media</span>
+                            </div>
+                            <div className="text-xs font-medium text-gray-500">
+                                75% Used
+                            </div>
+                        </div>
+                        <div className="mb-2">
+                            <p className="text-sm font-medium text-gray-500">Total Content</p>
+                            {loading ? (
+                                <div className="h-9 bg-gray-100 rounded animate-pulse mt-1"></div>
+                            ) : (
+                                <h3 className="text-3xl font-bold text-gray-900 mt-1">{stats.totalContent.toLocaleString()}</h3>
+                            )}
+                        </div>
+                        <div className="mt-5">
+                            <div className="flex justify-between text-xs text-gray-500 mb-1">
+                                <span>Storage</span>
+                                {loading ? (
+                                    <div className="h-3 w-20 bg-gray-100 rounded animate-pulse"></div>
+                                ) : (
+                                    <span>{stats.storageUsed.toFixed(1)}GB / {stats.storageTotal}GB</span>
+                                )}
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                                <div className="bg-gradient-to-r from-purple-600 to-indigo-500 h-2 rounded-full shadow-sm" style={{ width: `${stats.storagePercentage}%` }}></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Active Playlists */}
+                    <div className="p-6 rounded-lg relative overflow-hidden group hover:border-orange-300 transition-colors bg-white border border-gray-200 shadow-sm">
+                        <div className="flex justify-between items-start mb-4">
+                            <div className="p-2 bg-orange-50 rounded-lg border border-orange-100 text-orange-600">
+                                <span className="material-symbols-outlined text-xl">featured_play_list</span>
+                            </div>
+                        </div>
+                        <div className="flex justify-between items-end">
+                            <div className="mb-2">
+                                <p className="text-sm font-medium text-gray-500">Active Playlists</p>
+                                {loading ? (
+                                    <div className="h-9 bg-gray-100 rounded animate-pulse mt-1"></div>
+                                ) : (
+                                    <>
+                                        <h3 className="text-3xl font-bold text-gray-900 mt-1">{stats.activePlaylists}</h3>
+                                        <p className="text-xs text-gray-500 mt-1">{stats.scheduledPlaylists} scheduled for later</p>
+                                    </>
+                                )}
+                            </div>
+                            <div className="relative size-12 mr-2">
+                                <svg className="size-full -rotate-90" viewBox="0 0 36 36">
+                                    <path className="text-gray-200" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="4"></path>
+                                    <path className="text-orange-500" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeDasharray="75, 100" strokeLinecap="round" strokeWidth="4"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Network Uptime */}
+                    <div className="p-6 rounded-lg relative overflow-hidden group hover:border-emerald-300 transition-colors bg-white border border-gray-200 shadow-sm">
+                        <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-emerald-50 rounded-full blur-2xl group-hover:bg-emerald-100 transition-colors"></div>
+                        <div className="flex justify-between items-start mb-4">
+                            <div className="p-2 bg-emerald-50 rounded-lg border border-emerald-100 text-emerald-600">
+                                <span className="material-symbols-outlined text-xl">check_circle</span>
+                            </div>
+                            <div className="p-1 bg-emerald-100 rounded-full">
+                                <span className="material-symbols-outlined text-emerald-600 text-sm">check</span>
+                            </div>
+                        </div>
+                        <div className="mb-2">
+                            <p className="text-sm font-medium text-gray-500">Network Uptime</p>
+                            {loading ? (
+                                <div className="h-9 bg-gray-100 rounded animate-pulse mt-1"></div>
+                            ) : (
+                                <h3 className="text-3xl font-bold text-gray-900 mt-1">{stats.networkUptime}%</h3>
+                            )}
+                        </div>
+                        <p className="text-xs text-emerald-600 mt-4 flex items-center gap-1">
+                            <span className="material-symbols-outlined text-sm">verified</span>
+                            System is healthy
+                        </p>
+                    </div>
+                </div>
+
+                {/* Unified Filters */}
+                <div className="mb-6">
+                    <FilterBar
+                        filters={activityFilterConfig}
+                        activeFilters={activityFilters}
+                        onFilterChange={handleFilterChange}
+                        onClearAll={handleClearFilters}
+                    />
+                </div>
+
+                {/* Recent Activity & Performance */}
                 <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
                     {/* Recent Activity */}
                     <div className="lg:col-span-3 rounded-lg p-6 border border-gray-200 bg-white shadow-sm">
                         <div className="flex items-center justify-between mb-4">
                             <h2 className="text-lg font-semibold text-gray-900">Recent Activity</h2>
                             <button className="text-xs font-medium text-blue-600 hover:text-blue-700">View All</button>
-                        </div>
-
-                        {/* Filter Bar */}
-                        <div className="mb-6">
-                            <FilterBar
-                                filters={activityFilterConfig}
-                                activeFilters={activityFilters}
-                                onFilterChange={handleFilterChange}
-                                onClearAll={handleClearFilters}
-                            />
                         </div>
 
                         <div className="relative pl-4 border-l border-gray-200 space-y-8">
@@ -472,11 +479,6 @@ export default function DashboardPage() {
                         <div className="rounded-lg p-6 border border-gray-200 flex-1 flex flex-col bg-white shadow-sm">
                             <div className="flex items-center justify-between mb-4">
                                 <h2 className="text-lg font-semibold text-gray-900">Performance</h2>
-                                <select className="bg-white border border-gray-200 text-xs text-gray-700 rounded-lg px-2 py-1 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none">
-                                    <option>Last 24h</option>
-                                    <option>Last 7d</option>
-                                    <option>Last 30d</option>
-                                </select>
                             </div>
                             <div className="relative flex-1 min-h-[160px] w-full flex items-end justify-between gap-1 pt-8 px-2">
                                 <div className="absolute inset-0 flex flex-col justify-between pointer-events-none pb-6">
