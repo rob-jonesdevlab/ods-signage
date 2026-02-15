@@ -9,7 +9,6 @@ import { useEffect, useState, useCallback, useMemo } from 'react';
 import Header from '@/components/Header';
 import NewScheduleModal, { ScheduleFormData } from '@/components/NewScheduleModal';
 import AuditTrailModal, { AuditLogDetail } from '@/components/AuditTrailModal';
-import FilterBar, { FilterConfig } from '@/components/FilterBar';
 import SearchBar from '@/components/SearchBar';
 import FilterDropdown from '@/components/FilterDropdown';
 import SortDropdown from '@/components/SortDropdown';
@@ -224,17 +223,7 @@ export default function OperationsPage() {
         }
     };
 
-    // Alert filter configuration
-    const alertFilterConfig: FilterConfig[] = [
-        {
-            id: 'type',
-            label: 'Alert Type',
-            options: [
-                { value: 'critical', label: 'Critical' },
-                { value: 'warning', label: 'Warning' }
-            ]
-        }
-    ];
+
 
 
     // Filter alerts
@@ -437,6 +426,16 @@ export default function OperationsPage() {
                             icon="category"
                         />
                         <FilterDropdown
+                            label="Alert Type"
+                            options={[
+                                { value: 'critical', label: 'Critical', icon: 'error', color: 'text-rose-400' },
+                                { value: 'warning', label: 'Warning', icon: 'warning', color: 'text-amber-400' }
+                            ]}
+                            value={alertFilters.type}
+                            onChange={(values) => setAlertFilters(prev => ({ ...prev, type: values }))}
+                            icon="warning"
+                        />
+                        <FilterDropdown
                             label="Time Range"
                             options={[
                                 { value: '1h', label: 'Last Hour', icon: 'schedule' },
@@ -552,15 +551,7 @@ export default function OperationsPage() {
 
                         {/* Active Alerts */}
                         <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-                            {/* Alert Filter Bar */}
-                            <FilterBar
-                                filters={alertFilterConfig}
-                                activeFilters={alertFilters}
-                                onFilterChange={(filterId, values) => setAlertFilters(prev => ({ ...prev, [filterId]: values }))}
-                                onClearAll={() => setAlertFilters({ type: [] })}
-                            />
-
-                            <div className="flex items-center justify-between mb-4 mt-4">
+                            <div className="flex items-center justify-between mb-4">
                                 <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                                     <span className="material-symbols-outlined text-rose-600">warning</span>
                                     Active Alerts
