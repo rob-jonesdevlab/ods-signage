@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/useToast';
 import ExportButton from '@/components/ExportButton';
 import DateRangePicker from '@/components/DateRangePicker';
 import FilterDropdown from '@/components/FilterDropdown';
+import SearchBar from '@/components/SearchBar';
 import PairDeviceModal from '@/components/PairDeviceModal';
 import PlayerGroupTree, { PlayerGroup } from '@/components/PlayerGroupTree';
 import NewGroupModal from '@/components/NewGroupModal';
@@ -59,6 +60,7 @@ export default function PlayersPage() {
     const [selectAll, setSelectAll] = useState(false);
 
     // Filter states
+    const [searchQuery, setSearchQuery] = useState('');
     const [dateRange, setDateRange] = useState<{ start: Date | null; end: Date | null }>({ start: null, end: null });
     const [statusFilters, setStatusFilters] = useState<string[]>([]);
 
@@ -315,10 +317,34 @@ export default function PlayersPage() {
         }
     };
 
-    // Filter players by selected group
-    const filteredPlayers = selectedGroupId
-        ? players.filter(p => p.group_id === selectedGroupId)
-        : players;
+    // Filter players based on selected group, search, status, and date range
+    const filteredPlayers = players.filter((player) => {
+        // Group filter
+        if (selectedGroupId && player.group_id !== selectedGroupId) return false;
+
+        // Search filter (name, CPU serial, location)
+        if (searchQuery) {
+            const query = searchQuery.toLowerCase();
+            const matchesName = player.name.toLowerCase().includes(query);
+            const matchesCpuSerial = player.cpu_serial.toLowerCase().includes(query);
+            // Note: location field may not exist on all players
+            const matchesLocation = (player as any).location?.toLowerCase().includes(query);
+            if (!matchesName && !matchesCpuSerial && !matchesLocation) return false;
+        }
+
+        // Status filter
+        if (statusFilters.length > 0 && !statusFilters.includes(player.status)) return false;
+
+        // Date range filter
+        if (dateRange.start || dateRange.end) {
+            const lastSeen = player.last_seen ? new Date(player.last_seen) : null;
+            if (!lastSeen) return false;
+            if (dateRange.start && lastSeen < dateRange.start) return false;
+            if (dateRange.end && lastSeen > dateRange.end) return false;
+        }
+
+        return true;
+    });
 
     const getStatusColor = (status: string) => {
         switch (status) {
@@ -393,17 +419,6 @@ export default function PlayersPage() {
                                 <span className="material-symbols-outlined text-xl">add_circle</span>
                                 Pair Device
                             </button>
-                            <DateRangePicker
-                                value={dateRange}
-                                onChange={setDateRange}
-                            />
-                            <FilterDropdown
-                                label="Status"
-                                options={statusFilterOptions}
-                                value={statusFilters}
-                                onChange={setStatusFilters}
-                                icon="filter_list"
-                            />
                             <ExportButton
                                 data={filteredPlayers.map(player => ({
                                     Name: player.name,
@@ -435,6 +450,29 @@ export default function PlayersPage() {
                                 {filteredPlayers.filter((p) => p.status === 'offline').length}
                             </div>
                             <div className="text-gray-500">Offline</div>
+                        </div>
+                    </div>
+
+                    {/* Search + Filters */}
+                    <div className="flex flex-col md:flex-row gap-3">
+                        <SearchBar
+                            value={searchQuery}
+                            onChange={setSearchQuery}
+                            placeholder="Search by name, CPU serial, or location..."
+                            className="flex-1"
+                        />
+                        <div className="flex gap-2">
+                            <DateRangePicker
+                                value={dateRange}
+                                onChange={setDateRange}
+                            />
+                            <FilterDropdown
+                                label="Status"
+                                options={statusFilterOptions}
+                                value={statusFilters}
+                                onChange={setStatusFilters}
+                                icon="filter_list"
+                            />
                         </div>
                     </div>
 

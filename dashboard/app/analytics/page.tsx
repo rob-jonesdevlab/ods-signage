@@ -11,6 +11,7 @@ import DateRangePicker from '@/components/DateRangePicker';
 import FilterDropdown from '@/components/FilterDropdown';
 import SortDropdown, { SortOption } from '@/components/SortDropdown';
 import ExportButton from '@/components/ExportButton';
+import SearchBar from '@/components/SearchBar';
 
 // TypeScript Interfaces
 interface AnalyticsStats {
@@ -75,6 +76,7 @@ export default function AnalyticsPage() {
     const [loading, setLoading] = useState(true);
 
     // Filter states
+    const [searchQuery, setSearchQuery] = useState('');
     const [dateRange, setDateRange] = useState<{ start: Date | null; end: Date | null }>({ start: null, end: null });
     const [metricFilters, setMetricFilters] = useState<string[]>([]);
     const [sortBy, setSortBy] = useState<string>('highest');
@@ -218,48 +220,6 @@ export default function AnalyticsPage() {
                         <h1 className="text-3xl font-bold tracking-tight text-gray-900">Analytics</h1>
                         <p className="text-gray-500 mt-1">Comprehensive insights into content performance and network health</p>
                     </div>
-                    <div className="flex flex-wrap gap-3">
-                        {/* Date Range Filter */}
-                        <DateRangePicker
-                            value={dateRange}
-                            onChange={setDateRange}
-                        />
-                        {/* Metric Filter */}
-                        <FilterDropdown
-                            label="Metric"
-                            options={[
-                                { label: 'All Metrics', value: 'all', icon: 'analytics', color: 'text-blue-400' },
-                                { label: 'Impressions', value: 'impressions', icon: 'visibility', color: 'text-blue-400' },
-                                { label: 'Uptime', value: 'uptime', icon: 'router', color: 'text-emerald-400' },
-                                { label: 'Utilization', value: 'utilization', icon: 'pie_chart', color: 'text-purple-400' },
-                            ]}
-                            value={metricFilters}
-                            onChange={setMetricFilters}
-                            icon="filter_list"
-                        />
-                        {/* Sort Filter */}
-                        <SortDropdown
-                            options={[
-                                { label: 'Highest First', value: 'highest', direction: 'desc' },
-                                { label: 'Lowest First', value: 'lowest', direction: 'asc' },
-                                { label: 'Name (A-Z)', value: 'name-asc', direction: 'asc' },
-                            ]}
-                            value={sortBy}
-                            onChange={setSortBy}
-                        />
-                        {/* Export Button */}
-                        <ExportButton
-                            data={playlists.map(playlist => ({
-                                Name: playlist.name,
-                                Status: playlist.status,
-                                'Active Players': `${playlist.activePlayers}/${playlist.totalPlayers}`,
-                                'Engagement Score': `${playlist.engagementScore}%`,
-                                'Updated': getTimeAgo(playlist.updatedAt),
-                            }))}
-                            filename="analytics_report"
-                            title="Analytics Export"
-                        />
-                    </div>
                 </div>
 
                 {/* KPI Cards */}
@@ -349,6 +309,54 @@ export default function AnalyticsPage() {
                                 {Math.abs(stats.storageTrend).toFixed(1)}%
                             </span>
                             <span className="text-xs text-gray-500">vs last period</span>
+                        </div>
+
+                        {/* Search + Filters */}
+                        <div className="flex flex-col md:flex-row gap-3">
+                            <SearchBar
+                                value={searchQuery}
+                                onChange={setSearchQuery}
+                                placeholder="Search playlists..."
+                                className="flex-1"
+                            />
+                            <div className="flex gap-2">
+                                <DateRangePicker
+                                    value={dateRange}
+                                    onChange={setDateRange}
+                                />
+                                <FilterDropdown
+                                    label="Metric"
+                                    options={[
+                                        { label: 'All Metrics', value: 'all', icon: 'analytics', color: 'text-blue-400' },
+                                        { label: 'Impressions', value: 'impressions', icon: 'visibility', color: 'text-blue-400' },
+                                        { label: 'Uptime', value: 'uptime', icon: 'router', color: 'text-emerald-400' },
+                                        { label: 'Utilization', value: 'utilization', icon: 'pie_chart', color: 'text-purple-400' },
+                                    ]}
+                                    value={metricFilters}
+                                    onChange={setMetricFilters}
+                                    icon="filter_list"
+                                />
+                                <SortDropdown
+                                    options={[
+                                        { label: 'Highest First', value: 'highest', direction: 'desc' },
+                                        { label: 'Lowest First', value: 'lowest', direction: 'asc' },
+                                        { label: 'Name (A-Z)', value: 'name-asc', direction: 'asc' },
+                                    ]}
+                                    value={sortBy}
+                                    onChange={setSortBy}
+                                />
+                                <ExportButton
+                                    data={playlists.map(playlist => ({
+                                        Name: playlist.name,
+                                        Status: playlist.status,
+                                        'Active Players': `${playlist.activePlayers}/${playlist.totalPlayers}`,
+                                        'Engagement Score': `${playlist.engagementScore}%`,
+                                        'Updated': getTimeAgo(playlist.updatedAt),
+                                    }))}
+                                    filename="analytics_report"
+                                    title="Analytics Export"
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -506,16 +514,7 @@ export default function AnalyticsPage() {
                             <p className="text-sm text-gray-500">Active content sequences across player groups</p>
                         </div>
                         <div className="flex items-center gap-3">
-                            <div className="relative">
-                                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                                    <span className="material-symbols-outlined text-[18px]">search</span>
-                                </span>
-                                <input
-                                    className="bg-gray-50 border border-gray-200 text-sm text-gray-900 rounded-lg pl-9 pr-4 py-2 outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 w-64"
-                                    placeholder="Search playlists..."
-                                    type="text"
-                                />
-                            </div>
+                            {/* Removed duplicate search - now using SearchBar above */}
                         </div>
                     </div>
                     <div className="overflow-x-auto">
@@ -544,73 +543,81 @@ export default function AnalyticsPage() {
                                         </td>
                                     </tr>
                                 ) : (
-                                    playlists.map((playlist) => (
-                                        <tr key={playlist.id} className="hover:bg-gray-50 transition-colors">
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 rounded bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center text-blue-600 font-bold border border-gray-200">
-                                                        {playlist.name.substring(0, 2).toUpperCase()}
+                                    playlists
+                                        .filter(playlist => {
+                                            // Search filter
+                                            if (searchQuery && !playlist.name.toLowerCase().includes(searchQuery.toLowerCase())) {
+                                                return false;
+                                            }
+                                            return true;
+                                        })
+                                        .map((playlist) => (
+                                            <tr key={playlist.id} className="hover:bg-gray-50 transition-colors">
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-10 h-10 rounded bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center text-blue-600 font-bold border border-gray-200">
+                                                            {playlist.name.substring(0, 2).toUpperCase()}
+                                                        </div>
+                                                        <div>
+                                                            <div className="font-medium text-gray-900">{playlist.name}</div>
+                                                            <div className="text-xs text-gray-500">Updated {getTimeAgo(playlist.updatedAt)}</div>
+                                                        </div>
                                                     </div>
-                                                    <div>
-                                                        <div className="font-medium text-gray-900">{playlist.name}</div>
-                                                        <div className="text-xs text-gray-500">Updated {getTimeAgo(playlist.updatedAt)}</div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${playlist.status === 'active'
+                                                        ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
+                                                        : 'bg-gray-100 text-gray-600 border border-gray-200'
+                                                        }`}>
+                                                        <span className={`w-1.5 h-1.5 rounded-full ${playlist.status === 'active' ? 'bg-emerald-500' : 'bg-gray-400'
+                                                            }`}></span>
+                                                        {playlist.status.charAt(0).toUpperCase() + playlist.status.slice(1)}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex -space-x-2">
+                                                        {playlist.targetGroups.slice(0, 3).map((group, idx) => (
+                                                            <div
+                                                                key={group}
+                                                                className="w-6 h-6 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-[10px] text-gray-700"
+                                                                title={group}
+                                                            >
+                                                                {group}
+                                                            </div>
+                                                        ))}
+                                                        {playlist.targetGroups.length > 3 && (
+                                                            <div className="w-6 h-6 rounded-full bg-gray-100 border-2 border-white flex items-center justify-center text-[10px] text-gray-500">
+                                                                +{playlist.targetGroups.length - 3}
+                                                            </div>
+                                                        )}
                                                     </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${playlist.status === 'active'
-                                                    ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
-                                                    : 'bg-gray-100 text-gray-600 border border-gray-200'
-                                                    }`}>
-                                                    <span className={`w-1.5 h-1.5 rounded-full ${playlist.status === 'active' ? 'bg-emerald-500' : 'bg-gray-400'
-                                                        }`}></span>
-                                                    {playlist.status.charAt(0).toUpperCase() + playlist.status.slice(1)}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex -space-x-2">
-                                                    {playlist.targetGroups.slice(0, 3).map((group, idx) => (
+                                                </td>
+                                                <td className="px-6 py-4 text-gray-900 font-medium">
+                                                    {playlist.activePlayers} / {playlist.totalPlayers}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="w-full max-w-[100px] bg-gray-200 h-1.5 rounded-full overflow-hidden">
                                                         <div
-                                                            key={group}
-                                                            className="w-6 h-6 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-[10px] text-gray-700"
-                                                            title={group}
-                                                        >
-                                                            {group}
-                                                        </div>
-                                                    ))}
-                                                    {playlist.targetGroups.length > 3 && (
-                                                        <div className="w-6 h-6 rounded-full bg-gray-100 border-2 border-white flex items-center justify-center text-[10px] text-gray-500">
-                                                            +{playlist.targetGroups.length - 3}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 text-gray-900 font-medium">
-                                                {playlist.activePlayers} / {playlist.totalPlayers}
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div className="w-full max-w-[100px] bg-gray-200 h-1.5 rounded-full overflow-hidden">
-                                                    <div
-                                                        className="h-full rounded-full"
-                                                        style={{
-                                                            width: `${playlist.engagementScore}%`,
-                                                            backgroundColor: playlist.engagementScore > 80 ? '#10b981' : playlist.engagementScore > 60 ? '#3b82f6' : '#f59e0b'
-                                                        }}
-                                                    ></div>
-                                                </div>
-                                                <span className="text-xs mt-1 block" style={{
-                                                    color: playlist.engagementScore > 80 ? '#10b981' : playlist.engagementScore > 60 ? '#3b82f6' : '#f59e0b'
-                                                }}>
-                                                    {playlist.engagementScore}%
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 text-right">
-                                                <button className="p-1.5 hover:bg-gray-100 rounded text-gray-400 hover:text-gray-700 transition-colors">
-                                                    <span className="material-symbols-outlined text-[20px]">more_vert</span>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))
+                                                            className="h-full rounded-full"
+                                                            style={{
+                                                                width: `${playlist.engagementScore}%`,
+                                                                backgroundColor: playlist.engagementScore > 80 ? '#10b981' : playlist.engagementScore > 60 ? '#3b82f6' : '#f59e0b'
+                                                            }}
+                                                        ></div>
+                                                    </div>
+                                                    <span className="text-xs mt-1 block" style={{
+                                                        color: playlist.engagementScore > 80 ? '#10b981' : playlist.engagementScore > 60 ? '#3b82f6' : '#f59e0b'
+                                                    }}>
+                                                        {playlist.engagementScore}%
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <button className="p-1.5 hover:bg-gray-100 rounded text-gray-400 hover:text-gray-700 transition-colors">
+                                                        <span className="material-symbols-outlined text-[20px]">more_vert</span>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))
                                 )}
                             </tbody>
                         </table>
