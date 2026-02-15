@@ -10,7 +10,7 @@ import { supabase } from '@/lib/supabase';
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import Header from '@/components/Header';
 import { useAuth } from '@/contexts/AuthContext';
-import FilterBar, { FilterConfig } from '@/components/FilterBar';
+import FilterDropdown from '@/components/FilterDropdown';
 
 interface DashboardStats {
     activePlayers: number;
@@ -196,33 +196,6 @@ export default function DashboardPage() {
         return () => clearInterval(interval);
     }, [fetchDashboardData]);
 
-    // Filter configuration for Recent Activity
-    const activityFilterConfig: FilterConfig[] = [
-        {
-            id: 'type',
-            label: 'Type',
-            options: [
-                { value: 'all', label: 'All Types' },
-                { value: 'playlist', label: 'Playlist' },
-                { value: 'content', label: 'Content' },
-                { value: 'player', label: 'Player' },
-                { value: 'system', label: 'System' }
-            ],
-            type: 'single'
-        },
-        {
-            id: 'timeRange',
-            label: 'Time Range',
-            options: [
-                { value: '1h', label: 'Last Hour' },
-                { value: '24h', label: 'Last 24 Hours' },
-                { value: '7d', label: 'Last 7 Days' },
-                { value: '30d', label: 'Last 30 Days' }
-            ],
-            type: 'single'
-        }
-    ];
-
     // Apply filters to recent activity
     const filteredActivity = useMemo(() => {
         let filtered = [...recentActivity];
@@ -258,12 +231,21 @@ export default function DashboardPage() {
         return filtered;
     }, [recentActivity, activityFilters]);
 
+    // Filter change handlers
+    const handleTypeFilterChange = (values: string[]) => {
+        setActivityFilters(prev => ({ ...prev, type: values }));
+    };
+
+    const handleTimeRangeFilterChange = (values: string[]) => {
+        setActivityFilters(prev => ({ ...prev, timeRange: values }));
+    };
+
     const handleFilterChange = (filterId: string, values: string[]) => {
         setActivityFilters(prev => ({ ...prev, [filterId]: values }));
     };
 
     const handleClearFilters = () => {
-        setActivityFilters({ type: [], timeRange: ['7d'] });
+        setActivityFilters({ type: [], timeRange: [] });
     };
 
     return (
@@ -403,12 +385,29 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Unified Filters */}
-                <div className="mb-6">
-                    <FilterBar
-                        filters={activityFilterConfig}
-                        activeFilters={activityFilters}
-                        onFilterChange={handleFilterChange}
-                        onClearAll={handleClearFilters}
+                <div className="flex flex-wrap items-center gap-3 mb-6">
+                    <FilterDropdown
+                        label="Type"
+                        options={[
+                            { value: 'all', label: 'All Types' },
+                            { value: 'playlist', label: 'Playlist' },
+                            { value: 'content', label: 'Content' },
+                            { value: 'player', label: 'Player' },
+                            { value: 'system', label: 'System' }
+                        ]}
+                        value={activityFilters.type.length > 0 ? activityFilters.type : ['all']}
+                        onChange={handleTypeFilterChange}
+                    />
+                    <FilterDropdown
+                        label="Time Range"
+                        options={[
+                            { value: '1h', label: 'Last Hour' },
+                            { value: '24h', label: 'Last 24 Hours' },
+                            { value: '7d', label: 'Last 7 Days' },
+                            { value: '30d', label: 'Last 30 Days' }
+                        ]}
+                        value={activityFilters.timeRange.length > 0 ? activityFilters.timeRange : ['7d']}
+                        onChange={handleTimeRangeFilterChange}
                     />
                 </div>
 
