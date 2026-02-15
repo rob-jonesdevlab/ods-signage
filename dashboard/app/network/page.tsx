@@ -7,7 +7,9 @@ import { API_URL } from '@/lib/api';
 
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import Header from '@/components/Header';
-import FilterBar, { FilterConfig, FilterOption } from '@/components/FilterBar';
+import SearchBar from '@/components/SearchBar';
+import FilterDropdown from '@/components/FilterDropdown';
+import SortDropdown, { SortOption } from '@/components/SortDropdown';
 
 interface NetworkStats {
     onlinePlayers: number;
@@ -45,12 +47,11 @@ export default function NetworkPage() {
     const [recentContent, setRecentContent] = useState<ContentItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [players, setPlayers] = useState<any[]>([]);
-    const [filters, setFilters] = useState<Record<string, string[]>>({
-        status: [],
-        location: [],
-        group: [],
-        deviceType: []
-    });
+    const [searchQuery, setSearchQuery] = useState('');
+    const [statusFilter, setStatusFilter] = useState<string[]>([]);
+    const [locationFilter, setLocationFilter] = useState<string[]>([]);
+    const [connectionFilter, setConnectionFilter] = useState<string[]>([]);
+    const [sortBy, setSortBy] = useState<string>('name');
 
     const fetchNetworkData = useCallback(async () => {
         try {
@@ -112,60 +113,57 @@ export default function NetworkPage() {
     // Extract unique filter options from players
     const filterOptions = useMemo(() => {
         const locations = new Set<string>();
-        const groups = new Set<string>();
-        const deviceTypes = new Set<string>();
 
         players.forEach((player: any) => {
             if (player.location) locations.add(player.location);
-            if (player.group) groups.add(player.group);
-            if (player.device_type) deviceTypes.add(player.device_type);
         });
 
         return {
-            locations: Array.from(locations).map(l => ({ value: l, label: l })),
-            groups: Array.from(groups).map(g => ({ value: g, label: g })),
-            deviceTypes: Array.from(deviceTypes).map(d => ({ value: d, label: d.toUpperCase() }))
+            locations: Array.from(locations).map(l => ({ value: l, label: l }))
         };
     }, [players]);
 
-    // Filter configuration
-    const filterConfig: FilterConfig[] = [
-        {
-            id: 'status',
-            label: 'Status',
-            options: [
-                { value: 'online', label: 'Online' },
-                { value: 'offline', label: 'Offline' },
-                { value: 'warning', label: 'Warning' }
-            ]
-        },
-        {
-            id: 'location',
-            label: 'Location',
-            options: filterOptions.locations
-        },
-        {
-            id: 'group',
-            label: 'Group',
-            options: filterOptions.groups
-        },
-        {
-            id: 'deviceType',
-            label: 'Device Type',
-            options: filterOptions.deviceTypes
-        }
-    ].filter(f => f.options.length > 0); // Only show filters with options
-
-    // Apply filters to players
+    // Apply filters and search to players
     const filteredPlayers = useMemo(() => {
-        return players.filter(player => {
-            if (filters.status.length && !filters.status.includes(player.status)) return false;
-            if (filters.location.length && !filters.location.includes(player.location)) return false;
-            if (filters.group.length && !filters.group.includes(player.group)) return false;
-            if (filters.deviceType.length && !filters.deviceType.includes(player.device_type)) return false;
-            return true;
+        let filtered = [...players];
+
+        // Search filter
+        if (searchQuery) {
+            filtered = filtered.filter(player =>
+                player.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                player.location?.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+        }
+
+        // Status filter
+        if (statusFilter.length > 0) {
+            filtered = filtered.filter(player => statusFilter.includes(player.status));
+        }
+
+        // Location filter
+        if (locationFilter.length > 0) {
+            filtered = filtered.filter(player => locationFilter.includes(player.location));
+        }
+
+        // Connection filter (WiFi/Ethernet)
+        if (connectionFilter.length > 0) {
+            filtered = filtered.filter(player => connectionFilter.includes(player.connection_type || 'wifi'));
+        }
+
+        // Sort
+        filtered.sort((a, b) => {
+            if (sortBy === 'name') {
+                return (a.name || '').localeCompare(b.name || '');
+            } else if (sortBy === 'status') {
+                return (a.status || '').localeCompare(b.status || '');
+            } else if (sortBy === 'last-seen') {
+                return new Date(b.last_seen || 0).getTime() - new Date(a.last_seen || 0).getTime();
+            }
+            return 0;
         });
-    }, [players, filters]);
+
+        return filtered;
+    }, [players, searchQuery, statusFilter, locationFilter, connectionFilter, sortBy]);
 
     useEffect(() => {
         fetchNetworkData();
@@ -193,15 +191,54 @@ export default function NetworkPage() {
                     </div>
                 </div>
 
-                {/* Filter Bar */}
-                {filterConfig.length > 0 && (
-                    <FilterBar
-                        filters={filterConfig}
-                        activeFilters={filters}
-                        onFilterChange={(filterId, values) => setFilters(prev => ({ ...prev, [filterId]: values }))}
-                        onClearAll={() => setFilters({ status: [], location: [], group: [], deviceType: [] })}
+                {/* Search + Filters */}
+                <div className="flex flex-col md:flex-row gap-3 mb-6">
+                    <SearchBar
+                        value={searchQuery}
+                        onChange={setSearchQuery}
+                        placeholder="Search players and locations..."
+                        className="flex-1"
                     />
-                )}
+                    <div className="flex gap-2">
+                        <FilterDropdown
+                            label="Status"
+                            options={[
+                                { value: 'online', label: 'Online', icon: 'check_circle', color: 'text-emerald-400' },
+                                { value: 'offline', label: 'Offline', icon: 'wifi_off', color: 'text-red-400' },
+                                { value: 'warning', label: 'Warning', icon: 'warning', color: 'text-amber-400' }
+                            ]}
+                            value={statusFilter}
+                            onChange={setStatusFilter}
+                            icon="filter_list"
+                        />
+                        <FilterDropdown
+                            label="Location"
+                            options={filterOptions.locations}
+                            value={locationFilter}
+                            onChange={setLocationFilter}
+                            icon="location_on"
+                        />
+                        <FilterDropdown
+                            label="Connection"
+                            options={[
+                                { value: 'wifi', label: 'WiFi', icon: 'wifi', color: 'text-blue-400' },
+                                { value: 'ethernet', label: 'Ethernet', icon: 'cable', color: 'text-purple-400' }
+                            ]}
+                            value={connectionFilter}
+                            onChange={setConnectionFilter}
+                            icon="settings_ethernet"
+                        />
+                        <SortDropdown
+                            options={[
+                                { value: 'name', label: 'Name (A-Z)', direction: 'asc' },
+                                { value: 'status', label: 'Status', direction: 'desc' },
+                                { value: 'last-seen', label: 'Last Seen', direction: 'desc' }
+                            ]}
+                            value={sortBy}
+                            onChange={setSortBy}
+                        />
+                    </div>
+                </div>
 
                 {/* Stats Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

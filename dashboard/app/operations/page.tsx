@@ -10,6 +10,9 @@ import Header from '@/components/Header';
 import NewScheduleModal, { ScheduleFormData } from '@/components/NewScheduleModal';
 import AuditTrailModal, { AuditLogDetail } from '@/components/AuditTrailModal';
 import FilterBar, { FilterConfig } from '@/components/FilterBar';
+import SearchBar from '@/components/SearchBar';
+import FilterDropdown from '@/components/FilterDropdown';
+import SortDropdown, { SortOption } from '@/components/SortDropdown';
 
 interface OperationsStats {
     serverUptime: number;
@@ -55,11 +58,11 @@ export default function OperationsPage() {
     const [alertFilters, setAlertFilters] = useState<Record<string, string[]>>({
         type: []
     });
-    const [auditFilters, setAuditFilters] = useState<Record<string, string[]>>({
-        action: [],
-        resourceType: [],
-        timeRange: ['24h']  // Default to 24h
-    });
+    const [auditSearchQuery, setAuditSearchQuery] = useState('');
+    const [auditActionFilter, setAuditActionFilter] = useState<string[]>([]);
+    const [auditResourceFilter, setAuditResourceFilter] = useState<string[]>([]);
+    const [auditTimeRange, setAuditTimeRange] = useState<string>('24h');
+    const [auditSortBy, setAuditSortBy] = useState<string>('newest');
 
     // Scheduled updates state
     const [scheduledUpdates, setScheduledUpdates] = useState<any[]>([]);
@@ -278,36 +281,56 @@ export default function OperationsPage() {
 
     // Filter audit logs
     const filteredAuditLogs = useMemo(() => {
-        return auditLogs.filter(log => {
-            // Action filter
-            if (auditFilters.action.length && !auditFilters.action.some(a => log.action.toLowerCase().includes(a))) {
-                return false;
-            }
+        let filtered = [...auditLogs];
 
-            // Resource type filter
-            if (auditFilters.resourceType.length && !auditFilters.resourceType.includes(log.resource_type)) {
-                return false;
-            }
+        // Search filter
+        if (auditSearchQuery) {
+            filtered = filtered.filter(log =>
+                log.user_email?.toLowerCase().includes(auditSearchQuery.toLowerCase()) ||
+                log.action?.toLowerCase().includes(auditSearchQuery.toLowerCase()) ||
+                log.resource_type?.toLowerCase().includes(auditSearchQuery.toLowerCase()) ||
+                log.details?.toLowerCase().includes(auditSearchQuery.toLowerCase())
+            );
+        }
 
-            // Time range filter
-            if (auditFilters.timeRange.length > 0 && auditFilters.timeRange[0] !== 'all') {
-                const logTime = new Date(log.created_at).getTime();
-                const now = Date.now();
-                const timeRange = auditFilters.timeRange[0];
-                const ranges: Record<string, number> = {
-                    '1h': 3600000,
-                    '24h': 86400000,
-                    '7d': 604800000,
-                    '30d': 2592000000
-                };
-                if (ranges[timeRange] && now - logTime > ranges[timeRange]) {
-                    return false;
-                }
-            }
+        // Action filter
+        if (auditActionFilter.length > 0) {
+            filtered = filtered.filter(log =>
+                auditActionFilter.some(a => log.action.toLowerCase().includes(a))
+            );
+        }
 
-            return true;
+        // Resource type filter
+        if (auditResourceFilter.length > 0) {
+            filtered = filtered.filter(log => auditResourceFilter.includes(log.resource_type));
+        }
+
+        // Time range filter
+        if (auditTimeRange && auditTimeRange !== 'all') {
+            const now = Date.now();
+            const ranges: Record<string, number> = {
+                '1h': 3600000,
+                '24h': 86400000,
+                '7d': 604800000,
+                '30d': 2592000000
+            };
+            if (ranges[auditTimeRange]) {
+                filtered = filtered.filter(log => {
+                    const logTime = new Date(log.created_at).getTime();
+                    return now - logTime <= ranges[auditTimeRange];
+                });
+            }
+        }
+
+        // Sort
+        filtered.sort((a, b) => {
+            const timeA = new Date(a.created_at).getTime();
+            const timeB = new Date(b.created_at).getTime();
+            return auditSortBy === 'newest' ? timeB - timeA : timeA - timeB;
         });
-    }, [auditLogs, auditFilters]);
+
+        return filtered;
+    }, [auditLogs, auditSearchQuery, auditActionFilter, auditResourceFilter, auditTimeRange, auditSortBy]);
 
     return (
         <div className="min-h-screen">
@@ -557,14 +580,63 @@ export default function OperationsPage() {
                     <div className="lg:col-span-4 flex flex-col">
                         {/* Audit Trail */}
                         <div className="bg-white rounded-lg border border-gray-200 shadow-sm flex flex-col h-full">
-                            {/* Audit Trail Filter Bar */}
+                            {/* Audit Trail Search + Filters */}
                             <div className="p-4 border-b border-gray-200">
-                                <FilterBar
-                                    filters={auditFilterConfig}
-                                    activeFilters={auditFilters}
-                                    onFilterChange={(filterId, values) => setAuditFilters(prev => ({ ...prev, [filterId]: values }))}
-                                    onClearAll={() => setAuditFilters({ action: [], resourceType: [], timeRange: ['24h'] })}
-                                />
+                                <div className="flex flex-col gap-3">
+                                    <SearchBar
+                                        value={auditSearchQuery}
+                                        onChange={setAuditSearchQuery}
+                                        placeholder="Search audit logs..."
+                                        className="flex-1"
+                                    />
+                                    <div className="flex gap-2">
+                                        <FilterDropdown
+                                            label="Action"
+                                            options={[
+                                                { value: 'create', label: 'Create', icon: 'add_circle', color: 'text-green-400' },
+                                                { value: 'update', label: 'Update', icon: 'edit', color: 'text-blue-400' },
+                                                { value: 'delete', label: 'Delete', icon: 'delete', color: 'text-red-400' },
+                                                { value: 'login', label: 'Login', icon: 'login', color: 'text-purple-400' }
+                                            ]}
+                                            value={auditActionFilter}
+                                            onChange={setAuditActionFilter}
+                                            icon="filter_list"
+                                        />
+                                        <FilterDropdown
+                                            label="Resource"
+                                            options={[
+                                                { value: 'player', label: 'Player', icon: 'monitor', color: 'text-blue-400' },
+                                                { value: 'playlist', label: 'Playlist', icon: 'playlist_play', color: 'text-purple-400' },
+                                                { value: 'content', label: 'Content', icon: 'perm_media', color: 'text-orange-400' },
+                                                { value: 'schedule', label: 'Schedule', icon: 'calendar_month', color: 'text-emerald-400' }
+                                            ]}
+                                            value={auditResourceFilter}
+                                            onChange={setAuditResourceFilter}
+                                            icon="category"
+                                        />
+                                        <FilterDropdown
+                                            label="Time Range"
+                                            options={[
+                                                { value: '1h', label: 'Last Hour' },
+                                                { value: '24h', label: 'Last 24 Hours' },
+                                                { value: '7d', label: 'Last 7 Days' },
+                                                { value: '30d', label: 'Last 30 Days' },
+                                                { value: 'all', label: 'All Time' }
+                                            ]}
+                                            value={[auditTimeRange]}
+                                            onChange={(values) => setAuditTimeRange(values[0] || '24h')}
+                                            icon="schedule"
+                                        />
+                                        <SortDropdown
+                                            options={[
+                                                { value: 'newest', label: 'Newest First', direction: 'desc' },
+                                                { value: 'oldest', label: 'Oldest First', direction: 'asc' }
+                                            ]}
+                                            value={auditSortBy}
+                                            onChange={setAuditSortBy}
+                                        />
+                                    </div>
+                                </div>
                             </div>
 
                             <div className="p-5 border-b border-gray-200 flex justify-between items-center">
