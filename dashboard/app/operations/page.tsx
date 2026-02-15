@@ -253,7 +253,12 @@ export default function OperationsPage() {
                                     <span className="material-symbols-outlined text-blue-600">calendar_month</span>
                                     Scheduled Updates
                                 </h2>
-                                <button className="text-sm text-blue-600 hover:text-blue-500 font-medium">View Calendar</button>
+                                <button
+                                    onClick={() => alert('Calendar view coming soon! This will show a monthly calendar view of all scheduled updates.')}
+                                    className="text-sm text-blue-600 hover:text-blue-500 font-medium"
+                                >
+                                    View Calendar
+                                </button>
                             </div>
                             <div className="relative pl-4 border-l border-gray-200 space-y-8">
                                 {/* Update 1 */}
@@ -272,7 +277,15 @@ export default function OperationsPage() {
                                                 <span className="material-symbols-outlined text-[16px]">schedule</span>
                                                 Today, 14:00 PM
                                             </div>
-                                            <button className="px-3 py-1.5 rounded-md bg-white border border-gray-200 text-gray-700 hover:text-blue-600 transition-colors">Edit</button>
+                                            <button
+                                                onClick={() => {
+                                                    // TODO: Open modal in edit mode with pre-filled data
+                                                    alert('Edit functionality: This will open the schedule modal with pre-filled data for editing.');
+                                                }}
+                                                className="px-3 py-1.5 rounded-md bg-white border border-gray-200 text-gray-700 hover:text-blue-600 transition-colors"
+                                            >
+                                                Edit
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -293,7 +306,15 @@ export default function OperationsPage() {
                                                 <span className="material-symbols-outlined text-[16px]">schedule</span>
                                                 Tomorrow, 02:00 AM
                                             </div>
-                                            <button className="px-3 py-1.5 rounded-md bg-white border border-gray-200 text-gray-700 hover:text-blue-600 transition-colors">Edit</button>
+                                            <button
+                                                onClick={() => {
+                                                    // TODO: Open modal in edit mode with pre-filled data
+                                                    alert('Edit functionality: This will open the schedule modal with pre-filled data for editing.');
+                                                }}
+                                                className="px-3 py-1.5 rounded-md bg-white border border-gray-200 text-gray-700 hover:text-blue-600 transition-colors"
+                                            >
+                                                Edit
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -314,7 +335,15 @@ export default function OperationsPage() {
                                                 <span className="material-symbols-outlined text-[16px]">schedule</span>
                                                 Sat, 23:00 PM
                                             </div>
-                                            <button className="px-3 py-1.5 rounded-md bg-white border border-gray-200 text-gray-700 hover:text-blue-600 transition-colors">Edit</button>
+                                            <button
+                                                onClick={() => {
+                                                    // TODO: Open modal in edit mode with pre-filled data
+                                                    alert('Edit functionality: This will open the schedule modal with pre-filled data for editing.');
+                                                }}
+                                                className="px-3 py-1.5 rounded-md bg-white border border-gray-200 text-gray-700 hover:text-blue-600 transition-colors"
+                                            >
+                                                Edit
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
