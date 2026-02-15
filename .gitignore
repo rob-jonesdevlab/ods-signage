@@ -43,3 +43,4 @@ dist/
 
 # Large base images
 resources/base/
+server/ods-server.service

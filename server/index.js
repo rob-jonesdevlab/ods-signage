@@ -5,6 +5,7 @@ const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
 const dbPromise = require('./database');
 const { authMiddleware, requireODSStaff } = require('./middleware/auth');
+const { apiLimiter, authLimiter, uploadLimiter } = require('./middleware/rate-limit');
 
 const app = express();
 const server = http.createServer(app);
@@ -15,9 +16,36 @@ const io = new Server(server, {
     }
 });
 
+
 // Middleware
-app.use(cors());
+const corsOptions = {
+    origin: function (origin, callback) {
+        const allowedOrigins = [
+            'https://ods-cloud.com',
+            'https://www.ods-cloud.com',
+            'http://localhost:3000' // Development
+        ];
+
+        // Allow requests with no origin (like mobile apps, curl, Postman)
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+    optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
+
+
+// Apply rate limiting to all API routes
+app.use('/api/', apiLimiter);
+
 
 // Serve static media files
 app.use('/media', express.static('media'));
@@ -45,15 +73,17 @@ async function startServer() {
         res.json({ status: 'ok', timestamp: new Date().toISOString() });
     });
 
-    // Public routes (no auth required)
-    app.use('/api/pairing', pairingRoutes);
+    // Public routes (no auth required, but rate limited for security)
+    app.use('/api/pairing', authLimiter, pairingRoutes);
+
 
     // Protected routes (auth required)
     const createPlayersRoutes = require('./routes/players');
     const playersRoutes = createPlayersRoutes(db);
     app.use('/api/players', authMiddleware, playersRoutes);
 
-    app.use('/api/content', authMiddleware, contentRoutes);
+    app.use('/api/content', authMiddleware, uploadLimiter, contentRoutes);
+
     app.use('/api/folders', authMiddleware, require('./routes/folders'));
     app.use('/api/playlists', authMiddleware, require('./routes/playlists'));
     app.use('/api/player-groups', authMiddleware, require('./routes/player-groups'));

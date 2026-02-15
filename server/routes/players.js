@@ -13,12 +13,15 @@ module.exports = function (db) {
         try {
             const orgId = req.user.effective_organization_id;
 
+            // Define columns to return
+            const columns = 'id, name, cpu_serial, status, last_seen, config, created_at, group_id, playlist_id, pairing_code, account_id, paired_at, pairing_code_expires_at, device_uuid, org_id';
+
             // ODSAdmin can see all players when not in View As mode
             let players;
             if (req.user.app_role === 'ODSAdmin' && !req.user.view_as) {
-                players = db.prepare('SELECT * FROM players ORDER BY created_at DESC').all();
+                players = db.prepare(`SELECT ${columns} FROM players ORDER BY created_at DESC`).all();
             } else {
-                players = db.prepare('SELECT * FROM players WHERE org_id = ? ORDER BY created_at DESC').all(orgId);
+                players = db.prepare(`SELECT ${columns} FROM players WHERE org_id = ? ORDER BY created_at DESC`).all(orgId);
             }
 
             res.json(players);
@@ -63,7 +66,7 @@ module.exports = function (db) {
                 VALUES (?, ?, ?, ?, ?, 'offline', datetime('now'))
             `).run(id, name, cpu_serial, orgId, group_id || null);
 
-            const player = db.prepare('SELECT * FROM players WHERE id = ?').get(id);
+            const player = db.prepare(`SELECT id, name, cpu_serial, status, last_seen, config, created_at, group_id, playlist_id, org_id FROM players WHERE id = ?`).get(id);
             res.status(201).json(player);
         } catch (error) {
             console.error('Error creating player:', error);
@@ -81,11 +84,13 @@ module.exports = function (db) {
             const { id } = req.params;
             const orgId = req.user.effective_organization_id;
 
+            const columns = 'id, name, cpu_serial, status, last_seen, config, created_at, group_id, playlist_id, org_id';
+
             let player;
             if (req.user.app_role === 'ODSAdmin' && !req.user.view_as) {
-                player = db.prepare('SELECT * FROM players WHERE id = ?').get(id);
+                player = db.prepare(`SELECT ${columns} FROM players WHERE id = ?`).get(id);
             } else {
-                player = db.prepare('SELECT * FROM players WHERE id = ? AND org_id = ?').get(id, orgId);
+                player = db.prepare(`SELECT ${columns} FROM players WHERE id = ? AND org_id = ?`).get(id, orgId);
             }
 
             if (!player) {
@@ -111,12 +116,12 @@ module.exports = function (db) {
             const { name, status, config, group_id } = req.body;
             const orgId = req.user.effective_organization_id;
 
-            // Verify player exists and belongs to user's org
+            // Verify player exists and belongs to user's org (only need id for verification)
             let player;
             if (req.user.app_role === 'ODSAdmin' && !req.user.view_as) {
-                player = db.prepare('SELECT * FROM players WHERE id = ?').get(id);
+                player = db.prepare('SELECT id, org_id FROM players WHERE id = ?').get(id);
             } else {
-                player = db.prepare('SELECT * FROM players WHERE id = ? AND org_id = ?').get(id, orgId);
+                player = db.prepare('SELECT id, org_id FROM players WHERE id = ? AND org_id = ?').get(id, orgId);
             }
 
             if (!player) {
@@ -150,7 +155,7 @@ module.exports = function (db) {
                 db.prepare(`UPDATE players SET ${updates.join(', ')} WHERE id = ?`).run(...values);
             }
 
-            const updatedPlayer = db.prepare('SELECT * FROM players WHERE id = ?').get(id);
+            const updatedPlayer = db.prepare('SELECT id, name, cpu_serial, status, last_seen, config, created_at, group_id, playlist_id, org_id, updated_at FROM players WHERE id = ?').get(id);
             res.json(updatedPlayer);
         } catch (error) {
             console.error('Error updating player:', error);
@@ -169,12 +174,12 @@ module.exports = function (db) {
             const { id } = req.params;
             const orgId = req.user.effective_organization_id;
 
-            // Verify player exists and belongs to user's org
+            // Verify player exists and belongs to user's org (only need id for deletion check)
             let player;
             if (req.user.app_role === 'ODSAdmin' && !req.user.view_as) {
-                player = db.prepare('SELECT * FROM players WHERE id = ?').get(id);
+                player = db.prepare('SELECT id FROM players WHERE id = ?').get(id);
             } else {
-                player = db.prepare('SELECT * FROM players WHERE id = ? AND org_id = ?').get(id, orgId);
+                player = db.prepare('SELECT id FROM players WHERE id = ? AND org_id = ?').get(id, orgId);
             }
 
             if (!player) {
