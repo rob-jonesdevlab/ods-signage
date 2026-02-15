@@ -555,7 +555,7 @@ export default function ContentLibraryPage() {
 
                 {/* Main Content Area */}
                 <main className="flex-1 overflow-y-auto">
-                    <div className="w-full max-w-[1600px] mx-auto p-6 md:p-8 flex flex-col gap-8">
+                    <div className="w-full max-w-[1600px] mx-auto p-6 md:p-8 flex flex-col gap-4">
                         {/* Page Header */}
                         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                             <div>
@@ -599,13 +599,13 @@ export default function ContentLibraryPage() {
                         <div {...getRootProps()} className="relative group cursor-pointer">
                             <input {...getInputProps()} />
                             <div className={`absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg opacity-10 group-hover:opacity-20 blur transition duration-500 ${isDragActive ? 'opacity-30' : ''}`}></div>
-                            <div className={`relative flex flex-col items-center justify-center w-full h-48 rounded-lg border-2 border-dashed bg-white transition-all duration-300 ${isDragActive
+                            <div className={`relative flex flex-col items-center justify-center w-full h-32 rounded-lg border-2 border-dashed bg-white transition-all duration-300 ${isDragActive
                                 ? 'border-blue-500 bg-blue-50'
                                 : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'
                                 }`}>
                                 <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center">
-                                    <div className="p-3 rounded-full bg-blue-50 text-blue-600 mb-3 group-hover:scale-110 transition-transform duration-300">
-                                        <span className="material-symbols-outlined text-[32px]">cloud_upload</span>
+                                    <div className="p-2 rounded-full bg-blue-50 text-blue-600 mb-2 group-hover:scale-110 transition-transform duration-300">
+                                        <span className="material-symbols-outlined text-[24px]">cloud_upload</span>
                                     </div>
                                     {uploading ? (
                                         <>
@@ -619,8 +619,8 @@ export default function ContentLibraryPage() {
                                         </>
                                     ) : (
                                         <>
-                                            <p className="mb-1 text-base text-gray-900 font-semibold">Drag & drop media here</p>
-                                            <p className="text-sm text-gray-500">Supports JPG, PNG, MP4 <span className="text-gray-400">|</span> Max 100MB</p>
+                                            <p className="mb-0.5 text-sm text-gray-900 font-semibold">Drag & drop media here</p>
+                                            <p className="text-xs text-gray-500">Supports JPG, PNG, MP4 <span className="text-gray-400">|</span> Max 100MB</p>
                                         </>
                                     )}
                                 </div>

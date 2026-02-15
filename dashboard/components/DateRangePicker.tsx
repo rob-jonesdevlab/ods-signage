@@ -74,10 +74,10 @@ export default function DateRangePicker({ value, onChange, className = '' }: Dat
                 onClick={() => setIsOpen(!isOpen)}
                 className={`
                     flex items-center gap-2 px-4 py-2.5 
-                    bg-slate-800 hover:bg-slate-700 
-                    border rounded-lg text-sm transition-all 
-                    focus:outline-none focus:ring-2 focus:ring-blue-500
-                    ${value.start || value.end ? 'border-blue-500 text-blue-400' : 'border-slate-700 text-slate-300'}
+                    bg-white hover:bg-gray-50 
+                    border rounded-lg text-sm transition-all shadow-sm
+                    focus:outline-none focus:ring-2 focus:ring-blue-500/20
+                    ${value.start || value.end ? 'border-blue-500 text-blue-600' : 'border-gray-200 text-gray-700'}
                 `}
             >
                 <span className="material-symbols-outlined text-[20px]">calendar_month</span>
@@ -90,29 +90,29 @@ export default function DateRangePicker({ value, onChange, className = '' }: Dat
 
             {/* Dropdown Menu */}
             {isOpen && (
-                <div className="absolute right-0 mt-2 w-80 bg-slate-800 border border-slate-700 rounded-lg shadow-2xl shadow-black/50 z-50 overflow-hidden">
+                <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
                     <div className="p-4">
                         {/* Quick Select Options */}
                         <div className="mb-4">
-                            <label className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-2 block">
+                            <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2 block">
                                 Quick Select
                             </label>
                             <div className="grid grid-cols-3 gap-2">
                                 <button
                                     onClick={() => handleQuickSelect(7)}
-                                    className="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded text-sm transition-colors"
+                                    className="px-3 py-2 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded text-sm transition-colors border border-gray-200"
                                 >
                                     Last 7 days
                                 </button>
                                 <button
                                     onClick={() => handleQuickSelect(30)}
-                                    className="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded text-sm transition-colors"
+                                    className="px-3 py-2 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded text-sm transition-colors border border-gray-200"
                                 >
                                     Last 30 days
                                 </button>
                                 <button
                                     onClick={() => handleQuickSelect(90)}
-                                    className="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded text-sm transition-colors"
+                                    className="px-3 py-2 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded text-sm transition-colors border border-gray-200"
                                 >
                                     Last 90 days
                                 </button>
@@ -122,21 +122,21 @@ export default function DateRangePicker({ value, onChange, className = '' }: Dat
                         {/* Custom Date Inputs */}
                         <div className="space-y-3 mb-4">
                             <div>
-                                <label className="text-xs font-medium text-slate-400 mb-1 block">Start Date</label>
+                                <label className="text-xs font-medium text-gray-700 mb-1 block">Start Date</label>
                                 <input
                                     type="date"
                                     value={tempRange.start ? tempRange.start.toISOString().split('T')[0] : ''}
                                     onChange={(e) => setTempRange({ ...tempRange, start: e.target.value ? new Date(e.target.value) : null })}
-                                    className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full px-3 py-2 bg-white border border-gray-200 rounded text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                                 />
                             </div>
                             <div>
-                                <label className="text-xs font-medium text-slate-400 mb-1 block">End Date</label>
+                                <label className="text-xs font-medium text-gray-700 mb-1 block">End Date</label>
                                 <input
                                     type="date"
                                     value={tempRange.end ? tempRange.end.toISOString().split('T')[0] : ''}
                                     onChange={(e) => setTempRange({ ...tempRange, end: e.target.value ? new Date(e.target.value) : null })}
-                                    className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full px-3 py-2 bg-white border border-gray-200 rounded text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                                 />
                             </div>
                         </div>
@@ -145,13 +145,13 @@ export default function DateRangePicker({ value, onChange, className = '' }: Dat
                         <div className="flex gap-2">
                             <button
                                 onClick={handleClear}
-                                className="flex-1 px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded text-sm transition-colors"
+                                className="flex-1 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded text-sm transition-colors border border-gray-200"
                             >
                                 Clear
                             </button>
                             <button
                                 onClick={handleApply}
-                                className="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded text-sm transition-colors"
+                                className="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded text-sm transition-colors shadow-sm"
                             >
                                 Apply
                             </button>
