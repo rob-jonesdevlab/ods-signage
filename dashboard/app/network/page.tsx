@@ -5,8 +5,9 @@ export const dynamic = 'force-dynamic';
 
 import { API_URL } from '@/lib/api';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import Header from '@/components/Header';
+import FilterBar, { FilterConfig, FilterOption } from '@/components/FilterBar';
 
 interface NetworkStats {
     onlinePlayers: number;
@@ -43,6 +44,13 @@ export default function NetworkPage() {
     const [alerts, setAlerts] = useState<Alert[]>([]);
     const [recentContent, setRecentContent] = useState<ContentItem[]>([]);
     const [loading, setLoading] = useState(true);
+    const [players, setPlayers] = useState<any[]>([]);
+    const [filters, setFilters] = useState<Record<string, string[]>>({
+        status: [],
+        location: [],
+        group: [],
+        deviceType: []
+    });
 
     const fetchNetworkData = useCallback(async () => {
         try {
@@ -69,6 +77,9 @@ export default function NetworkPage() {
                 activeSyncs,
                 totalPlayers: players.length
             });
+
+            // Store players for filtering
+            setPlayers(players);
 
             // Generate alerts from offline players
             const generatedAlerts: Alert[] = players
@@ -98,6 +109,64 @@ export default function NetworkPage() {
         }
     }, []);
 
+    // Extract unique filter options from players
+    const filterOptions = useMemo(() => {
+        const locations = new Set<string>();
+        const groups = new Set<string>();
+        const deviceTypes = new Set<string>();
+
+        players.forEach((player: any) => {
+            if (player.location) locations.add(player.location);
+            if (player.group) groups.add(player.group);
+            if (player.device_type) deviceTypes.add(player.device_type);
+        });
+
+        return {
+            locations: Array.from(locations).map(l => ({ value: l, label: l })),
+            groups: Array.from(groups).map(g => ({ value: g, label: g })),
+            deviceTypes: Array.from(deviceTypes).map(d => ({ value: d, label: d.toUpperCase() }))
+        };
+    }, [players]);
+
+    // Filter configuration
+    const filterConfig: FilterConfig[] = [
+        {
+            id: 'status',
+            label: 'Status',
+            options: [
+                { value: 'online', label: 'Online' },
+                { value: 'offline', label: 'Offline' },
+                { value: 'warning', label: 'Warning' }
+            ]
+        },
+        {
+            id: 'location',
+            label: 'Location',
+            options: filterOptions.locations
+        },
+        {
+            id: 'group',
+            label: 'Group',
+            options: filterOptions.groups
+        },
+        {
+            id: 'deviceType',
+            label: 'Device Type',
+            options: filterOptions.deviceTypes
+        }
+    ].filter(f => f.options.length > 0); // Only show filters with options
+
+    // Apply filters to players
+    const filteredPlayers = useMemo(() => {
+        return players.filter(player => {
+            if (filters.status.length && !filters.status.includes(player.status)) return false;
+            if (filters.location.length && !filters.location.includes(player.location)) return false;
+            if (filters.group.length && !filters.group.includes(player.group)) return false;
+            if (filters.deviceType.length && !filters.deviceType.includes(player.device_type)) return false;
+            return true;
+        });
+    }, [players, filters]);
+
     useEffect(() => {
         fetchNetworkData();
 
@@ -122,6 +191,16 @@ export default function NetworkPage() {
                         </div>
                     </div>
                 </div>
+
+                {/* Filter Bar */}
+                {filterConfig.length > 0 && (
+                    <FilterBar
+                        filters={filterConfig}
+                        activeFilters={filters}
+                        onFilterChange={(filterId, values) => setFilters(prev => ({ ...prev, [filterId]: values }))}
+                        onClearAll={() => setFilters({ status: [], location: [], group: [], deviceType: [] })}
+                    />
+                )}
 
                 {/* Stats Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
