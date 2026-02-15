@@ -195,22 +195,26 @@ export default function LoginPage() {
 
         label {
           font-size: 0.875rem;
-          font-weight: 500;
-          color: #cbd5e1;
+          font-weight: 600;
+          color: #334155;
         }
 
         input {
+          width: 100%;
           padding: 0.875rem 1rem;
-          background: rgba(15, 23, 42, 0.6);
-          border: 1px solid rgba(148, 163, 184, 0.2);
+          background: #f1f5f9;
+          border: 1.5px solid #e2e8f0;
           border-radius: 12px;
-          color: #f1f5f9;
+          color: #0f172a;
           font-size: 0.9375rem;
+          font-weight: 500;
           transition: all 0.2s ease;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
         }
 
         input:focus {
           outline: none;
+          background: #ffffff;
           border-color: #3b82f6;
           box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
@@ -221,7 +225,8 @@ export default function LoginPage() {
         }
 
         input::placeholder {
-          color: #64748b;
+          color: #94a3b8;
+          font-weight: 400;
         }
 
         .submit-button {
