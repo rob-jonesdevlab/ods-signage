@@ -11,6 +11,9 @@ import { useEffect, useState, useCallback, useMemo } from 'react';
 import Header from '@/components/Header';
 import { useAuth } from '@/contexts/AuthContext';
 import FilterDropdown from '@/components/FilterDropdown';
+import SearchBar from '@/components/SearchBar';
+import DateRangePicker from '@/components/DateRangePicker';
+import SortDropdown from '@/components/SortDropdown';
 
 interface DashboardStats {
     activePlayers: number;
@@ -31,6 +34,7 @@ interface ActivityItem {
     details: string;
     timestamp: string;
     color: 'blue' | 'purple' | 'orange' | 'emerald';
+    priority: 'high' | 'medium' | 'low';
 }
 
 export default function DashboardPage() {
@@ -52,8 +56,12 @@ export default function DashboardPage() {
     const [loading, setLoading] = useState(true);
     const [activityFilters, setActivityFilters] = useState<Record<string, string[]>>({
         type: [],
-        timeRange: ['7d']  // Default to 7 days
+        timeRange: ['7d'],  // Default to 7 days
+        priority: []  // NEW
     });
+    const [searchQuery, setSearchQuery] = useState('');
+    const [dateRange, setDateRange] = useState<{ start: Date | null; end: Date | null }>({ start: null, end: null });
+    const [sortBy, setSortBy] = useState<string>('newest');
 
     const fetchDashboardData = useCallback(async () => {
         try {
@@ -130,7 +138,8 @@ export default function DashboardPage() {
                     message: `New Playlist deployed to ${playlist.name}`,
                     details: `Successfully synced with ${playersCount} players.`,
                     timestamp: playlist.created_at,
-                    color: 'blue'
+                    color: 'blue',
+                    priority: 'medium'
                 });
             });
 
@@ -147,7 +156,8 @@ export default function DashboardPage() {
                     message: `Content Upload: ${item.filename}`,
                     details: `Uploaded by System • ${sizeInMB}MB`,
                     timestamp: item.created_at,
-                    color: 'purple'
+                    color: 'purple',
+                    priority: 'medium'
                 });
             });
 
@@ -160,7 +170,8 @@ export default function DashboardPage() {
                     message: `Player Offline Alert: ${player.name}`,
                     details: 'Connectivity lost. Automatic retry scheduled.',
                     timestamp: player.last_seen || player.created_at,
-                    color: 'orange'
+                    color: 'orange',
+                    priority: 'high'
                 });
             });
 
@@ -171,7 +182,8 @@ export default function DashboardPage() {
                 message: 'System Update Completed',
                 details: 'All players updated to Firmware v3.4.1',
                 timestamp: new Date(Date.now() - 86400000).toISOString(), // Yesterday
-                color: 'emerald'
+                color: 'emerald',
+                priority: 'high'
             });
 
             // Sort by timestamp and take top 4
@@ -196,14 +208,30 @@ export default function DashboardPage() {
         return () => clearInterval(interval);
     }, [fetchDashboardData]);
 
+
     // Apply filters to recent activity
     const filteredActivity = useMemo(() => {
         let filtered = [...recentActivity];
+
+        // Search filter
+        if (searchQuery) {
+            filtered = filtered.filter(activity =>
+                activity.message.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                activity.details?.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+        }
 
         // Filter by type
         const typeFilter = activityFilters.type[0];
         if (typeFilter && typeFilter !== 'all') {
             filtered = filtered.filter(activity => activity.type === typeFilter);
+        }
+
+        // Filter by priority
+        if (activityFilters.priority.length > 0) {
+            filtered = filtered.filter(activity =>
+                activityFilters.priority.includes(activity.priority)
+            );
         }
 
         // Filter by time range
@@ -228,12 +256,21 @@ export default function DashboardPage() {
 
         filtered = filtered.filter(activity => new Date(activity.timestamp) >= cutoffTime);
 
+        // Sort
+        if (sortBy === 'oldest') {
+            filtered.reverse();
+        }
+
         return filtered;
-    }, [recentActivity, activityFilters]);
+    }, [recentActivity, searchQuery, activityFilters, sortBy]);
 
     // Filter change handlers
     const handleTypeFilterChange = (values: string[]) => {
         setActivityFilters(prev => ({ ...prev, type: values }));
+    };
+
+    const handlePriorityFilterChange = (values: string[]) => {
+        setActivityFilters(prev => ({ ...prev, priority: values }));
     };
 
     const handleTimeRangeFilterChange = (values: string[]) => {
@@ -245,7 +282,10 @@ export default function DashboardPage() {
     };
 
     const handleClearFilters = () => {
-        setActivityFilters({ type: [], timeRange: [] });
+        setActivityFilters({ type: [], timeRange: [], priority: [] });
+        setSearchQuery('');
+        setDateRange({ start: null, end: null });
+        setSortBy('newest');
     };
 
     return (
@@ -384,31 +424,50 @@ export default function DashboardPage() {
                     </div>
                 </div>
 
-                {/* Unified Filters */}
-                <div className="flex flex-wrap items-center gap-3 mb-6">
-                    <FilterDropdown
-                        label="Type"
-                        options={[
-                            { value: 'all', label: 'All Types' },
-                            { value: 'playlist', label: 'Playlist' },
-                            { value: 'content', label: 'Content' },
-                            { value: 'player', label: 'Player' },
-                            { value: 'system', label: 'System' }
-                        ]}
-                        value={activityFilters.type.length > 0 ? activityFilters.type : ['all']}
-                        onChange={handleTypeFilterChange}
+                {/* Search + Filters */}
+                <div className="flex flex-col md:flex-row gap-3 mb-6">
+                    <SearchBar
+                        value={searchQuery}
+                        onChange={setSearchQuery}
+                        placeholder="Search activity..."
+                        className="flex-1"
                     />
-                    <FilterDropdown
-                        label="Time Range"
-                        options={[
-                            { value: '1h', label: 'Last Hour' },
-                            { value: '24h', label: 'Last 24 Hours' },
-                            { value: '7d', label: 'Last 7 Days' },
-                            { value: '30d', label: 'Last 30 Days' }
-                        ]}
-                        value={activityFilters.timeRange.length > 0 ? activityFilters.timeRange : ['7d']}
-                        onChange={handleTimeRangeFilterChange}
-                    />
+                    <div className="flex gap-2">
+                        <FilterDropdown
+                            label="Type"
+                            options={[
+                                { value: 'all', label: 'All Types' },
+                                { value: 'playlist', label: 'Playlist' },
+                                { value: 'content', label: 'Content' },
+                                { value: 'player', label: 'Player' },
+                                { value: 'system', label: 'System' }
+                            ]}
+                            value={activityFilters.type.length > 0 ? activityFilters.type : ['all']}
+                            onChange={handleTypeFilterChange}
+                        />
+                        <FilterDropdown
+                            label="Priority"
+                            options={[
+                                { value: 'high', label: 'High' },
+                                { value: 'medium', label: 'Medium' },
+                                { value: 'low', label: 'Low' }
+                            ]}
+                            value={activityFilters.priority}
+                            onChange={handlePriorityFilterChange}
+                        />
+                        <DateRangePicker
+                            value={dateRange}
+                            onChange={setDateRange}
+                        />
+                        <SortDropdown
+                            options={[
+                                { value: 'newest', label: 'Newest First', direction: 'desc' },
+                                { value: 'oldest', label: 'Oldest First', direction: 'asc' }
+                            ]}
+                            value={sortBy}
+                            onChange={setSortBy}
+                        />
+                    </div>
                 </div>
 
                 {/* Recent Activity & Performance */}
