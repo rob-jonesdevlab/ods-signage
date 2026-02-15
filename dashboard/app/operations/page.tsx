@@ -49,6 +49,7 @@ export default function OperationsPage() {
     const [loading, setLoading] = useState(true);
     const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
     const [selectedAuditLog, setSelectedAuditLog] = useState<AuditLogDetail | null>(null);
+    const [editingSchedule, setEditingSchedule] = useState<any | null>(null);
 
     // Filter states
     const [alertFilters, setAlertFilters] = useState<Record<string, string[]>>({
@@ -149,8 +150,14 @@ export default function OperationsPage() {
 
     const handleCreateSchedule = async (scheduleData: ScheduleFormData) => {
         try {
-            const response = await fetch(`${API_URL}/api/scheduled-updates`, {
-                method: 'POST',
+            const isEditing = editingSchedule !== null;
+            const url = isEditing
+                ? `${API_URL}/api/scheduled-updates/${editingSchedule.id}`
+                : `${API_URL}/api/scheduled-updates`;
+            const method = isEditing ? 'PATCH' : 'POST';
+
+            const response = await fetch(url, {
+                method,
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
                 body: JSON.stringify({
@@ -166,20 +173,50 @@ export default function OperationsPage() {
 
             if (!response.ok) {
                 const error = await response.json();
-                throw new Error(error.details || 'Failed to create schedule');
+                throw new Error(error.details || `Failed to ${isEditing ? 'update' : 'create'} schedule`);
             }
 
-            // Show success message (you can add a toast notification here)
-            alert('Schedule created successfully!');
+            // Show success message
+            alert(`Schedule ${isEditing ? 'updated' : 'created'} successfully!`);
 
-            // Close modal
+            // Close modal and reset editing state
             setIsScheduleModalOpen(false);
+            setEditingSchedule(null);
 
-            // Refresh data to show new schedule
+            // Refresh data to show updated schedule
             await fetchOperationsData();
         } catch (error) {
-            console.error('Error creating schedule:', error);
-            alert('Failed to create schedule. Please try again.');
+            console.error('Error saving schedule:', error);
+            alert(`Failed to ${editingSchedule ? 'update' : 'create'} schedule. Please try again.`);
+        }
+    };
+
+    const handleEditSchedule = (schedule: any) => {
+        setEditingSchedule(schedule);
+        setIsScheduleModalOpen(true);
+    };
+
+    const handleDeleteSchedule = async (scheduleId: string) => {
+        if (!confirm('Are you sure you want to delete this scheduled update? This action cannot be undone.')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/api/scheduled-updates/${scheduleId}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.details || 'Failed to delete schedule');
+            }
+
+            alert('Schedule deleted successfully!');
+            await fetchOperationsData();
+        } catch (error) {
+            console.error('Error deleting schedule:', error);
+            alert('Failed to delete schedule. Please try again.');
         }
     };
 
@@ -274,6 +311,7 @@ export default function OperationsPage() {
 
     return (
         <div className="min-h-screen">
+            <Header />
             <main className="flex-1 w-full max-w-[1400px] mx-auto p-6 md:p-8 lg:px-12 flex flex-col gap-8">
                 {/* Page Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -432,15 +470,20 @@ export default function OperationsPage() {
                                                                 minute: '2-digit'
                                                             })}
                                                         </div>
-                                                        <button
-                                                            onClick={() => {
-                                                                // TODO: Open modal in edit mode with pre-filled data
-                                                                alert('Edit functionality: This will open the schedule modal with pre-filled data for editing.');
-                                                            }}
-                                                            className="px-3 py-1.5 rounded-md bg-white border border-gray-200 text-gray-700 hover:text-blue-600 transition-colors"
-                                                        >
-                                                            Edit
-                                                        </button>
+                                                        <div className="flex items-center gap-2">
+                                                            <button
+                                                                onClick={() => handleEditSchedule(update)}
+                                                                className="px-3 py-1.5 rounded-md bg-white border border-gray-200 text-gray-700 hover:text-blue-600 transition-colors"
+                                                            >
+                                                                Edit
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleDeleteSchedule(update.id)}
+                                                                className="px-3 py-1.5 rounded-md bg-white border border-gray-200 text-gray-700 hover:text-red-600 transition-colors"
+                                                            >
+                                                                Delete
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -598,8 +641,20 @@ export default function OperationsPage() {
             {/* Modals */}
             <NewScheduleModal
                 isOpen={isScheduleModalOpen}
-                onClose={() => setIsScheduleModalOpen(false)}
+                onClose={() => {
+                    setIsScheduleModalOpen(false);
+                    setEditingSchedule(null);
+                }}
                 onSubmit={handleCreateSchedule}
+                initialData={editingSchedule ? {
+                    title: editingSchedule.title,
+                    type: editingSchedule.type,
+                    targets: editingSchedule.targets,
+                    scheduleDate: editingSchedule.schedule_date,
+                    scheduleTime: editingSchedule.schedule_time,
+                    recurrence: editingSchedule.recurrence || { enabled: false, pattern: 'daily', interval: 1 },
+                    notifications: editingSchedule.notifications || { email: false, sms: false }
+                } : undefined}
             />
             <AuditTrailModal
                 isOpen={selectedAuditLog !== null}

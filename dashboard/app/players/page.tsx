@@ -340,6 +340,7 @@ export default function PlayersPage() {
 
     return (
         <div className="min-h-screen">
+            <Header />
             <main className="w-full max-w-[1600px] mx-auto p-6 md:p-8 flex gap-6">
                 {/* Sidebar */}
                 <aside className="w-64 flex-shrink-0">

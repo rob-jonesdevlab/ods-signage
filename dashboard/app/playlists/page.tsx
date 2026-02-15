@@ -271,6 +271,7 @@ export default function PlaylistsPage() {
 
     return (
         <div className="min-h-screen">
+            <Header />
             {/* Main Content */}
             <main className="w-full max-w-[1600px] mx-auto p-6 md:p-8 flex gap-6">
                 {/* Sidebar */}

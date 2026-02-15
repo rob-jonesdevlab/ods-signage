@@ -528,6 +528,7 @@ export default function ContentLibraryPage() {
 
     return (
         <div className="min-h-screen">
+            <Header />
             {/* Main Content - Two Column Layout */}
             <div className="flex-1 flex overflow-hidden">
                 {/* Folder Sidebar */}
