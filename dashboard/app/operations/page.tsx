@@ -133,7 +133,10 @@ export default function OperationsPage() {
                         <p className="text-gray-500 mt-1">Monitor infrastructure health and manage scheduled deployments.</p>
                     </div>
                     <div className="flex gap-3">
-                        <button className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 rounded-lg text-sm font-medium transition-colors border border-gray-200 shadow-sm">
+                        <button
+                            onClick={() => fetchOperationsData()}
+                            className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 rounded-lg text-sm font-medium transition-colors border border-gray-200 shadow-sm"
+                        >
                             <span className="material-symbols-outlined text-[18px]">refresh</span>
                             Refresh Data
                         </button>
@@ -157,7 +160,7 @@ export default function OperationsPage() {
                                 <div className="h-8 bg-gray-100 rounded animate-pulse w-24"></div>
                             ) : (
                                 <>
-                                    <span className="text-2xl font-bold text-gray-900">{stats.serverUptime}%</span>
+                                    <span className="text-2xl font-bold text-gray-900">{stats.serverUptime.toFixed(3)}%</span>
                                     <span className="text-xs text-emerald-600 mb-1">Uptime</span>
                                 </>
                             )}
@@ -292,11 +295,15 @@ export default function OperationsPage() {
                         {/* Active Alerts */}
                         <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
                             <div className="flex items-center justify-between mb-4">
-                                <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                                <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
                                     <span className="material-symbols-outlined text-rose-600">warning</span>
                                     Active Alerts
                                 </h2>
-                                <span className="text-xs font-medium px-2 py-1 bg-rose-100 text-rose-600 rounded-full">2 Critical</span>
+                                {alerts.filter(a => a.type === 'critical').length > 0 && (
+                                    <span className="text-xs font-medium px-2 py-1 bg-rose-100 text-rose-600 rounded-full">
+                                        {alerts.filter(a => a.type === 'critical').length} Critical
+                                    </span>
+                                )}
                             </div>
                             <div className="space-y-3">
                                 {loading ? (

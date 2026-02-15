@@ -27,13 +27,12 @@ export default function Header() {
                     <AppsMenu />
 
                     {/* Logo */}
-                    <Link href="/dashboard" className="flex items-center gap-3 group ml-2">
-                        <div className="size-8 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-sm">
-                            <span className="material-symbols-outlined text-white text-lg">bolt</span>
-                        </div>
-                        <span className="text-lg font-bold tracking-tight text-gray-900">
-                            ODS <span className="text-gray-500 font-medium">Cloud</span>
-                        </span>
+                    <Link href="/dashboard" className="flex items-center gap-2 group ml-2">
+                        <img
+                            src="/ods-cloud-logo.png"
+                            alt="ODS Cloud"
+                            className="h-8 w-auto"
+                        />
                     </Link>
                 </div>
 
