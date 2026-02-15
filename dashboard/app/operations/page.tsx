@@ -8,6 +8,7 @@ import { API_URL } from '@/lib/api';
 import { useEffect, useState, useCallback } from 'react';
 import Header from '@/components/Header';
 import NewScheduleModal, { ScheduleFormData } from '@/components/NewScheduleModal';
+import AuditTrailModal, { AuditLogDetail } from '@/components/AuditTrailModal';
 
 interface OperationsStats {
     serverUptime: number;
@@ -46,6 +47,7 @@ export default function OperationsPage() {
     const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
     const [loading, setLoading] = useState(true);
     const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
+    const [selectedAuditLog, setSelectedAuditLog] = useState<AuditLogDetail | null>(null);
 
     const fetchOperationsData = useCallback(async () => {
         try {
@@ -392,7 +394,11 @@ export default function OperationsPage() {
                                 ) : auditLogs.length > 0 ? (
                                     <ul className="space-y-1">
                                         {auditLogs.map((log) => (
-                                            <li key={log.id} className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors group">
+                                            <li
+                                                key={log.id}
+                                                onClick={() => setSelectedAuditLog(log as AuditLogDetail)}
+                                                className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors group cursor-pointer"
+                                            >
                                                 <div className="relative shrink-0">
                                                     <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-600 ring-2 ring-white">
                                                         {log.user_email?.substring(0, 2).toUpperCase() || 'SY'}
@@ -447,6 +453,11 @@ export default function OperationsPage() {
                 isOpen={isScheduleModalOpen}
                 onClose={() => setIsScheduleModalOpen(false)}
                 onSubmit={handleCreateSchedule}
+            />
+            <AuditTrailModal
+                isOpen={selectedAuditLog !== null}
+                onClose={() => setSelectedAuditLog(null)}
+                auditLog={selectedAuditLog}
             />
         </div>
     );
