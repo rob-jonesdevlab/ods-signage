@@ -66,10 +66,10 @@ export default function FilterDropdown({ label, options, value, onChange, icon =
                 onClick={() => setIsOpen(!isOpen)}
                 className={`
                     flex items-center gap-2 px-4 py-2.5 
-                    bg-slate-800 hover:bg-slate-700 
-                    border rounded-lg text-sm transition-all 
-                    focus:outline-none focus:ring-2 focus:ring-blue-500
-                    ${value.length > 0 ? 'border-blue-500 text-blue-400' : 'border-slate-700 text-slate-300'}
+                    bg-white hover:bg-gray-50 
+                    border rounded-lg text-sm transition-all shadow-sm
+                    focus:outline-none focus:ring-2 focus:ring-blue-500/20
+                    ${value.length > 0 ? 'border-blue-500 text-blue-600' : 'border-gray-200 text-gray-700'}
                 `}
             >
                 <span className="material-symbols-outlined text-[20px]">{icon}</span>
@@ -87,7 +87,7 @@ export default function FilterDropdown({ label, options, value, onChange, icon =
 
             {/* Dropdown Menu */}
             {isOpen && (
-                <div className="absolute right-0 mt-2 w-64 bg-slate-800 border border-slate-700 rounded-lg shadow-2xl shadow-black/50 z-50 overflow-hidden">
+                <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
                     <div className="p-2">
                         {/* Options */}
                         <div className="max-h-64 overflow-y-auto">
@@ -99,7 +99,7 @@ export default function FilterDropdown({ label, options, value, onChange, icon =
                                         w-full flex items-center justify-between px-3 py-2.5 rounded text-sm transition-colors
                                         ${value.includes(option.value)
                                             ? 'bg-blue-600 text-white'
-                                            : 'text-slate-300 hover:bg-slate-700'
+                                            : 'text-gray-700 hover:bg-gray-50'
                                         }
                                     `}
                                 >
@@ -120,10 +120,10 @@ export default function FilterDropdown({ label, options, value, onChange, icon =
 
                         {/* Clear Button */}
                         {value.length > 0 && (
-                            <div className="mt-2 pt-2 border-t border-slate-700">
+                            <div className="mt-2 pt-2 border-t border-gray-200">
                                 <button
                                     onClick={handleClearAll}
-                                    className="w-full px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded text-sm transition-colors"
+                                    className="w-full px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded text-sm transition-colors"
                                 >
                                     Clear All
                                 </button>

@@ -41,7 +41,7 @@ export default function SortDropdown({ options, value, onChange, className = '' 
             {/* Trigger Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-sm text-slate-300 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             >
                 <span className="material-symbols-outlined text-[20px]">
                     {currentOption.direction === 'asc' ? 'arrow_upward' : 'arrow_downward'}
@@ -56,7 +56,7 @@ export default function SortDropdown({ options, value, onChange, className = '' 
 
             {/* Dropdown Menu */}
             {isOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-slate-800 border border-slate-700 rounded-lg shadow-2xl shadow-black/50 z-50 overflow-hidden">
+                <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
                     <div className="py-1">
                         {options.map((option) => (
                             <button
@@ -69,7 +69,7 @@ export default function SortDropdown({ options, value, onChange, className = '' 
                                     w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors
                                     ${value === option.value
                                         ? 'bg-blue-600 text-white'
-                                        : 'text-slate-300 hover:bg-slate-700'
+                                        : 'text-gray-700 hover:bg-gray-50'
                                     }
                                 `}
                             >
