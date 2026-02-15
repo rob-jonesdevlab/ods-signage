@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/components/AuthProvider'
 import { signIn } from '@/lib/auth'
-import Image from 'next/image'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -47,13 +46,10 @@ export default function LoginPage() {
       <div className="login-card">
         <div className="login-header">
           <div className="logo-container">
-            <Image
-              src="/ods-logo.png"
-              alt="ODS Cloud"
-              width={48}
-              height={48}
-              priority
-            />
+            <svg className="cloud-icon" width="32" height="32" viewBox="0 0 24 24" fill="none">
+              <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4C9.11 4 6.6 5.64 5.35 8.04C2.34 8.36 0 10.91 0 14C0 17.31 2.69 20 6 20H19C21.76 20 24 17.76 24 15C24 12.36 21.95 10.22 19.35 10.04Z" fill="currentColor" />
+            </svg>
+            <span className="logo-text">ODS Cloud</span>
           </div>
           <h1>Welcome to ODS Cloud</h1>
           <p>Sign in to manage your digital signage network</p>
@@ -147,15 +143,21 @@ export default function LoginPage() {
         }
 
         .logo-container {
-          display: inline-flex;
+          display: flex;
           align-items: center;
           justify-content: center;
-          width: 80px;
-          height: 80px;
-          background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-          border-radius: 20px;
+          gap: 0.75rem;
           margin-bottom: 1.5rem;
-          box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+        }
+
+        .cloud-icon {
+          color: #3b82f6;
+        }
+
+        .logo-text {
+          font-size: 1.875rem;
+          font-weight: 700;
+          color: #f1f5f9;
         }
 
         h1 {
