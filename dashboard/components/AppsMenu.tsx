@@ -56,12 +56,12 @@ export default function AppsMenu() {
             {/* Apps Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-3 px-5 py-3 text-base font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-xl hover:bg-gray-100 transition-colors"
             >
-                <Squares2X2Icon className="w-5 h-5" />
+                <Squares2X2Icon className="w-6 h-6" />
                 <span>Apps</span>
                 <ChevronDownIcon
-                    className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''
+                    className={`w-5 h-5 transition-transform ${isOpen ? 'rotate-180' : ''
                         }`}
                 />
             </button>

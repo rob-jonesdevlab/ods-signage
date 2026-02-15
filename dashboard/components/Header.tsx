@@ -21,19 +21,20 @@ export default function Header() {
     return (
         <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur-md h-16">
             <div className="px-6 h-full flex items-center justify-between">
-                {/* Left side: Apps Menu + Logo */}
-                <div className="flex items-center gap-4">
-                    {/* Apps Menu */}
-                    <AppsMenu />
-
-                    {/* Logo */}
-                    <Link href="/dashboard" className="flex items-center gap-2 group ml-2">
+                {/* Left side: Logo */}
+                <div className="flex items-center">
+                    <Link href="/dashboard" className="flex items-center gap-2 group">
                         <img
                             src="/ods-cloud-logo.png"
                             alt="ODS Cloud"
                             className="h-8 w-auto"
                         />
                     </Link>
+                </div>
+
+                {/* Center-Left: Apps Menu */}
+                <div className="flex-1 flex items-center ml-8">
+                    <AppsMenu />
                 </div>
 
                 {/* Right side: Status + Notifications + Profile */}
