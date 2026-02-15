@@ -314,7 +314,7 @@ export default function AnalyticsPage() {
                 </div>
 
                 {/* Search + Filters */}
-                <div className="flex flex-col md:flex-row gap-3 mb-6">
+                <div className="flex flex-col md:flex-row gap-3">
                     <SearchBar
                         value={searchQuery}
                         onChange={setSearchQuery}
