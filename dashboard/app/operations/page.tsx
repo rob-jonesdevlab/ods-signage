@@ -60,34 +60,30 @@ export default function OperationsPage() {
         timeRange: ['24h']  // Default to 24h
     });
 
+    // Scheduled updates state
+    const [scheduledUpdates, setScheduledUpdates] = useState<any[]>([]);
+
     const fetchOperationsData = useCallback(async () => {
         try {
-            // Fetch players for system metrics
-            const playersRes = await fetch(`${API_URL}/api/players`);
-            const players = await playersRes.json();
-
-            // Fetch content for storage metrics
-            const contentRes = await fetch(`${API_URL}/api/content`);
-            const content = await contentRes.json();
-
-            // Calculate storage from content metadata
-            const totalBytes = content.reduce((sum: any, item: any) => {
-                return sum + (item.metadata?.size || item.size || 0);
-            }, 0);
-            const storageGB = totalBytes / (1024 * 1024 * 1024);
-            const storageTotal = 20; // GB
-            const storagePercentage = Math.min((storageGB / storageTotal) * 100, 100);
-
-            // Mock database latency (in production, this would come from actual metrics)
-            const databaseLatency = Math.floor(Math.random() * 20) + 15; // 15-35ms
+            // Fetch real system metrics
+            const metricsRes = await fetch(`${API_URL}/api/system-metrics`, {
+                credentials: 'include'
+            });
+            const metricsData = await metricsRes.json();
 
             setStats({
-                serverUptime: 99.9,
-                databaseLatency,
-                storageUsed: storageGB,
-                storageTotal,
-                storagePercentage
+                serverUptime: metricsData.serverUptime,
+                databaseLatency: metricsData.databaseLatency,
+                storageUsed: metricsData.storageUsed,
+                storageTotal: metricsData.storageTotal,
+                storagePercentage: metricsData.storagePercentage
             });
+
+            // Fetch players for alert generation
+            const playersRes = await fetch(`${API_URL}/api/players`, {
+                credentials: 'include'
+            });
+            const players = await playersRes.json();
 
             // Generate alerts from offline players and storage
             const generatedAlerts: Alert[] = [];
@@ -102,20 +98,33 @@ export default function OperationsPage() {
                 });
             }
 
-            if (storagePercentage > 75) {
+            if (metricsData.storagePercentage > 75) {
                 generatedAlerts.push({
                     id: 'storage-warning',
                     type: 'warning',
                     message: 'Approaching Storage Limit',
-                    details: `${storagePercentage.toFixed(0)}% Used • Consider archiving old content`
+                    details: `${metricsData.storagePercentage.toFixed(0)}% Used • Consider archiving old content`
                 });
             }
 
             setAlerts(generatedAlerts);
 
+            // Fetch scheduled updates
+            try {
+                const scheduledRes = await fetch(`${API_URL}/api/scheduled-updates`, {
+                    credentials: 'include'
+                });
+                const scheduledData = await scheduledRes.json();
+                setScheduledUpdates(scheduledData);
+            } catch (error) {
+                console.error('Error fetching scheduled updates:', error);
+            }
+
             // Fetch audit logs
             try {
-                const auditRes = await fetch(`${API_URL}/api/audit-logs?limit=10`);
+                const auditRes = await fetch(`${API_URL}/api/audit-logs?limit=10`, {
+                    credentials: 'include'
+                });
                 const auditData = await auditRes.json();
                 setAuditLogs(auditData);
             } catch (error) {
@@ -140,17 +149,31 @@ export default function OperationsPage() {
 
     const handleCreateSchedule = async (scheduleData: ScheduleFormData) => {
         try {
-            // TODO: Implement API call to create schedule
-            console.log('Creating schedule:', scheduleData);
-            // const response = await fetch(`${API_URL}/api/schedules`, {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify(scheduleData),
-            // });
-            // if (!response.ok) throw new Error('Failed to create schedule');
+            const response = await fetch(`${API_URL}/api/scheduled-updates`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    title: scheduleData.title,
+                    type: scheduleData.type,
+                    targets: scheduleData.targets,
+                    scheduleDate: scheduleData.scheduleDate,
+                    scheduleTime: scheduleData.scheduleTime,
+                    recurrence: scheduleData.recurrence.enabled ? scheduleData.recurrence : null,
+                    notifications: scheduleData.notifications
+                }),
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.details || 'Failed to create schedule');
+            }
 
             // Show success message (you can add a toast notification here)
             alert('Schedule created successfully!');
+
+            // Close modal
+            setIsScheduleModalOpen(false);
 
             // Refresh data to show new schedule
             await fetchOperationsData();
@@ -361,92 +384,69 @@ export default function OperationsPage() {
                                 </button>
                             </div>
                             <div className="relative pl-4 border-l border-gray-200 space-y-8">
-                                {/* Update 1 */}
-                                <div className="relative group">
-                                    <div className="absolute -left-[21px] top-1 h-3 w-3 rounded-full border-2 border-blue-500 bg-white group-hover:bg-blue-500 transition-colors"></div>
-                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors border border-transparent hover:border-gray-200">
-                                        <div>
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-600 uppercase">Playlist</span>
-                                                <h3 className="text-sm font-semibold text-gray-900">Q3 Marketing Campaign</h3>
-                                            </div>
-                                            <p className="text-xs text-gray-500">Target: All Retail Displays (North America)</p>
-                                        </div>
-                                        <div className="flex items-center gap-4 text-xs">
-                                            <div className="flex items-center gap-1 text-gray-500">
-                                                <span className="material-symbols-outlined text-[16px]">schedule</span>
-                                                Today, 14:00 PM
-                                            </div>
-                                            <button
-                                                onClick={() => {
-                                                    // TODO: Open modal in edit mode with pre-filled data
-                                                    alert('Edit functionality: This will open the schedule modal with pre-filled data for editing.');
-                                                }}
-                                                className="px-3 py-1.5 rounded-md bg-white border border-gray-200 text-gray-700 hover:text-blue-600 transition-colors"
-                                            >
-                                                Edit
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+                                {loading ? (
+                                    <>
+                                        <div className="h-20 bg-gray-100 rounded-lg animate-pulse"></div>
+                                        <div className="h-20 bg-gray-100 rounded-lg animate-pulse"></div>
+                                    </>
+                                ) : scheduledUpdates.length === 0 ? (
+                                    <p className="text-sm text-gray-500 text-center py-8">
+                                        No scheduled updates. Click "New Schedule" to create one.
+                                    </p>
+                                ) : (
+                                    scheduledUpdates.map((update, index) => {
+                                        const typeColors: Record<string, string> = {
+                                            playlist: 'bg-purple-100 text-purple-600',
+                                            firmware: 'bg-blue-100 text-blue-600',
+                                            maintenance: 'bg-amber-100 text-amber-600',
+                                            content: 'bg-green-100 text-green-600'
+                                        };
 
-                                {/* Update 2 */}
-                                <div className="relative group">
-                                    <div className="absolute -left-[21px] top-1 h-3 w-3 rounded-full border-2 border-gray-300 bg-white group-hover:bg-gray-400 transition-colors"></div>
-                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors border border-transparent hover:border-gray-200">
-                                        <div>
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-600 uppercase">Firmware</span>
-                                                <h3 className="text-sm font-semibold text-gray-900">Player OS Update v4.2.1</h3>
-                                            </div>
-                                            <p className="text-xs text-gray-500">Target: Lobby Screens (Group B)</p>
-                                        </div>
-                                        <div className="flex items-center gap-4 text-xs">
-                                            <div className="flex items-center gap-1 text-gray-500">
-                                                <span className="material-symbols-outlined text-[16px]">schedule</span>
-                                                Tomorrow, 02:00 AM
-                                            </div>
-                                            <button
-                                                onClick={() => {
-                                                    // TODO: Open modal in edit mode with pre-filled data
-                                                    alert('Edit functionality: This will open the schedule modal with pre-filled data for editing.');
-                                                }}
-                                                className="px-3 py-1.5 rounded-md bg-white border border-gray-200 text-gray-700 hover:text-blue-600 transition-colors"
-                                            >
-                                                Edit
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+                                        const scheduleDateTime = new Date(`${update.schedule_date}T${update.schedule_time}`);
+                                        const isToday = scheduleDateTime.toDateString() === new Date().toDateString();
+                                        const isSoon = index === 0; // First item is upcoming
 
-                                {/* Update 3 */}
-                                <div className="relative group">
-                                    <div className="absolute -left-[21px] top-1 h-3 w-3 rounded-full border-2 border-gray-300 bg-white group-hover:bg-gray-400 transition-colors"></div>
-                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors border border-transparent hover:border-gray-200">
-                                        <div>
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-600 uppercase">Maint</span>
-                                                <h3 className="text-sm font-semibold text-gray-900">Database Optimization</h3>
+                                        return (
+                                            <div key={update.id} className="relative group">
+                                                <div className={`absolute -left-[21px] top-1 h-3 w-3 rounded-full border-2 ${isSoon ? 'border-blue-500 bg-white group-hover:bg-blue-500' : 'border-gray-300 bg-white group-hover:bg-gray-400'
+                                                    } transition-colors`}></div>
+                                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors border border-transparent hover:border-gray-200">
+                                                    <div>
+                                                        <div className="flex items-center gap-2 mb-1">
+                                                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${typeColors[update.type]}`}>
+                                                                {update.type}
+                                                            </span>
+                                                            <h3 className="text-sm font-semibold text-gray-900">{update.title}</h3>
+                                                        </div>
+                                                        <p className="text-xs text-gray-500">
+                                                            Target: {Array.isArray(update.targets) ? update.targets.length : 0} device{update.targets?.length !== 1 ? 's' : ''}
+                                                        </p>
+                                                    </div>
+                                                    <div className="flex items-center gap-4 text-xs">
+                                                        <div className="flex items-center gap-1 text-gray-500">
+                                                            <span className="material-symbols-outlined text-[16px]">schedule</span>
+                                                            {isToday ? 'Today, ' : ''}{scheduleDateTime.toLocaleString([], {
+                                                                month: 'short',
+                                                                day: 'numeric',
+                                                                hour: '2-digit',
+                                                                minute: '2-digit'
+                                                            })}
+                                                        </div>
+                                                        <button
+                                                            onClick={() => {
+                                                                // TODO: Open modal in edit mode with pre-filled data
+                                                                alert('Edit functionality: This will open the schedule modal with pre-filled data for editing.');
+                                                            }}
+                                                            className="px-3 py-1.5 rounded-md bg-white border border-gray-200 text-gray-700 hover:text-blue-600 transition-colors"
+                                                        >
+                                                            Edit
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <p className="text-xs text-gray-500">System-wide performance tune</p>
-                                        </div>
-                                        <div className="flex items-center gap-4 text-xs">
-                                            <div className="flex items-center gap-1 text-gray-500">
-                                                <span className="material-symbols-outlined text-[16px]">schedule</span>
-                                                Sat, 23:00 PM
-                                            </div>
-                                            <button
-                                                onClick={() => {
-                                                    // TODO: Open modal in edit mode with pre-filled data
-                                                    alert('Edit functionality: This will open the schedule modal with pre-filled data for editing.');
-                                                }}
-                                                className="px-3 py-1.5 rounded-md bg-white border border-gray-200 text-gray-700 hover:text-blue-600 transition-colors"
-                                            >
-                                                Edit
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+                                        );
+                                    })
+                                )}
                             </div>
                         </div>
 

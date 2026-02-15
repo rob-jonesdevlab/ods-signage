@@ -90,6 +90,10 @@ async function startServer() {
     app.use('/api/playlist-templates', authMiddleware, require('./routes/playlist-templates'));
     app.use('/api/analytics', authMiddleware, require('./routes/analytics'));
 
+    // System metrics and scheduled updates (Phase 3)
+    app.use('/api/system-metrics', authMiddleware, require('./routes/system-metrics'));
+    app.use('/api/scheduled-updates', authMiddleware, require('./routes/scheduled-updates'));
+
     // ODS Staff only routes
     app.use('/api/audit-logs', authMiddleware, requireODSStaff, require('./routes/audit-logs'));
 
