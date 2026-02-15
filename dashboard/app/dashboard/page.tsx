@@ -271,7 +271,7 @@ export default function DashboardPage() {
                     </div>
                 </div>
 
-                {/* Stats Cards */
+                {/* Stats Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                         {/* Active Players */}
                         <div className="p-6 rounded-lg relative overflow-hidden group hover:border-blue-300 transition-colors bg-white border border-gray-200 shadow-sm">
