@@ -23,6 +23,7 @@ const corsOptions = {
         const allowedOrigins = [
             'https://ods-cloud.com',
             'https://www.ods-cloud.com',
+            'https://ods-signage.vercel.app', // Vercel deployment
             'http://localhost:3000' // Development
         ];
 

@@ -27,6 +27,7 @@ function PairDeviceContent() {
     const [deviceName, setDeviceName] = useState('');
     const [error, setError] = useState('');
     const [pairedDevice, setPairedDevice] = useState<PairedDevice | null>(null);
+    const [connectionStatus, setConnectionStatus] = useState<'checking' | 'connected' | 'disconnected'>('checking');
 
     // Redirect if not authenticated
     useEffect(() => {
@@ -42,6 +43,23 @@ function PairDeviceContent() {
             setPairingCode(code.toUpperCase());
         }
     }, [searchParams]);
+
+    // Check API connectivity on mount
+    useEffect(() => {
+        const checkConnection = async () => {
+            try {
+                const response = await fetch('https://api.ods-cloud.com/api/health');
+                if (response.ok) {
+                    setConnectionStatus('connected');
+                } else {
+                    setConnectionStatus('disconnected');
+                }
+            } catch (err) {
+                setConnectionStatus('disconnected');
+            }
+        };
+        checkConnection();
+    }, []);
 
     const handlePairDevice = async () => {
         if (!pairingCode || pairingCode.length !== 6) {
@@ -83,9 +101,15 @@ function PairDeviceContent() {
             setTimeout(() => {
                 router.push('/players');
             }, 3000);
-        } catch (err) {
+        } catch (err: any) {
             setState('error');
-            setError('Network error. Please check your connection and try again.');
+            const errorMessage = err.message || 'Network error';
+            if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError')) {
+                setError('Connection Error: Unable to reach the server. Please check your internet connection and try again.');
+                setConnectionStatus('disconnected');
+            } else {
+                setError(`Error: ${errorMessage}`);
+            }
         }
     };
 
@@ -122,6 +146,26 @@ function PairDeviceContent() {
                                 <span className="material-symbols-outlined">close</span>
                             </button>
                         </div>
+
+                        {/* Connection Status Indicator */}
+                        {connectionStatus === 'disconnected' && (
+                            <div className="mb-4 flex gap-2 rounded-lg border border-amber-900/50 bg-amber-900/20 p-3 text-amber-200">
+                                <span className="material-symbols-outlined text-amber-400 text-[20px]">wifi_off</span>
+                                <div className="text-xs">
+                                    <p className="font-medium text-amber-400">Connection Issue</p>
+                                    <p className="text-amber-200/90">Unable to reach server. Check your connection.</p>
+                                </div>
+                            </div>
+                        )}
+                        {connectionStatus === 'connected' && (
+                            <div className="mb-4 flex gap-2 rounded-lg border border-emerald-900/50 bg-emerald-900/20 p-3 text-emerald-200">
+                                <span className="material-symbols-outlined text-emerald-400 text-[20px]">check_circle</span>
+                                <div className="text-xs">
+                                    <p className="font-medium text-emerald-400">Connected</p>
+                                    <p className="text-emerald-200/90">Server is reachable</p>
+                                </div>
+                            </div>
+                        )}
 
                         <div className="space-y-6">
                             <div className="space-y-1.5">
