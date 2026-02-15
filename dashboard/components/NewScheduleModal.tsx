@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { XMarkIcon, CalendarIcon } from '@heroicons/react/24/outline';
 
 interface NewScheduleModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: (scheduleData: ScheduleFormData) => void;
+    onSubmit: (scheduleData: ScheduleFormData) => void | Promise<void>;
+    initialData?: ScheduleFormData;
 }
 
 export interface ScheduleFormData {
@@ -33,7 +34,7 @@ const UPDATE_TYPES = [
     { value: 'content', label: 'Content Refresh', icon: '🎨', color: 'green' },
 ];
 
-export default function NewScheduleModal({ isOpen, onClose, onSubmit }: NewScheduleModalProps) {
+export default function NewScheduleModal({ isOpen, onClose, onSubmit, initialData }: NewScheduleModalProps) {
     const [formData, setFormData] = useState<ScheduleFormData>({
         title: '',
         type: 'playlist',
@@ -50,6 +51,24 @@ export default function NewScheduleModal({ isOpen, onClose, onSubmit }: NewSched
     });
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Populate form with initialData when editing
+    useEffect(() => {
+        if (initialData) {
+            setFormData(initialData);
+        } else {
+            // Reset form when creating new schedule
+            setFormData({
+                title: '',
+                type: 'playlist',
+                targets: [],
+                scheduleDate: '',
+                scheduleTime: '',
+                recurrence: { enabled: false },
+                notifications: { emailOnCompletion: false, alertOnFailure: true },
+            });
+        }
+    }, [initialData, isOpen]);
 
     if (!isOpen) return null;
 
