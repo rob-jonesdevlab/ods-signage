@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -45,6 +45,23 @@ export default function AppsMenu() {
     const [isOpen, setIsOpen] = useState(false);
     const pathname = usePathname();
     const userRole = useUserRole();
+    const menuRef = useRef<HTMLDivElement>(null);
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        }
+
+        if (isOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+            return () => {
+                document.removeEventListener('mousedown', handleClickOutside);
+            };
+        }
+    }, [isOpen]);
 
     // Filter apps based on role
     const visibleApps = digitalSignageApps.filter(
@@ -52,7 +69,7 @@ export default function AppsMenu() {
     );
 
     return (
-        <div className="relative">
+        <div className="relative" ref={menuRef}>
             {/* Apps Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
