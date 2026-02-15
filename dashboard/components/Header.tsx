@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useState } from 'react';
@@ -21,16 +22,18 @@ export default function Header() {
     return (
         <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur-md h-16">
             <div className="px-6 h-full flex items-center justify-between">
-                {/* Left side: Logo */}
-                <div className="flex items-center">
-                    <Link href="/dashboard" className="flex items-center gap-2 group">
+                {/* Logo: Otter O style */}
+                <Link href="/dashboard" className="flex items-center gap-3 group">
+                    <div className="relative flex items-center justify-center w-12 h-12 bg-black rounded-xl shadow-lg">
+                        <div className="absolute w-9 h-9 bg-white rounded-full"></div>
                         <img
-                            src="/ods-cloud-logo.png"
+                            src="/ods-logo.png"
                             alt="ODS Cloud"
-                            className="h-32 w-auto"
+                            className="relative z-10 w-6 h-6"
                         />
-                    </Link>
-                </div>
+                    </div>
+                    <span className="text-xl font-semibold text-gray-900">ODS Cloud</span>
+                </Link>
 
                 {/* Center-Left: Apps Menu */}
                 <div className="flex-1 flex items-center ml-8">
