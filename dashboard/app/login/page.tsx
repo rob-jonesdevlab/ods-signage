@@ -48,7 +48,7 @@ export default function LoginPage() {
         <div className="login-header">
           <div className="logo-container">
             <Image
-              src="/ods-logo.png"
+              src="/ods-logo-clean.png"
               alt="ODS Cloud"
               width={48}
               height={48}

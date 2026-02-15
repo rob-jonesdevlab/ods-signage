@@ -27,7 +27,7 @@ export default function Header() {
                     <div className="relative flex items-center justify-center w-12 h-12 bg-black rounded-xl shadow-lg">
                         <div className="absolute w-9 h-9 bg-white rounded-full"></div>
                         <img
-                            src="/ods-logo.png"
+                            src="/ods-logo-clean.png"
                             alt="ODS Cloud"
                             className="relative z-10 w-6 h-6"
                         />
