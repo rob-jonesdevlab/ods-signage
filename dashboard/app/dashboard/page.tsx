@@ -293,7 +293,7 @@ export default function DashboardPage() {
             <Header />
             <main className="w-full max-w-[1600px] mx-auto p-6 md:p-8 flex flex-col gap-6">
                 {/* Page Header */}
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                     <div>
                         <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">Welcome back, {displayName}</h1>
                         <p className="text-gray-500 mt-1 text-sm md:text-base">Here's what's happening with your digital signage network today.</p>

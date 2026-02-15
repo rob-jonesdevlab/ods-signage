@@ -563,18 +563,6 @@ export default function ContentLibraryPage() {
                                 <p className="text-gray-500 mt-1">Manage and organize your digital signage assets.</p>
                             </div>
                             <div className="flex gap-3">
-                                <ExportButton
-                                    data={content.map(item => ({
-                                        Name: item.name,
-                                        Type: item.type,
-                                        Size: `${(item.metadata.size / 1024).toFixed(1)} KB`,
-                                        Duration: `${item.duration}s`,
-                                        'Upload Date': new Date(item.metadata.uploadedAt).toLocaleDateString(),
-                                        Filename: item.metadata.originalName,
-                                    }))}
-                                    filename="content_library"
-                                    title="Content Library Export"
-                                />
                                 <button
                                     onClick={() => setShowUrlModal(true)}
                                     className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
@@ -589,6 +577,18 @@ export default function ContentLibraryPage() {
                                     <span className="material-symbols-outlined text-[18px]">cloud_upload</span>
                                     Upload Media
                                 </button>
+                                <ExportButton
+                                    data={content.map(item => ({
+                                        Name: item.name,
+                                        Type: item.type,
+                                        Size: `${(item.metadata.size / 1024).toFixed(1)} KB`,
+                                        Duration: `${item.duration}s`,
+                                        'Upload Date': new Date(item.metadata.uploadedAt).toLocaleDateString(),
+                                        Filename: item.metadata.originalName,
+                                    }))}
+                                    filename="content_library"
+                                    title="Content Library Export"
+                                />
                             </div>
                         </div>
 
