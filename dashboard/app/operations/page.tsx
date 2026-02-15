@@ -391,6 +391,63 @@ export default function OperationsPage() {
                     </div>
                 </div>
 
+                {/* Audit Trail Search + Filters */}
+                <div className="flex flex-col md:flex-row gap-3">
+                    <SearchBar
+                        value={auditSearchQuery}
+                        onChange={setAuditSearchQuery}
+                        placeholder="Search audit logs..."
+                        className="flex-1"
+                    />
+                    <div className="flex gap-2 flex-wrap">
+                        <FilterDropdown
+                            label="Action"
+                            options={[
+                                { value: 'create', label: 'Create', icon: 'add_circle', color: 'text-green-400' },
+                                { value: 'update', label: 'Update', icon: 'edit', color: 'text-blue-400' },
+                                { value: 'delete', label: 'Delete', icon: 'delete', color: 'text-red-400' },
+                                { value: 'login', label: 'Login', icon: 'login', color: 'text-purple-400' }
+                            ]}
+                            value={auditActionFilter}
+                            onChange={setAuditActionFilter}
+                            icon="bolt"
+                        />
+                        <FilterDropdown
+                            label="Resource"
+                            options={[
+                                { value: 'player', label: 'Player', icon: 'devices', color: 'text-blue-400' },
+                                { value: 'playlist', label: 'Playlist', icon: 'playlist_play', color: 'text-purple-400' },
+                                { value: 'content', label: 'Content', icon: 'perm_media', color: 'text-green-400' },
+                                { value: 'schedule', label: 'Schedule', icon: 'schedule', color: 'text-amber-400' }
+                            ]}
+                            value={auditResourceFilter}
+                            onChange={setAuditResourceFilter}
+                            icon="category"
+                        />
+                        <FilterDropdown
+                            label="Time Range"
+                            options={[
+                                { value: '1h', label: 'Last Hour', icon: 'schedule' },
+                                { value: '24h', label: 'Last 24 Hours', icon: 'today' },
+                                { value: '7d', label: 'Last 7 Days', icon: 'date_range' },
+                                { value: '30d', label: 'Last 30 Days', icon: 'calendar_month' },
+                                { value: 'all', label: 'All Time', icon: 'all_inclusive' }
+                            ]}
+                            value={auditTimeRange ? [auditTimeRange] : []}
+                            onChange={(values) => setAuditTimeRange(values[0] || 'all')}
+                            icon="access_time"
+                        />
+                        <SortDropdown
+                            options={[
+                                { value: 'newest', label: 'Newest First', direction: 'desc' },
+                                { value: 'oldest', label: 'Oldest First', direction: 'asc' }
+                            ]}
+                            value={auditSortBy}
+                            onChange={setAuditSortBy}
+                        />
+                    </div>
+                </div>
+
                 {/* Main Content Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
                     {/* Left Column - Scheduled Updates & Active Alerts */}
@@ -545,64 +602,6 @@ export default function OperationsPage() {
                     <div className="lg:col-span-4 flex flex-col">
                         {/* Audit Trail */}
                         <div className="bg-white rounded-lg border border-gray-200 shadow-sm flex flex-col h-full">
-                            {/* Audit Trail Search + Filters */}
-                            <div className="p-4 border-b border-gray-200">
-                                <div className="flex flex-col gap-3">
-                                    <SearchBar
-                                        value={auditSearchQuery}
-                                        onChange={setAuditSearchQuery}
-                                        placeholder="Search audit logs..."
-                                        className="flex-1"
-                                    />
-                                    <div className="flex gap-2 flex-wrap">
-                                        <FilterDropdown
-                                            label="Action"
-                                            options={[
-                                                { value: 'create', label: 'Create', icon: 'add_circle', color: 'text-green-400' },
-                                                { value: 'update', label: 'Update', icon: 'edit', color: 'text-blue-400' },
-                                                { value: 'delete', label: 'Delete', icon: 'delete', color: 'text-red-400' },
-                                                { value: 'login', label: 'Login', icon: 'login', color: 'text-purple-400' }
-                                            ]}
-                                            value={auditActionFilter}
-                                            onChange={setAuditActionFilter}
-                                            icon="bolt"
-                                        />
-                                        <FilterDropdown
-                                            label="Resource"
-                                            options={[
-                                                { value: 'player', label: 'Player', icon: 'devices', color: 'text-blue-400' },
-                                                { value: 'playlist', label: 'Playlist', icon: 'playlist_play', color: 'text-purple-400' },
-                                                { value: 'content', label: 'Content', icon: 'perm_media', color: 'text-green-400' },
-                                                { value: 'schedule', label: 'Schedule', icon: 'schedule', color: 'text-amber-400' }
-                                            ]}
-                                            value={auditResourceFilter}
-                                            onChange={setAuditResourceFilter}
-                                            icon="category"
-                                        />
-                                        <FilterDropdown
-                                            label="Time Range"
-                                            options={[
-                                                { value: '1h', label: 'Last Hour', icon: 'schedule' },
-                                                { value: '24h', label: 'Last 24 Hours', icon: 'today' },
-                                                { value: '7d', label: 'Last 7 Days', icon: 'date_range' },
-                                                { value: '30d', label: 'Last 30 Days', icon: 'calendar_month' },
-                                                { value: 'all', label: 'All Time', icon: 'all_inclusive' }
-                                            ]}
-                                            value={auditTimeRange ? [auditTimeRange] : []}
-                                            onChange={(values) => setAuditTimeRange(values[0] || 'all')}
-                                            icon="access_time"
-                                        />
-                                        <SortDropdown
-                                            options={[
-                                                { value: 'newest', label: 'Newest First', direction: 'desc' },
-                                                { value: 'oldest', label: 'Oldest First', direction: 'asc' }
-                                            ]}
-                                            value={auditSortBy}
-                                            onChange={setAuditSortBy}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
 
                             <div className="p-5 border-b border-gray-200 flex justify-between items-center">
                                 <h3 className="font-semibold text-gray-900 flex items-center gap-2">
