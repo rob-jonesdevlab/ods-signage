@@ -76,96 +76,59 @@ export default function AppsMenu() {
 
             {/* Dropdown Menu */}
             {isOpen && (
-                <div className="absolute left-0 top-full mt-2 w-[600px] bg-white rounded-xl shadow-2xl z-50 overflow-hidden">
-                    <div className="grid grid-cols-2 divide-x divide-gray-200">
-                        {/* My Apps Column */}
-                        <div className="p-6">
-                            <h3 className="text-sm font-semibold text-gray-900 mb-4">
-                                My apps
-                            </h3>
+                <div className="absolute left-0 top-full mt-2 w-[320px] bg-white rounded-xl shadow-2xl border border-gray-200 z-50 overflow-hidden">
+                    <div className="p-6">
+                        {/* My Apps Section */}
+                        <h3 className="text-sm font-semibold text-gray-900 mb-4">
+                            My apps
+                        </h3>
 
-                            {/* Digital Signage Category */}
-                            <div className="space-y-1">
-                                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
-                                    Digital Signage
-                                </p>
-                                {visibleApps.map((app) => {
-                                    const Icon = app.icon;
-                                    const isActive = pathname === app.href;
+                        {/* Digital Signage Category */}
+                        <div className="space-y-1">
+                            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+                                Digital Signage
+                            </p>
+                            {visibleApps.map((app) => {
+                                const Icon = app.icon;
+                                const isActive = pathname === app.href;
 
-                                    return (
-                                        <Link
-                                            key={app.name}
-                                            href={app.href}
-                                            onClick={() => setIsOpen(false)}
-                                            className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isActive
-                                                ? 'bg-blue-50 text-blue-600'
-                                                : 'text-gray-700 hover:bg-gray-50'
+                                return (
+                                    <Link
+                                        key={app.name}
+                                        href={app.href}
+                                        onClick={() => setIsOpen(false)}
+                                        className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isActive
+                                            ? 'bg-blue-50 text-blue-600'
+                                            : 'text-gray-700 hover:bg-gray-50'
+                                            }`}
+                                    >
+                                        <div
+                                            className={`w-8 h-8 rounded-lg flex items-center justify-center ${isActive
+                                                ? 'bg-blue-100'
+                                                : 'bg-gray-100'
                                                 }`}
                                         >
-                                            <div
-                                                className={`w-8 h-8 rounded-lg flex items-center justify-center ${isActive
-                                                    ? 'bg-blue-100'
-                                                    : 'bg-gray-100'
-                                                    }`}
-                                            >
-                                                <Icon className="w-5 h-5" />
-                                            </div>
-                                            <span className="text-sm font-medium">{app.name}</span>
-                                        </Link>
-                                    );
-                                })}
-                            </div>
+                                            <Icon className="w-5 h-5" />
+                                        </div>
+                                        <span className="text-sm font-medium">{app.name}</span>
+                                    </Link>
+                                );
+                            })}
                         </div>
 
-                        {/* Explore Otter Column */}
-                        <div className="p-6 bg-gray-50">
-                            <h3 className="text-sm font-semibold text-gray-900 mb-4">
-                                Explore Otter
-                            </h3>
-
-                            {/* Intelligence & Reporting */}
-                            <div className="space-y-1 mb-6">
-                                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
-                                    Intelligence & Reporting
-                                </p>
-                                <div className="flex items-center gap-3 px-3 py-2 text-gray-400 cursor-not-allowed rounded-lg">
-                                    <div className="w-8 h-8 rounded-lg bg-gray-200 flex items-center justify-center">
-                                        <ChartBarIcon className="w-5 h-5" />
-                                    </div>
-                                    <span className="text-sm font-medium">Analytics</span>
-                                </div>
-                            </div>
-
-                            {/* Guest engagement & Growth */}
-                            <div className="space-y-1">
-                                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
-                                    Guest engagement & Growth
-                                </p>
-                                <div className="flex items-center gap-3 px-3 py-2 text-gray-400 cursor-not-allowed rounded-lg">
-                                    <div className="w-8 h-8 rounded-lg bg-gray-200 flex items-center justify-center">
-                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-                                        </svg>
-                                    </div>
-                                    <span className="text-sm font-medium">CloudKitchens</span>
-                                </div>
-                            </div>
-
-                            {/* Footer Link */}
-                            <div className="mt-6 pt-4 border-t border-gray-200">
-                                <a
-                                    href="https://www.tryotter.com"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
-                                >
-                                    Visit Otter shop
-                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                    </svg>
-                                </a>
-                            </div>
+                        {/* Footer Link */}
+                        <div className="mt-6 pt-4 border-t border-gray-200">
+                            <a
+                                href="https://www.tryotter.com"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+                            >
+                                Visit Otter shop
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                </svg>
+                            </a>
                         </div>
                     </div>
                 </div>
