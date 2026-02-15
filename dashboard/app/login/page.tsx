@@ -46,9 +46,24 @@ export default function LoginPage() {
       <div className="login-card">
         <div className="login-header">
           <div className="logo-container">
-            <svg className="cloud-icon" width="32" height="32" viewBox="0 0 24 24" fill="none">
-              <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4C9.11 4 6.6 5.64 5.35 8.04C2.34 8.36 0 10.91 0 14C0 17.31 2.69 20 6 20H19C21.76 20 24 17.76 24 15C24 12.36 21.95 10.22 19.35 10.04Z" fill="currentColor" />
-            </svg>
+            {/* Otter-style O logo with ODS cloud icon inside */}
+            <div className="otter-logo">
+              <svg className="ods-icon" width="48" height="48" viewBox="0 0 64 64" fill="none">
+                {/* Cloud with screens */}
+                <path d="M48 28C46.5 22 41.5 18 36 18C31.5 18 27.5 20.5 25.5 24C20.5 24.5 17 28.5 17 33C17 38 21 42 26 42H47C51 42 54 39 54 35C54 31.5 51.5 28.5 48 28Z" fill="url(#cloudGradient)" />
+                {/* Screen squares inside cloud */}
+                <rect x="30" y="28" width="6" height="6" rx="1" fill="white" opacity="0.9" />
+                <rect x="38" y="28" width="6" height="6" rx="1" fill="white" opacity="0.9" />
+                <rect x="30" y="36" width="6" height="6" rx="1" fill="white" opacity="0.9" />
+                <rect x="38" y="36" width="6" height="6" rx="1" fill="white" opacity="0.9" />
+                <defs>
+                  <linearGradient id="cloudGradient" x1="17" y1="18" x2="54" y2="42" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#3b82f6" />
+                    <stop offset="1" stopColor="#8b5cf6" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
             <span className="logo-text">ODS Cloud</span>
           </div>
           <h1>Welcome to ODS Cloud</h1>
@@ -146,12 +161,24 @@ export default function LoginPage() {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 0.75rem;
+          gap: 1rem;
           margin-bottom: 1.5rem;
         }
 
-        .cloud-icon {
-          color: #3b82f6;
+        .otter-logo {
+          width: 80px;
+          height: 80px;
+          background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+          border-radius: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+        }
+
+        .ods-icon {
+          width: 48px;
+          height: 48px;
         }
 
         .logo-text {
