@@ -7,6 +7,7 @@ import { API_URL } from '@/lib/api';
 
 import { useEffect, useState, useCallback } from 'react';
 import Header from '@/components/Header';
+import NewScheduleModal, { ScheduleFormData } from '@/components/NewScheduleModal';
 
 interface OperationsStats {
     serverUptime: number;
@@ -44,6 +45,7 @@ export default function OperationsPage() {
     const [alerts, setAlerts] = useState<Alert[]>([]);
     const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
     const [loading, setLoading] = useState(true);
+    const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
 
     const fetchOperationsData = useCallback(async () => {
         try {
@@ -123,6 +125,28 @@ export default function OperationsPage() {
         return () => clearInterval(interval);
     }, [fetchOperationsData]);
 
+    const handleCreateSchedule = async (scheduleData: ScheduleFormData) => {
+        try {
+            // TODO: Implement API call to create schedule
+            console.log('Creating schedule:', scheduleData);
+            // const response = await fetch(`${API_URL}/api/schedules`, {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify(scheduleData),
+            // });
+            // if (!response.ok) throw new Error('Failed to create schedule');
+
+            // Show success message (you can add a toast notification here)
+            alert('Schedule created successfully!');
+
+            // Refresh data to show new schedule
+            await fetchOperationsData();
+        } catch (error) {
+            console.error('Error creating schedule:', error);
+            alert('Failed to create schedule. Please try again.');
+        }
+    };
+
     return (
         <div className="min-h-screen">
             <main className="flex-1 w-full max-w-[1400px] mx-auto p-6 md:p-8 lg:px-12 flex flex-col gap-8">
@@ -140,7 +164,10 @@ export default function OperationsPage() {
                             <span className="material-symbols-outlined text-[18px]">refresh</span>
                             Refresh Data
                         </button>
-                        <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-colors shadow-md shadow-blue-500/20">
+                        <button
+                            onClick={() => setIsScheduleModalOpen(true)}
+                            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-colors shadow-md shadow-blue-500/20"
+                        >
                             <span className="material-symbols-outlined text-[18px]">add_circle</span>
                             New Schedule
                         </button>
@@ -414,6 +441,13 @@ export default function OperationsPage() {
                     </div>
                 </div>
             </main>
+
+            {/* Modals */}
+            <NewScheduleModal
+                isOpen={isScheduleModalOpen}
+                onClose={() => setIsScheduleModalOpen(false)}
+                onSubmit={handleCreateSchedule}
+            />
         </div>
     );
 }
