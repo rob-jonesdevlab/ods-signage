@@ -7,9 +7,10 @@ import { API_URL } from '@/lib/api';
 import DOMPurify from 'isomorphic-dompurify';
 import { supabase } from '@/lib/supabase';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import Header from '@/components/Header';
 import { useAuth } from '@/contexts/AuthContext';
+import FilterBar, { FilterConfig } from '@/components/FilterBar';
 
 interface DashboardStats {
     activePlayers: number;
@@ -49,6 +50,10 @@ export default function DashboardPage() {
     });
     const [recentActivity, setRecentActivity] = useState<ActivityItem[]>([]);
     const [loading, setLoading] = useState(true);
+    const [activityFilters, setActivityFilters] = useState<Record<string, string[]>>({
+        type: [],
+        timeRange: ['7d']  // Default to 7 days
+    });
 
     const fetchDashboardData = useCallback(async () => {
         try {
@@ -184,6 +189,76 @@ export default function DashboardPage() {
         return () => clearInterval(interval);
     }, [fetchDashboardData]);
 
+    // Filter configuration for Recent Activity
+    const activityFilterConfig: FilterConfig[] = [
+        {
+            id: 'type',
+            label: 'Type',
+            options: [
+                { value: 'all', label: 'All Types' },
+                { value: 'playlist', label: 'Playlist' },
+                { value: 'content', label: 'Content' },
+                { value: 'player', label: 'Player' },
+                { value: 'system', label: 'System' }
+            ],
+            type: 'single'
+        },
+        {
+            id: 'timeRange',
+            label: 'Time Range',
+            options: [
+                { value: '1h', label: 'Last Hour' },
+                { value: '24h', label: 'Last 24 Hours' },
+                { value: '7d', label: 'Last 7 Days' },
+                { value: '30d', label: 'Last 30 Days' }
+            ],
+            type: 'single'
+        }
+    ];
+
+    // Apply filters to recent activity
+    const filteredActivity = useMemo(() => {
+        let filtered = [...recentActivity];
+
+        // Filter by type
+        const typeFilter = activityFilters.type[0];
+        if (typeFilter && typeFilter !== 'all') {
+            filtered = filtered.filter(activity => activity.type === typeFilter);
+        }
+
+        // Filter by time range
+        const timeRange = activityFilters.timeRange[0] || '7d';
+        const now = new Date();
+        const cutoffTime = new Date();
+
+        switch (timeRange) {
+            case '1h':
+                cutoffTime.setHours(now.getHours() - 1);
+                break;
+            case '24h':
+                cutoffTime.setHours(now.getHours() - 24);
+                break;
+            case '7d':
+                cutoffTime.setDate(now.getDate() - 7);
+                break;
+            case '30d':
+                cutoffTime.setDate(now.getDate() - 30);
+                break;
+        }
+
+        filtered = filtered.filter(activity => new Date(activity.timestamp) >= cutoffTime);
+
+        return filtered;
+    }, [recentActivity, activityFilters]);
+
+    const handleFilterChange = (filterId: string, values: string[]) => {
+        setActivityFilters(prev => ({ ...prev, [filterId]: values }));
+    };
+
+    const handleClearFilters = () => {
+        setActivityFilters({ type: [], timeRange: ['7d'] });
+    };
+
     return (
         <div className="min-h-screen">
             <Header />
@@ -194,168 +269,151 @@ export default function DashboardPage() {
                         <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">Welcome back, {displayName}</h1>
                         <p className="text-gray-500 mt-1 text-sm md:text-base">Here's what's happening with your digital signage network today.</p>
                     </div>
-                    <div className="flex flex-wrap gap-3">
-                        {/* Date Range Filter */}
-                        <button className="flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-gray-50 text-gray-700 rounded-lg text-sm font-medium transition-all border border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300">
-                            <span className="material-symbols-outlined text-[18px] text-gray-500">calendar_today</span>
-                            Last 7 Days
-                            <span className="material-symbols-outlined text-[16px] text-gray-400">expand_more</span>
-                        </button>
-
-                        {/* Status Filter */}
-                        <button className="flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-gray-50 text-gray-700 rounded-lg text-sm font-medium transition-all border border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300">
-                            <span className="material-symbols-outlined text-[18px] text-emerald-500">check_circle</span>
-                            All Status
-                            <span className="material-symbols-outlined text-[16px] text-gray-400">expand_more</span>
-                        </button>
-
-                        {/* Sort Filter */}
-                        <button className="flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-gray-50 text-gray-700 rounded-lg text-sm font-medium transition-all border border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300">
-                            <span className="material-symbols-outlined text-[18px] text-blue-600">sort</span>
-                            Newest First
-                            <span className="material-symbols-outlined text-[16px] text-gray-400">expand_more</span>
-                        </button>
-
-                        {/* Export Button */}
-                        <button className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-all shadow-sm border border-blue-600">
-                            <span className="material-symbols-outlined text-[18px]">download</span>
-                            Export
-                        </button>
-                    </div>
                 </div>
 
-                {/* Stats Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-                    {/* Active Players */}
-                    <div className="p-6 rounded-lg relative overflow-hidden group hover:border-blue-300 transition-colors bg-white border border-gray-200 shadow-sm">
-                        <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                            <span className="material-symbols-outlined text-6xl text-blue-500">monitor</span>
-                        </div>
-                        <div className="flex justify-between items-start mb-4">
-                            <div className="p-2 bg-blue-50 rounded-lg border border-blue-100 text-blue-600">
-                                <span className="material-symbols-outlined text-xl">monitor</span>
+                {/* Stats Cards */
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+                        {/* Active Players */}
+                        <div className="p-6 rounded-lg relative overflow-hidden group hover:border-blue-300 transition-colors bg-white border border-gray-200 shadow-sm">
+                            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                                <span className="material-symbols-outlined text-6xl text-blue-500">monitor</span>
                             </div>
-                            <div className="flex items-center text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-200">
-                                <span className="material-symbols-outlined text-sm mr-0.5">trending_up</span>
-                                +3
+                            <div className="flex justify-between items-start mb-4">
+                                <div className="p-2 bg-blue-50 rounded-lg border border-blue-100 text-blue-600">
+                                    <span className="material-symbols-outlined text-xl">monitor</span>
+                                </div>
+                                <div className="flex items-center text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-200">
+                                    <span className="material-symbols-outlined text-sm mr-0.5">trending_up</span>
+                                    +3
+                                </div>
                             </div>
-                        </div>
-                        <div className="mb-2">
-                            <p className="text-sm font-medium text-gray-500">Active Players</p>
-                            {loading ? (
-                                <div className="h-9 bg-gray-100 rounded animate-pulse mt-1"></div>
-                            ) : (
-                                <h3 className="text-3xl font-bold text-gray-900 mt-1">{stats.activePlayers}<span className="text-lg text-gray-400 font-normal ml-1">/ {stats.totalPlayers}</span></h3>
-                            )}
-                        </div>
-                        <div className="flex items-end gap-1 h-8 mt-4">
-                            <div className="w-1/6 bg-blue-100 h-[40%] rounded-sm"></div>
-                            <div className="w-1/6 bg-blue-100 h-[60%] rounded-sm"></div>
-                            <div className="w-1/6 bg-blue-100 h-[50%] rounded-sm"></div>
-                            <div className="w-1/6 bg-blue-200 h-[80%] rounded-sm"></div>
-                            <div className="w-1/6 bg-blue-300 h-[70%] rounded-sm"></div>
-                            <div className="w-1/6 bg-blue-500 h-[90%] rounded-sm shadow-sm"></div>
-                        </div>
-                    </div>
-
-                    {/* Total Content */}
-                    <div className="p-6 rounded-lg relative overflow-hidden group hover:border-purple-300 transition-colors bg-white border border-gray-200 shadow-sm">
-                        <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                            <span className="material-symbols-outlined text-6xl text-purple-500">perm_media</span>
-                        </div>
-                        <div className="flex justify-between items-start mb-4">
-                            <div className="p-2 bg-purple-50 rounded-lg border border-purple-100 text-purple-600">
-                                <span className="material-symbols-outlined text-xl">perm_media</span>
-                            </div>
-                            <div className="text-xs font-medium text-gray-500">
-                                75% Used
-                            </div>
-                        </div>
-                        <div className="mb-2">
-                            <p className="text-sm font-medium text-gray-500">Total Content</p>
-                            {loading ? (
-                                <div className="h-9 bg-gray-100 rounded animate-pulse mt-1"></div>
-                            ) : (
-                                <h3 className="text-3xl font-bold text-gray-900 mt-1">{stats.totalContent.toLocaleString()}</h3>
-                            )}
-                        </div>
-                        <div className="mt-5">
-                            <div className="flex justify-between text-xs text-gray-500 mb-1">
-                                <span>Storage</span>
-                                {loading ? (
-                                    <div className="h-3 w-20 bg-gray-100 rounded animate-pulse"></div>
-                                ) : (
-                                    <span>{stats.storageUsed.toFixed(1)}GB / {stats.storageTotal}GB</span>
-                                )}
-                            </div>
-                            <div className="w-full bg-gray-200 rounded-full h-2">
-                                <div className="bg-gradient-to-r from-purple-600 to-indigo-500 h-2 rounded-full shadow-sm" style={{ width: `${stats.storagePercentage}%` }}></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Active Playlists */}
-                    <div className="p-6 rounded-lg relative overflow-hidden group hover:border-orange-300 transition-colors bg-white border border-gray-200 shadow-sm">
-                        <div className="flex justify-between items-start mb-4">
-                            <div className="p-2 bg-orange-50 rounded-lg border border-orange-100 text-orange-600">
-                                <span className="material-symbols-outlined text-xl">featured_play_list</span>
-                            </div>
-                        </div>
-                        <div className="flex justify-between items-end">
                             <div className="mb-2">
-                                <p className="text-sm font-medium text-gray-500">Active Playlists</p>
+                                <p className="text-sm font-medium text-gray-500">Active Players</p>
                                 {loading ? (
                                     <div className="h-9 bg-gray-100 rounded animate-pulse mt-1"></div>
                                 ) : (
-                                    <>
-                                        <h3 className="text-3xl font-bold text-gray-900 mt-1">{stats.activePlaylists}</h3>
-                                        <p className="text-xs text-gray-500 mt-1">{stats.scheduledPlaylists} scheduled for later</p>
-                                    </>
+                                    <h3 className="text-3xl font-bold text-gray-900 mt-1">{stats.activePlayers}<span className="text-lg text-gray-400 font-normal ml-1">/ {stats.totalPlayers}</span></h3>
                                 )}
                             </div>
-                            <div className="relative size-12 mr-2">
-                                <svg className="size-full -rotate-90" viewBox="0 0 36 36">
-                                    <path className="text-gray-200" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="4"></path>
-                                    <path className="text-orange-500" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeDasharray="75, 100" strokeLinecap="round" strokeWidth="4"></path>
-                                </svg>
+                            <div className="flex items-end gap-1 h-8 mt-4">
+                                <div className="w-1/6 bg-blue-100 h-[40%] rounded-sm"></div>
+                                <div className="w-1/6 bg-blue-100 h-[60%] rounded-sm"></div>
+                                <div className="w-1/6 bg-blue-100 h-[50%] rounded-sm"></div>
+                                <div className="w-1/6 bg-blue-200 h-[80%] rounded-sm"></div>
+                                <div className="w-1/6 bg-blue-300 h-[70%] rounded-sm"></div>
+                                <div className="w-1/6 bg-blue-500 h-[90%] rounded-sm shadow-sm"></div>
                             </div>
+                        </div>
+
+                        {/* Total Content */}
+                        <div className="p-6 rounded-lg relative overflow-hidden group hover:border-purple-300 transition-colors bg-white border border-gray-200 shadow-sm">
+                            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                                <span className="material-symbols-outlined text-6xl text-purple-500">perm_media</span>
+                            </div>
+                            <div className="flex justify-between items-start mb-4">
+                                <div className="p-2 bg-purple-50 rounded-lg border border-purple-100 text-purple-600">
+                                    <span className="material-symbols-outlined text-xl">perm_media</span>
+                                </div>
+                                <div className="text-xs font-medium text-gray-500">
+                                    75% Used
+                                </div>
+                            </div>
+                            <div className="mb-2">
+                                <p className="text-sm font-medium text-gray-500">Total Content</p>
+                                {loading ? (
+                                    <div className="h-9 bg-gray-100 rounded animate-pulse mt-1"></div>
+                                ) : (
+                                    <h3 className="text-3xl font-bold text-gray-900 mt-1">{stats.totalContent.toLocaleString()}</h3>
+                                )}
+                            </div>
+                            <div className="mt-5">
+                                <div className="flex justify-between text-xs text-gray-500 mb-1">
+                                    <span>Storage</span>
+                                    {loading ? (
+                                        <div className="h-3 w-20 bg-gray-100 rounded animate-pulse"></div>
+                                    ) : (
+                                        <span>{stats.storageUsed.toFixed(1)}GB / {stats.storageTotal}GB</span>
+                                    )}
+                                </div>
+                                <div className="w-full bg-gray-200 rounded-full h-2">
+                                    <div className="bg-gradient-to-r from-purple-600 to-indigo-500 h-2 rounded-full shadow-sm" style={{ width: `${stats.storagePercentage}%` }}></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Active Playlists */}
+                        <div className="p-6 rounded-lg relative overflow-hidden group hover:border-orange-300 transition-colors bg-white border border-gray-200 shadow-sm">
+                            <div className="flex justify-between items-start mb-4">
+                                <div className="p-2 bg-orange-50 rounded-lg border border-orange-100 text-orange-600">
+                                    <span className="material-symbols-outlined text-xl">featured_play_list</span>
+                                </div>
+                            </div>
+                            <div className="flex justify-between items-end">
+                                <div className="mb-2">
+                                    <p className="text-sm font-medium text-gray-500">Active Playlists</p>
+                                    {loading ? (
+                                        <div className="h-9 bg-gray-100 rounded animate-pulse mt-1"></div>
+                                    ) : (
+                                        <>
+                                            <h3 className="text-3xl font-bold text-gray-900 mt-1">{stats.activePlaylists}</h3>
+                                            <p className="text-xs text-gray-500 mt-1">{stats.scheduledPlaylists} scheduled for later</p>
+                                        </>
+                                    )}
+                                </div>
+                                <div className="relative size-12 mr-2">
+                                    <svg className="size-full -rotate-90" viewBox="0 0 36 36">
+                                        <path className="text-gray-200" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="4"></path>
+                                        <path className="text-orange-500" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeDasharray="75, 100" strokeLinecap="round" strokeWidth="4"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Network Uptime */}
+                        <div className="p-6 rounded-lg relative overflow-hidden group hover:border-emerald-300 transition-colors bg-white border border-gray-200 shadow-sm">
+                            <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-emerald-50 rounded-full blur-2xl group-hover:bg-emerald-100 transition-colors"></div>
+                            <div className="flex justify-between items-start mb-4">
+                                <div className="p-2 bg-emerald-50 rounded-lg border border-emerald-100 text-emerald-600">
+                                    <span className="material-symbols-outlined text-xl">check_circle</span>
+                                </div>
+                                <div className="p-1 bg-emerald-100 rounded-full">
+                                    <span className="material-symbols-outlined text-emerald-600 text-sm">check</span>
+                                </div>
+                            </div>
+                            <div className="mb-2">
+                                <p className="text-sm font-medium text-gray-500">Network Uptime</p>
+                                {loading ? (
+                                    <div className="h-9 bg-gray-100 rounded animate-pulse mt-1"></div>
+                                ) : (
+                                    <h3 className="text-3xl font-bold text-gray-900 mt-1">{stats.networkUptime}%</h3>
+                                )}
+                            </div>
+                            <p className="text-xs text-emerald-600 mt-4 flex items-center gap-1">
+                                <span className="material-symbols-outlined text-sm">verified</span>
+                                System is healthy
+                            </p>
                         </div>
                     </div>
 
-                    {/* Network Uptime */}
-                    <div className="p-6 rounded-lg relative overflow-hidden group hover:border-emerald-300 transition-colors bg-white border border-gray-200 shadow-sm">
-                        <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-emerald-50 rounded-full blur-2xl group-hover:bg-emerald-100 transition-colors"></div>
-                        <div className="flex justify-between items-start mb-4">
-                            <div className="p-2 bg-emerald-50 rounded-lg border border-emerald-100 text-emerald-600">
-                                <span className="material-symbols-outlined text-xl">check_circle</span>
-                            </div>
-                            <div className="p-1 bg-emerald-100 rounded-full">
-                                <span className="material-symbols-outlined text-emerald-600 text-sm">check</span>
-                            </div>
-                        </div>
-                        <div className="mb-2">
-                            <p className="text-sm font-medium text-gray-500">Network Uptime</p>
-                            {loading ? (
-                                <div className="h-9 bg-gray-100 rounded animate-pulse mt-1"></div>
-                            ) : (
-                                <h3 className="text-3xl font-bold text-gray-900 mt-1">{stats.networkUptime}%</h3>
-                            )}
-                        </div>
-                        <p className="text-xs text-emerald-600 mt-4 flex items-center gap-1">
-                            <span className="material-symbols-outlined text-sm">verified</span>
-                            System is healthy
-                        </p>
-                    </div>
-                </div>
-
-                {/* Recent Activity & Performance */}
+    {/* Recent Activity & Performance */}
                 <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
                     {/* Recent Activity */}
                     <div className="lg:col-span-3 rounded-lg p-6 border border-gray-200 bg-white shadow-sm">
-                        <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center justify-between mb-4">
                             <h2 className="text-lg font-semibold text-gray-900">Recent Activity</h2>
                             <button className="text-xs font-medium text-blue-600 hover:text-blue-700">View All</button>
                         </div>
+
+                        {/* Filter Bar */}
+                        <div className="mb-6">
+                            <FilterBar
+                                filters={activityFilterConfig}
+                                activeFilters={activityFilters}
+                                onFilterChange={handleFilterChange}
+                                onClearAll={handleClearFilters}
+                            />
+                        </div>
+
                         <div className="relative pl-4 border-l border-gray-200 space-y-8">
                             {loading ? (
                                 <>
@@ -363,8 +421,8 @@ export default function DashboardPage() {
                                     <div className="h-16 bg-gray-100 rounded animate-pulse"></div>
                                     <div className="h-16 bg-gray-100 rounded animate-pulse"></div>
                                 </>
-                            ) : recentActivity.length > 0 ? (
-                                recentActivity.map((activity) => {
+                            ) : filteredActivity.length > 0 ? (
+                                filteredActivity.map((activity) => {
                                     const getTimeAgo = (timestamp: string) => {
                                         const now = new Date();
                                         const then = new Date(timestamp);
@@ -489,7 +547,7 @@ export default function DashboardPage() {
                         </div>
                     </div>
                 </div>
-            </main>
-        </div>
+            </main >
+        </div >
     );
 }
