@@ -10,6 +10,7 @@ import Header from '@/components/Header';
 import SearchBar from '@/components/SearchBar';
 import FilterDropdown from '@/components/FilterDropdown';
 import SortDropdown from '@/components/SortDropdown';
+import ExportButton from '@/components/ExportButton';
 
 interface NetworkStats {
     onlinePlayers: number;
@@ -197,6 +198,18 @@ export default function NetworkPage() {
                         <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-lg border border-gray-200 text-xs text-gray-600">
                             <span className="material-symbols-outlined text-[16px]">refresh</span> Auto-refresh: 30s
                         </div>
+                        <ExportButton
+                            data={filteredPlayers.map(player => ({
+                                Name: player.name,
+                                Location: player.location,
+                                Status: player.status,
+                                Connection: player.connection,
+                                'Last Seen': new Date(player.lastSeen).toLocaleString(),
+                                'IP Address': player.ipAddress || 'N/A',
+                            }))}
+                            filename="network_players"
+                            title="Network Players Export"
+                        />
                     </div>
                 </div>
 

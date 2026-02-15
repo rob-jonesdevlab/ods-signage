@@ -220,6 +220,19 @@ export default function AnalyticsPage() {
                         <h1 className="text-3xl font-bold tracking-tight text-gray-900">Analytics</h1>
                         <p className="text-gray-500 mt-1">Comprehensive insights into content performance and network health</p>
                     </div>
+                    <div className="flex gap-2">
+                        <ExportButton
+                            data={playlists.map(playlist => ({
+                                Name: playlist.name,
+                                Status: playlist.status,
+                                'Active Players': `${playlist.activePlayers}/${playlist.totalPlayers}`,
+                                'Engagement Score': `${playlist.engagementScore}%`,
+                                'Updated': getTimeAgo(playlist.updatedAt),
+                            }))}
+                            filename="analytics_report"
+                            title="Analytics Export"
+                        />
+                    </div>
                 </div>
 
                 {/* KPI Cards */}
@@ -346,17 +359,6 @@ export default function AnalyticsPage() {
                             ]}
                             value={sortBy}
                             onChange={setSortBy}
-                        />
-                        <ExportButton
-                            data={playlists.map(playlist => ({
-                                Name: playlist.name,
-                                Status: playlist.status,
-                                'Active Players': `${playlist.activePlayers}/${playlist.totalPlayers}`,
-                                'Engagement Score': `${playlist.engagementScore}%`,
-                                'Updated': getTimeAgo(playlist.updatedAt),
-                            }))}
-                            filename="analytics_report"
-                            title="Analytics Export"
                         />
                     </div>
                 </div>

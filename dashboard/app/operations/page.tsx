@@ -13,6 +13,7 @@ import FilterBar, { FilterConfig } from '@/components/FilterBar';
 import SearchBar from '@/components/SearchBar';
 import FilterDropdown from '@/components/FilterDropdown';
 import SortDropdown from '@/components/SortDropdown';
+import ExportButton from '@/components/ExportButton';
 
 interface OperationsStats {
     serverUptime: number;
@@ -322,6 +323,17 @@ export default function OperationsPage() {
                             <span className="material-symbols-outlined text-[18px]">add_circle</span>
                             New Schedule
                         </button>
+                        <ExportButton
+                            data={filteredAuditLogs.map(log => ({
+                                Timestamp: new Date(log.created_at).toLocaleString(),
+                                Action: log.action,
+                                Resource: log.resource_type,
+                                User: log.user_email || 'System',
+                                Details: log.details || 'N/A',
+                            }))}
+                            filename="operations_audit_logs"
+                            title="Audit Logs Export"
+                        />
                     </div>
                 </div>
 

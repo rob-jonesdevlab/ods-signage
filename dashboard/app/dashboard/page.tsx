@@ -291,7 +291,7 @@ export default function DashboardPage() {
     return (
         <div className="min-h-screen">
             <Header />
-            <main className="w-full max-w-[1600px] mx-auto p-6 md:p-8 flex flex-col gap-8">
+            <main className="w-full max-w-[1600px] mx-auto p-6 md:p-8 flex flex-col gap-6">
                 {/* Page Header */}
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                     <div>
