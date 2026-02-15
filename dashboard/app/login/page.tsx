@@ -48,10 +48,10 @@ export default function LoginPage() {
         <div className="login-header">
           <div className="logo-container">
             <Image
-              src="/ods-logo-clean.png"
+              src="/ods-logo-complete.png"
               alt="ODS Cloud"
-              width={48}
-              height={48}
+              width={80}
+              height={80}
               priority
             />
           </div>
@@ -150,27 +150,7 @@ export default function LoginPage() {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          width: 80px;
-          height: 80px;
-          background: #000000;
-          border-radius: 20px;
           margin-bottom: 1.5rem;
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-          position: relative;
-        }
-
-        .logo-container::before {
-          content: '';
-          position: absolute;
-          width: 56px;
-          height: 56px;
-          background: white;
-          border-radius: 50%;
-        }
-
-        .logo-container :global(img) {
-          position: relative;
-          z-index: 1;
         }
 
         h1 {

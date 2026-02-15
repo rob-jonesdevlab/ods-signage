@@ -22,16 +22,13 @@ export default function Header() {
     return (
         <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur-md h-16">
             <div className="px-6 h-full flex items-center justify-between">
-                {/* Logo: Otter O style */}
+                {/* Logo: Complete Otter O design */}
                 <Link href="/dashboard" className="flex items-center gap-3 group">
-                    <div className="relative flex items-center justify-center w-12 h-12 bg-black rounded-xl shadow-lg">
-                        <div className="absolute w-9 h-9 bg-white rounded-full"></div>
-                        <img
-                            src="/ods-logo-clean.png"
-                            alt="ODS Cloud"
-                            className="relative z-10 w-6 h-6"
-                        />
-                    </div>
+                    <img
+                        src="/ods-logo-complete.png"
+                        alt="ODS Cloud"
+                        className="w-12 h-12"
+                    />
                     <span className="text-xl font-semibold text-gray-900">ODS Cloud</span>
                 </Link>
 
