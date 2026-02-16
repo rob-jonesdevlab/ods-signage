@@ -193,6 +193,41 @@ function runMigrations() {
     console.log('✅ Added device_uuid column to players table');
   }
 
+  // Phase 3: Multi-tenancy Support - Add org_id columns
+  const hasOrgId = playerColumns[0]?.values.some(col => col[1] === 'org_id');
+
+  if (!hasOrgId) {
+    db.run("ALTER TABLE players ADD COLUMN org_id TEXT");
+    console.log('✅ Added org_id column to players table');
+  }
+
+  // Add org_id to content table
+  const contentColumnsForOrgId = db.exec("PRAGMA table_info(content)");
+  const contentHasOrgId = contentColumnsForOrgId[0]?.values.some(col => col[1] === 'org_id');
+
+  if (!contentHasOrgId) {
+    db.run("ALTER TABLE content ADD COLUMN org_id TEXT");
+    console.log('✅ Added org_id column to content table');
+  }
+
+  // Add org_id to playlists_v2 table
+  const playlistsColumns = db.exec("PRAGMA table_info(playlists_v2)");
+  const playlistsHasOrgId = playlistsColumns[0]?.values.some(col => col[1] === 'org_id');
+
+  if (!playlistsHasOrgId) {
+    db.run("ALTER TABLE playlists_v2 ADD COLUMN org_id TEXT");
+    console.log('✅ Added org_id column to playlists_v2 table');
+  }
+
+  // Add org_id to folders table
+  const foldersColumns = db.exec("PRAGMA table_info(folders)");
+  const foldersHasOrgId = foldersColumns[0]?.values.some(col => col[1] === 'org_id');
+
+  if (!foldersHasOrgId) {
+    db.run("ALTER TABLE folders ADD COLUMN org_id TEXT");
+    console.log('✅ Added org_id column to folders table');
+  }
+
 
   // Create System folder if it doesn't exist
   const { v4: uuidv4 } = require('uuid');
