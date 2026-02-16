@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="dark" lang="en">
+<html lang="en">
 
 <head>
     <meta charset="utf-8" />
@@ -47,17 +47,19 @@
     </script>
     <style>
         .glass-card {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
         .glass-pill {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
         }
 
         .text-glow {
@@ -152,8 +154,8 @@
                     class="w-20 h-20 rounded-full bg-red-500/20 flex items-center justify-center border-2 border-red-500/30">
                     <span class="material-symbols-outlined text-5xl text-red-500">error</span>
                 </div>
-                <h2 class="text-2xl font-bold text-white">Connection Error</h2>
-                <p id="errorMessage" class="text-slate-400 text-lg max-w-md">Unable to connect to pairing server. Please
+                <h2 class="text-2xl font-bold text-gray-900">Connection Error</h2>
+                <p id="errorMessage" class="text-gray-700 text-lg max-w-md">Unable to connect to pairing server. Please
                     check your network connection.</p>
             </div>
         </div>
@@ -167,7 +169,7 @@
                     class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                 <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
             </span>
-            <span id="statusText" class="text-slate-300 text-sm font-medium tracking-wide">Initializing...</span>
+            <span id="statusText" class="text-gray-800 text-sm font-medium tracking-wide">Initializing...</span>
         </div>
     </footer>
 
