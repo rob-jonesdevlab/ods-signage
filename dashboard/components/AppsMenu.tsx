@@ -3,6 +3,7 @@
 import { Fragment, useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 import {
     HomeIcon,
     TvIcon,
@@ -15,18 +16,11 @@ import {
     ChevronDownIcon,
 } from '@heroicons/react/24/outline';
 
-// Role-based filtering (TODO: integrate with actual auth)
-function useUserRole(): 'client' | 'admin' {
-    // For now, return 'admin' - replace with actual auth check
-    // Example: const { user } = useAuth(); return user?.role || 'client';
-    return 'admin';
-}
-
 interface AppMenuItem {
     name: string;
     href: string;
     icon: React.ComponentType<{ className?: string }>;
-    adminOnly?: boolean;
+    odsOnly?: boolean; // Pages only visible to odsadmin and odstech
 }
 
 // NOTE: Dashboard intentionally NOT included here - accessed via logo click only
@@ -36,15 +30,15 @@ const digitalSignageApps: AppMenuItem[] = [
     { name: 'Players', href: '/players', icon: TvIcon },
     { name: 'Playlists', href: '/playlists', icon: RectangleStackIcon },
     { name: 'Content Library', href: '/content', icon: FolderIcon },
-    { name: 'Analytics', href: '/analytics', icon: ChartBarIcon, adminOnly: true },
-    { name: 'Network', href: '/network', icon: SignalIcon, adminOnly: true },
-    { name: 'Operations', href: '/operations', icon: Cog6ToothIcon, adminOnly: true },
+    { name: 'Analytics', href: '/analytics', icon: ChartBarIcon, odsOnly: true },
+    { name: 'Network', href: '/network', icon: SignalIcon, odsOnly: true },
+    { name: 'Operations', href: '/operations', icon: Cog6ToothIcon, odsOnly: true },
 ];
 
 export default function AppsMenu() {
     const [isOpen, setIsOpen] = useState(false);
     const pathname = usePathname();
-    const userRole = useUserRole();
+    const { profile } = useAuth();
     const menuRef = useRef<HTMLDivElement>(null);
 
     // Close dropdown when clicking outside
@@ -63,9 +57,12 @@ export default function AppsMenu() {
         }
     }, [isOpen]);
 
-    // Filter apps based on role
+    // Filter apps based on role - ODS-only pages visible to odsadmin and odstech only
+    const userRole = profile?.role || 'viewer';
+    const isODSRole = userRole === 'odsadmin' || userRole === 'odstech';
+
     const visibleApps = digitalSignageApps.filter(
-        (app) => !app.adminOnly || userRole === 'admin'
+        (app) => !app.odsOnly || isODSRole
     );
 
     return (

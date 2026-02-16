@@ -175,17 +175,6 @@ export default function DashboardPage() {
                 });
             });
 
-            // Add system update (static for now)
-            activities.push({
-                id: 'system-update',
-                type: 'system',
-                message: 'System Update Completed',
-                details: 'All players updated to Firmware v3.4.1',
-                timestamp: new Date(Date.now() - 86400000).toISOString(), // Yesterday
-                color: 'emerald',
-                priority: 'high'
-            });
-
             // Sort by timestamp and take top 4
             const sortedActivities = activities
                 .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
