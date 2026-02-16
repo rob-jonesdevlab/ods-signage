@@ -59,7 +59,8 @@ export default function TeamSettings() {
         resolver: zodResolver(inviteTeamMemberSchema),
     });
 
-    const isAdmin = profile?.role === 'system' || profile?.role === 'odsadmin' || profile?.role === 'odsmanager';
+    // Owners and ODS staff can manage team members (ODS staff will use "View As" feature in future)
+    const isAdmin = profile?.role === 'owner' || profile?.role === 'odsadmin' || profile?.role === 'odstech';
 
     // Load team members and invitations
     useEffect(() => {
