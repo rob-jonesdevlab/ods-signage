@@ -61,7 +61,7 @@ module.exports = (db) => {
                 return res.json({
                     pairing_code: pairingCode,
                     expires_at: expiresAt,
-                    qr_data: `https://ods-cloud.com/pair?code=${pairingCode}`,
+                    qr_data: `https://ods-cloud.com/players/pair?code=${pairingCode}`,
                     player_id: existingPlayer.id
                 });
             }
@@ -85,7 +85,7 @@ module.exports = (db) => {
             res.json({
                 pairing_code: pairingCode,
                 expires_at: expiresAt,
-                qr_data: `https://ods-cloud.com/pair?code=${pairingCode}`,
+                qr_data: `https://ods-cloud.com/players/pair?code=${pairingCode}`,
                 player_id: playerId
             });
 
