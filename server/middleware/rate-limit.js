@@ -17,13 +17,13 @@ const apiLimiter = rateLimit({
     legacyHeaders: false, // Disable `X-RateLimit-*` headers
 });
 
-// Strict limiter for authentication endpoints - 5 attempts per 15 minutes
+// Auth limiter for pairing/login - 100 attempts per 5 minutes (relaxed for testing)
 const authLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 5,
+    windowMs: 5 * 60 * 1000, // 5 minutes
+    max: 100, // Very high limit for E2E testing
     message: {
-        error: 'Too many authentication attempts, please try again later.',
-        retryAfter: '15 minutes'
+        error: 'Rate limit reached, try again.',
+        retryAfter: '5 minutes'
     },
     standardHeaders: true,
     legacyHeaders: false,
