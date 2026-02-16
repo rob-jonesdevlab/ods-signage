@@ -1,5 +1,6 @@
 'use client';
 import { API_URL } from '@/lib/api';
+import { useAuth } from '@/contexts/AuthContext';
 
 import { useState, useEffect } from 'react';
 
@@ -10,6 +11,7 @@ interface PairDeviceModalProps {
 }
 
 export default function PairDeviceModal({ isOpen, onClose, onSuccess }: PairDeviceModalProps) {
+    const { profile } = useAuth();
     const [pairingCode, setPairingCode] = useState('');
     const [deviceName, setDeviceName] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -51,6 +53,11 @@ export default function PairDeviceModal({ isOpen, onClose, onSuccess }: PairDevi
             return;
         }
 
+        if (!profile?.organization_id) {
+            setError('User organization not found. Please log in again.');
+            return;
+        }
+
         setIsLoading(true);
         setError('');
 
@@ -60,6 +67,7 @@ export default function PairDeviceModal({ isOpen, onClose, onSuccess }: PairDevi
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     pairing_code: pairingCode,
+                    account_id: profile.organization_id,
                     device_name: deviceName || undefined
                 })
             });
@@ -140,8 +148,8 @@ export default function PairDeviceModal({ isOpen, onClose, onSuccess }: PairDevi
                                     value={pairingCode}
                                     onChange={handlePairingCodeChange}
                                     className={`block w-full rounded-lg ${error
-                                            ? 'border-red-500 shadow-[0_0_0_4px_rgba(239,68,68,0.2)]'
-                                            : 'border-slate-700 shadow-[0_0_15px_rgba(59,130,246,0.1)] focus:border-blue-500 focus:ring-blue-500 focus:shadow-[0_0_20px_rgba(59,130,246,0.15)]'
+                                        ? 'border-red-500 shadow-[0_0_0_4px_rgba(239,68,68,0.2)]'
+                                        : 'border-slate-700 shadow-[0_0_15px_rgba(59,130,246,0.1)] focus:border-blue-500 focus:ring-blue-500 focus:shadow-[0_0_20px_rgba(59,130,246,0.15)]'
                                         } bg-slate-950/50 text-white text-center text-3xl font-mono tracking-widest py-4 placeholder-slate-600 uppercase transition-all`}
                                     placeholder="ABC 123"
                                     maxLength={6}
