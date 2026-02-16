@@ -24,7 +24,8 @@ const corsOptions = {
             'https://ods-cloud.com',
             'https://www.ods-cloud.com',
             'https://ods-signage.vercel.app', // Vercel deployment
-            'http://localhost:3000' // Development
+            'http://localhost:3000', // Development
+            'http://localhost:8080' // Device pairing screen
         ];
 
         // Allow requests with no origin (like mobile apps, curl, Postman)
