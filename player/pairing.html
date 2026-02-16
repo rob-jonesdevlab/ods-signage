@@ -79,11 +79,12 @@
     style="background: url('../resources/designs/ODS_Background.png') center/cover no-repeat fixed;">
     <!-- Header Section -->
     <header class="w-full pt-10 pb-4 px-10 flex flex-col items-center justify-center z-10">
-        <div class="flex flex-col items-center gap-1">
-            <h1 class="text-4xl font-extrabold tracking-tight">
-                <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-primary">ODS CLOUD</span>
-            </h1>
-            <p class="text-slate-400 text-sm uppercase tracking-widest font-semibold">Digital Signage</p>
+        <div class="flex flex-col items-center gap-2">
+            <div class="flex items-center gap-3">
+                <img src="../resources/designs/new-ods-logo.png" alt="ODS Cloud" class="w-12 h-12" />
+                <h1 class="text-3xl font-bold tracking-tight text-gray-900">ODS Cloud</h1>
+            </div>
+            <p class="text-gray-600 text-sm uppercase tracking-widest font-semibold">Player Initiation</p>
         </div>
     </header>
 
@@ -149,27 +150,43 @@
     <main id="errorState" class="flex-1 flex flex-col items-center justify-center w-full px-4 z-10"
         style="display: none;">
         <div class="glass-card rounded-2xl p-10 md:p-14 flex flex-col items-center max-w-2xl w-full shadow-2xl">
-            <div class="flex flex-col items-center gap-4 text-center">
+            <div class="flex flex-col items-center gap-6 text-center">
                 <div
                     class="w-20 h-20 rounded-full bg-red-500/20 flex items-center justify-center border-2 border-red-500/30">
                     <span class="material-symbols-outlined text-5xl text-red-500">error</span>
                 </div>
-                <h2 class="text-2xl font-bold text-gray-900">Connection Error</h2>
-                <p id="errorMessage" class="text-gray-700 text-lg max-w-md">Unable to connect to pairing server. Please
-                    check your network connection.</p>
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Connection Error</h2>
+                    <p id="errorMessage" class="text-gray-700 text-base max-w-md">Unable to connect to pairing server at
+                        <span class="font-mono text-sm bg-gray-100 px-2 py-1 rounded">209.38.118.127:3001</span>
+                    </p>
+                    <p class="text-gray-600 text-sm mt-2">Please check your network connection and ensure the server is
+                        reachable.</p>
+                </div>
+                <!-- Retry Button -->
+                <button onclick="retryConnection()"
+                    class="w-full max-w-xs px-8 py-3 bg-gradient-to-r from-blue-500 to-primary text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5 active:translate-y-0">
+                    <div class="flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-[20px]">refresh</span>
+                        <span>Retry Connection</span>
+                    </div>
+                </button>
             </div>
         </div>
     </main>
 
     <!-- Footer / Status Pill -->
     <footer class="pb-12 pt-6 w-full flex justify-center z-10">
-        <div id="statusPill" class="glass-pill px-6 py-3 rounded-full flex items-center gap-3 shadow-lg">
-            <span id="statusDot" class="relative flex h-3 w-3">
+        <div id="statusPill" class="glass-pill px-5 py-2.5 rounded-full inline-flex items-center gap-2.5 shadow-lg">
+            <span id="statusDot" class="relative flex h-2.5 w-2.5">
                 <span
                     class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
             </span>
-            <span id="statusText" class="text-gray-800 text-sm font-medium tracking-wide">Initializing...</span>
+            <div class="flex flex-col" id="statusContent">
+                <span id="statusText" class="text-gray-800 text-xs font-medium tracking-wide">Initializing...</span>
+                <span id="statusDetails" class="text-gray-600 text-[10px]"></span>
+            </div>
         </div>
     </footer>
 
@@ -213,26 +230,43 @@
         }
 
         // Update status
-        function updateStatus(state, message) {
+        function updateStatus(state, message, details = '') {
             const statusDot = document.getElementById('statusDot');
             const statusText = document.getElementById('statusText');
+            const statusDetails = document.getElementById('statusDetails');
 
             statusText.textContent = message;
+            if (statusDetails) {
+                statusDetails.textContent = details;
+            }
 
             if (state === 'waiting') {
                 statusDot.innerHTML = `
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
                 `;
             } else if (state === 'success') {
                 statusDot.innerHTML = `
-                    <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
                 `;
             } else if (state === 'error') {
                 statusDot.innerHTML = `
-                    <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
                 `;
             }
+        }
+
+        // Retry connection function
+        function retryConnection() {
+            // Hide error state, show loading state
+            document.getElementById('errorState').style.display = 'none';
+            document.getElementById('loadingState').style.display = 'flex';
+            updateStatus('waiting', 'Retrying...', 'Attempting to connect to server');
+
+            // Retry initialization
+            setTimeout(() => {
+                initPairing();
+            }, 500);
         }
 
         // Show error
@@ -307,7 +341,7 @@
                 deviceUuid = getDeviceUuid();
                 const cpuSerial = getCpuSerial();
 
-                updateStatus('waiting', 'Connecting...');
+                updateStatus('waiting', 'Connecting...', 'Generating pairing code');
 
                 const response = await fetch(`${API_URL}/api/pairing/generate`, {
                     method: 'POST',
