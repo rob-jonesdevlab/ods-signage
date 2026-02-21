@@ -2,7 +2,7 @@
 
 **Master navigation for ODS Digital Signage knowledge base**  
 **Format:** Thing : Description : Location  
-**Last Updated:** February 11, 2026
+**Last Updated:** February 19, 2026
 
 ---
 
@@ -14,6 +14,7 @@
 - **Task Master List** → `/kbase/artifacts/current/task.md`
 - **Deployment Guides** → `/server/migrations/`
 - **Complete Archive** → `/kbase/artifacts/archive/`
+- **Recollection (Sprint State)** → `/kbase/recollection.md`
 
 ### By System
 - **Authentication** → `/kbase/artifacts/current/auth/`
@@ -21,6 +22,8 @@
 - **API Routes** → `/kbase/artifacts/current/api/`
 - **Frontend** → `/kbase/artifacts/current/frontend/`
 - **Deployment** → `/kbase/artifacts/current/deployment/`
+- **Player OS** → `../ods-player-os-atlas/.arch/`
+- **Architecture Overview** → `/.arch/project.md`
 
 ---
 
@@ -132,6 +135,13 @@
 - Supabase Guide : Custom claims setup : `/server/migrations/SUPABASE_CUSTOM_CLAIMS_GUIDE.md`
 - Quick Start : 5-minute setup : `/kbase/artifacts/current/auth/supabase_quick_start.md`
 
+### Player OS (ods-player-os-atlas)
+- Architecture Overview : System layers, build pipeline, v5 state : `../ods-player-os-atlas/.arch/project.md`
+- Boot UX Pipeline : Flash-free boot sequence, VT lockdown : `../ods-player-os-atlas/.arch/boot_ux_pipeline.md`
+- Build Guide : Golden image build steps + gotchas : `../ods-player-os-atlas/.arch/build_guide.md`
+- Player OS README : Comprehensive feature/API reference : `../ods-player-os-atlas/README.md`
+- Integration : Dashboard ↔ Player data flow : `/.arch/player_os_integration.md`
+
 ---
 
 ## 🎯 Common Tasks
@@ -231,8 +241,8 @@
 
 ---
 
-**Last Updated:** February 11, 2026, 7:45 PM PST  
+**Last Updated:** February 19, 2026, 3:35 PM PST  
 **Created By:** Antigravity (Google Deepmind)  
 **Purpose:** Master navigation for ODS Digital Signage knowledge base  
-**Files Indexed:** 15+ documentation files, 6 tenant-filtered routes, 8 RBAC functions  
-**Status:** Phase 5 (Auth & Multi-Tenancy) - 95% Complete
+**Files Indexed:** 20+ documentation files, 6 tenant-filtered routes, 8 RBAC functions  
+**Status:** Phase 5 Complete · Player OS v5 Golden Image Built

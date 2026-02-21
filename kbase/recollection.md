@@ -1,7 +1,7 @@
 # ODS Cloud Signage - Project Recollection
 
-**Last Updated:** February 14, 2026, 9:05 PM PST  
-**Project Status:** Active Development - Phase 3 Complete, Phase 4 In Progress  
+**Last Updated:** February 19, 2026, 3:35 PM PST  
+**Project Status:** Active Development — Phase 5 Complete, Phase 4 In Progress  
 **Production URL:** https://www.ods-cloud.com  
 **Local Dev:** http://localhost:3000
 
@@ -19,7 +19,7 @@ ODS Cloud is a digital signage management platform for controlling displays acro
 - **URL:** https://www.ods-cloud.com
 - **Backend API:** https://api.ods-cloud.com
 - **Status:** ✅ Live and operational
-- **Last Verified:** February 14, 2026, 8:52 PM PST
+- **Last Verified:** February 19, 2026
 
 ### Local Development
 - **Frontend:** Next.js (React) - Port 3000
@@ -56,89 +56,92 @@ ODS Cloud is a digital signage management platform for controlling displays acro
 - **Pending:** Wallpaper for device pairing screen
 
 ### ✅ Phase 3: Operations Page - Real Data (100% Complete)
-
-**Backend APIs Created:**
-- `GET /api/system-metrics` - Real-time server metrics
-  - Server uptime, database latency, storage usage, active connections
-  - File: `server/routes/system-metrics.js`
-  
-- `GET/POST/PATCH/DELETE /api/scheduled-updates` - Schedule management
-  - CRUD operations for scheduled deployments
-  - File: `server/routes/scheduled-updates.js`
-
-**Database Schema:**
-- Table: `scheduled_updates`
-- Migration: `server/migrations/create-scheduled-updates-table.sql`
-- Includes RLS policies for user data isolation
-
-**Frontend Integration:**
-- Operations page (`dashboard/app/operations/page.tsx`) fully integrated
-- Real metrics displaying: 99.900% uptime, 0ms latency, 0% storage
-- Scheduled updates section with loading/empty states
-- Type-based color coding (playlist, firmware, maintenance, content)
-- Date formatting and target device counts
+- System metrics API (`GET /api/system-metrics`)
+- Scheduled updates CRUD (`/api/scheduled-updates`)
+- Frontend integration with real-time data
+- Type-based color coding for updates
 
 ### ✅ Phase 5: Specialized Filters (100% Complete)
 - Network page filters implemented
-- Operations page filters implemented (Alert Type, Action, Resource, Time Range)
+- Operations page filters implemented
 - FilterBar component reused across pages
+
+---
+
+## Player OS Status (ods-player-os-atlas)
+
+### ✅ Golden Image v5 Built (February 19, 2026)
+- **Location:** `~/Desktop/ods-atlas-rpi5-golden-v5.img` (1.8 GB)
+- **Build server:** jdl-mini-box (`10.111.123.134`)
+- **Test device:** ArPi5 (`10.111.123.102`)
+
+### v5 Key Features
+| Feature | Status |
+|---------|--------|
+| TTY flash fix (VT1 pre-paint) | ✅ |
+| Tight Xorg ready loop (xdpyinfo poll) | ✅ |
+| VT lockdown (getty mask, SysRq off) | ✅ |
+| System config shortcut (Ctrl+Alt+Shift+O) | ✅ |
+| Plymouth ODS theme (bold font, black bg) | ✅ |
+| Shutdown splash (correct service deps) | ✅ |
+| Sleep prevention (DPMS off, suspend masked) | ✅ |
+| RustDesk remote access | ✅ |
+| Esper MDM enrollment | ✅ |
+| Health monitor service | ✅ |
+
+### Player OS Documentation
+- **Architecture:** `ods-player-os-atlas/.arch/project.md`
+- **Boot UX Pipeline:** `ods-player-os-atlas/.arch/boot_ux_pipeline.md`
+- **Build Guide:** `ods-player-os-atlas/.arch/build_guide.md`
+- **README:** `ods-player-os-atlas/README.md` (comprehensive, updated)
 
 ---
 
 ## Pending Work (Prioritized)
 
 ### 🔄 Phase 2B: Otter Branding - Wallpaper (In Progress)
-**Files to Update:**
-- Network setup screen (location TBD)
-- Device pairing screen (location TBD)
-
-**Approach:**
-- Generate wallpaper design using generate_image tool
-- Apply to relevant screens
-- Verify on production
+- Network setup screen wallpaper
+- Device pairing screen wallpaper
 
 ### 🔄 Phase 4: Operations Page - Interactive Elements (50% Complete)
-
 **Completed:**
 - ✅ "New Schedule" modal functionality
-- ✅ "Audit Trail" modal functionality  
+- ✅ "Audit Trail" modal functionality
 - ✅ "View Calendar" button wired up
 
 **Pending:**
-- ❌ "Edit" functionality for scheduled updates
-  - Current: Placeholder alert
-  - Required: Open modal in edit mode with pre-filled data
-  - API: `PATCH /api/scheduled-updates/:id` (already exists)
-  
-- ❌ "Delete" functionality for scheduled updates
-  - Current: Not implemented in UI
-  - Required: Confirmation dialog + API call
-  - API: `DELETE /api/scheduled-updates/:id` (already exists)
+- ❌ "Edit" functionality for scheduled updates (PATCH API exists)
+- ❌ "Delete" functionality for scheduled updates (DELETE API exists)
 
 ---
 
 ## Technical Details
 
-### Key Files Modified (This Sprint)
+### Key Files Modified (Recent Sprint)
 
 **Backend:**
-- `server/routes/system-metrics.js` (NEW)
-- `server/routes/scheduled-updates.js` (NEW)
-- `server/migrations/create-scheduled-updates-table.sql` (NEW)
-- `server/index.js` (route registration)
+- `server/routes/system-metrics.js`
+- `server/routes/scheduled-updates.js`
+- `server/migrations/create-scheduled-updates-table.sql`
+- `server/index.js`
 
 **Frontend:**
-- `dashboard/app/operations/page.tsx` (major refactor)
-- `dashboard/app/network/page.tsx` (filter integration)
-- `dashboard/components/FilterBar.tsx` (reusable filters)
-- `dashboard/components/Header.tsx` (logo update)
+- `dashboard/app/operations/page.tsx`
+- `dashboard/app/network/page.tsx`
+- `dashboard/components/FilterBar.tsx`
+- `dashboard/components/Header.tsx`
+
+**Player OS:**
+- `ods-player-os-atlas/scripts/atlas_firstboot.sh` (TTY flash fix, Xorg loop, shortcuts)
+- `ods-player-os-atlas/scripts/inject_atlas.sh` (path fix for sudo)
+- `ods-player-os-atlas/README.md` (complete rewrite)
+- `ods-player-os-atlas/.arch/*` (new architecture docs)
 
 ### API Endpoints
 
 **System Metrics:**
 ```
 GET /api/system-metrics
-Response: { uptime, latency, storage, connections }
 ```
 
 **Scheduled Updates:**
@@ -152,16 +155,9 @@ DELETE /api/scheduled-updates/:id
 ### Database Schema
 
 **scheduled_updates table:**
-- id (uuid, primary key)
-- user_id (uuid, foreign key)
-- title (text)
-- type (text: playlist, firmware, maintenance, content)
-- targets (jsonb array)
-- schedule_date (date)
-- schedule_time (time)
-- recurrence (text, nullable)
-- notifications (jsonb)
-- status (text, default: pending)
+- id (uuid), user_id (uuid), title (text), type (text)
+- targets (jsonb), schedule_date (date), schedule_time (time)
+- recurrence (text), notifications (jsonb), status (text)
 - created_at, updated_at (timestamps)
 
 ### Authentication & Security
@@ -174,34 +170,22 @@ DELETE /api/scheduled-updates/:id
 
 ## Known Issues
 
-### Minor Issues
-1. **Edit button placeholder** - Shows alert instead of opening modal
-2. **Delete functionality missing** - No UI implementation yet
-3. **Active Connections metric** - Not displayed in production (may need backend update)
-
-### No Critical Blockers
+1. **Edit button placeholder** — Shows alert instead of opening modal
+2. **Delete functionality missing** — No UI implementation yet
+3. **Active Connections metric** — Not displayed in production
 
 ---
 
 ## Development Commands
 
-### Start Local Development
 ```bash
-# Frontend (from /dashboard)
+# Frontend
 cd dashboard && npm run dev
 
-# Backend (from /server)
+# Backend
 cd server && node index.js
-```
 
-### Database Migration
-```bash
-# Execute via Supabase SQL Editor (psql not available locally)
-# File: server/migrations/create-scheduled-updates-table.sql
-```
-
-### Build Production
-```bash
+# Production build
 cd dashboard && npm run build
 ```
 
@@ -209,23 +193,15 @@ cd dashboard && npm run build
 
 ## Recommended Next Steps
 
-### Immediate Priorities (This Session)
-1. **Complete Phase 2B:** Generate and apply wallpaper to network/device pairing screens
-2. **Implement Edit Functionality:**
-   - Add state for edit mode in Operations page
-   - Pre-fill modal with selected schedule data
-   - Wire up PATCH API call
-3. **Implement Delete Functionality:**
-   - Add confirmation dialog component
-   - Wire up DELETE API call
-   - Update UI after successful deletion
+### Immediate (Next Session)
+1. Complete Phase 2B wallpaper branding
+2. Implement Edit/Delete for scheduled updates
+3. Flash v5 image and test on ArPi5 device
 
-### Future Enhancements
+### Future
 - Backend job to execute scheduled updates
-- Advanced metrics (CPU/memory, network bandwidth, error rates)
-- Grafana/Prometheus integration for historical metrics
+- Advanced metrics (CPU/memory, network bandwidth)
 - Calendar view for scheduled updates
-- Bulk operations for scheduled updates
 
 ---
 
@@ -235,16 +211,8 @@ cd dashboard && npm run build
 - **Architecture:** `kbase/architecture/`
 - **Testing:** `kbase/testing/`
 - **Security:** `kbase/security/`
+- **Player OS:** `../ods-player-os-atlas/.arch/`
 
 ---
 
-## Notes for Future Sessions
-
-- **Production testing is primary** - Always verify on www.ods-cloud.com, not just localhost
-- **Backend APIs are complete** - Focus on frontend integration for Edit/Delete
-- **Design consistency** - Match Otter Manager aesthetic (light theme, clean UI)
-- **Verification required** - Test all changes on production before marking complete
-
----
-
-**Status:** Ready to continue with wallpaper branding and Edit/Delete implementation.
+**Status:** v5 golden image built. Ready to flash and test. Dashboard pending Phase 2B and Phase 4 completion.
