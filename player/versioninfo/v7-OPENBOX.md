@@ -1,7 +1,7 @@
 # v7-OPENBOX — Architectural Overhaul
 
 **Released:** 2026-02-21  
-**Image:** `ods-atlas-rpi5-v7-OPENBOX.img` (1.8G)  
+**Image:** `ods-atlas-golden-v7-OPENBOX.img` (1.8G)  
 **Repo:** `ods-player-os-atlas`  
 **Commits:** `5a3b910`, `c93604f`, `03d6357`
 

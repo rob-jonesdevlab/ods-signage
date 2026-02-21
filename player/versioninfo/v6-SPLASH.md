@@ -1,7 +1,7 @@
 # v6-SPLASH — Plymouth + TTY Flash Fix
 
 **Released:** 2026-02-18  
-**Image:** `ods-atlas-rpi5-v6-SPLASH.img` (1.8G)  
+**Image:** `ods-atlas-golden-v6-SPLASH.img` (1.8G)  
 **Repo:** `ods-player-os-atlas`  
 **Commit:** `a4a7444` — `v5: fix TTY flash — pre-paint VT1 black before Plymouth deactivates, tight Xorg ready loop`
 

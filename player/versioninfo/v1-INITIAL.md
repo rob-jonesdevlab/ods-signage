@@ -1,7 +1,7 @@
 # v1-INITIAL — First Boot
 
 **Released:** 2026-02-16  
-**Image:** `ods-player-os-atlas-v1-INITIAL.img` (1.0G)  
+**Image:** `ods-atlas-golden-v1-INITIAL.img` (1.0G)  
 **Repo:** `ods-player-os-atlas`  
 **Commit:** `3e072c7` — `feat: initial Atlas release`
 

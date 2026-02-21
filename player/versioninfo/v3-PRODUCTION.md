@@ -1,7 +1,7 @@
 # v3-PRODUCTION — Production Baseline
 
 **Released:** 2026-02-16  
-**Image:** `ods-player-os-atlas-golden-v3-PRODUCTION.img` (775M)  
+**Image:** `ods-atlas-golden-v3-PRODUCTION.img` (775M)  
 **Repo:** `ods-player-os-atlas`  
 **Commit:** `69c7447` — `v3: Fix duplicate logs, patch cmdline.txt for RPi5 splash, mask getty@tty1`
 

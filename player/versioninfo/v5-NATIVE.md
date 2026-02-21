@@ -1,7 +1,7 @@
 # v5-NATIVE — Native Kiosk Lockdown
 
 **Released:** 2026-02-16  
-**Image:** `ods-player-os-atlas-v5-NATIVE.img` (1.0G)  
+**Image:** `ods-atlas-golden-v5-NATIVE.img` (1.0G)  
 **Repo:** `ods-player-os-atlas`  
 **Commits:** `c460e1e` → `7ac8058`
 

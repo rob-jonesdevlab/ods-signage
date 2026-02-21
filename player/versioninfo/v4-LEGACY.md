@@ -1,7 +1,7 @@
 # v4-LEGACY — Forensic Sync + White Flash Fix
 
 **Released:** 2026-02-16  
-**Image:** `ods-player-os-atlas-v4-LEGACY.img` (1.0G)  
+**Image:** `ods-atlas-golden-v4-LEGACY.img` (1.0G)  
 **Repo:** `ods-player-os-atlas`  
 **Commits:** `a632f38` → `5eebc59`
 

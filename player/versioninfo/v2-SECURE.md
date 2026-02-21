@@ -1,7 +1,7 @@
 # v2-SECURE — Security Hardening
 
 **Released:** 2026-02-16  
-**Image:** `ods-player-os-atlas-golden-v2-SECURE.img` (1.0G)  
+**Image:** `ods-atlas-golden-v2-SECURE.img` (1.0G)  
 **Repo:** `ods-player-os-atlas`  
 **Commits:** `cf392ed` → `2ea1bdd`
 
