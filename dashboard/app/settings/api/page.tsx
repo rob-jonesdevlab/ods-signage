@@ -172,13 +172,13 @@ export default function ApiSettings() {
                         <Key className="w-6 h-6 text-purple-400" />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-bold text-white">API Access</h1>
+                        <h1 className="text-2xl font-bold text-gray-900">API Access</h1>
                         <p className="text-gray-400">Manage your API keys and usage</p>
                     </div>
                 </div>
                 <button
                     onClick={() => setShowCreateModal(true)}
-                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg font-medium transition-colors text-white"
+                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg font-medium transition-colors text-gray-900"
                 >
                     Create API Key
                 </button>
@@ -197,11 +197,11 @@ export default function ApiSettings() {
                                         <TrendingUp className="w-5 h-5 text-purple-400" />
                                         <p className="text-sm text-gray-400">Total Requests</p>
                                     </div>
-                                    <p className="text-3xl font-bold text-white">{usageStats.total_requests.toLocaleString()}</p>
+                                    <p className="text-3xl font-bold text-gray-900">{usageStats.total_requests.toLocaleString()}</p>
                                 </div>
                                 <div className="p-4 bg-gray-800/30 rounded-lg border border-gray-700/50">
                                     <p className="text-sm text-gray-400 mb-2">Rate Limit</p>
-                                    <p className="text-3xl font-bold text-white">1,000</p>
+                                    <p className="text-3xl font-bold text-gray-900">1,000</p>
                                     <p className="text-xs text-gray-500 mt-1">requests/hour</p>
                                 </div>
                                 <div className="p-4 bg-gray-800/30 rounded-lg border border-gray-700/50">
@@ -220,7 +220,7 @@ export default function ApiSettings() {
                                 <p className="text-sm text-gray-400">No API keys yet</p>
                                 <button
                                     onClick={() => setShowCreateModal(true)}
-                                    className="mt-4 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg font-medium transition-colors text-white"
+                                    className="mt-4 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg font-medium transition-colors text-gray-900"
                                 >
                                     Create Your First API Key
                                 </button>
@@ -234,7 +234,7 @@ export default function ApiSettings() {
                                     >
                                         <div className="flex-1">
                                             <div className="flex items-center gap-3 mb-2">
-                                                <p className="text-sm font-medium text-white">{key.name}</p>
+                                                <p className="text-sm font-medium text-gray-900">{key.name}</p>
                                                 <span className={`text-xs px-2 py-1 rounded-full border ${getEnvironmentBadgeColor(key.environment)}`}>
                                                     {key.environment}
                                                 </span>
@@ -257,7 +257,7 @@ export default function ApiSettings() {
                                             <div className="flex items-center gap-2">
                                                 <button
                                                     onClick={() => handleCopyKey(key.key_prefix)}
-                                                    className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors"
+                                                    className="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-700 rounded-lg transition-colors"
                                                     title="Copy key prefix"
                                                 >
                                                     <Copy className="w-4 h-4" />
@@ -287,7 +287,7 @@ export default function ApiSettings() {
                                 className="flex items-center justify-between p-4 bg-gray-800/30 rounded-lg border border-gray-700/50 hover:border-purple-600/50 transition-colors group"
                             >
                                 <div>
-                                    <p className="text-sm font-medium text-white group-hover:text-purple-400 transition-colors">
+                                    <p className="text-sm font-medium text-gray-900 group-hover:text-purple-400 transition-colors">
                                         API Reference
                                     </p>
                                     <p className="text-xs text-gray-400">Complete API documentation and endpoints</p>
@@ -301,7 +301,7 @@ export default function ApiSettings() {
                                 className="flex items-center justify-between p-4 bg-gray-800/30 rounded-lg border border-gray-700/50 hover:border-purple-600/50 transition-colors group"
                             >
                                 <div>
-                                    <p className="text-sm font-medium text-white group-hover:text-purple-400 transition-colors">
+                                    <p className="text-sm font-medium text-gray-900 group-hover:text-purple-400 transition-colors">
                                         Quick Start Guide
                                     </p>
                                     <p className="text-xs text-gray-400">Get started with the API in minutes</p>
@@ -316,8 +316,8 @@ export default function ApiSettings() {
             {/* Create API Key Modal */}
             {showCreateModal && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-slate-900 rounded-xl border border-slate-800 max-w-md w-full p-6">
-                        <h2 className="text-xl font-bold text-white mb-4">Create API Key</h2>
+                    <div className="bg-gray-100 rounded-xl border border-gray-200 max-w-md w-full p-6">
+                        <h2 className="text-xl font-bold text-gray-900 mb-4">Create API Key</h2>
 
                         {newKeyData ? (
                             // Show the generated key
@@ -334,11 +334,11 @@ export default function ApiSettings() {
                                             type="text"
                                             value={newKeyData.full_key}
                                             readOnly
-                                            className="flex-1 px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white font-mono text-sm"
+                                            className="flex-1 px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-gray-900 font-mono text-sm"
                                         />
                                         <button
                                             onClick={() => handleCopyKey(newKeyData.full_key)}
-                                            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors text-white"
+                                            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors text-gray-900"
                                         >
                                             <Copy className="w-4 h-4" />
                                         </button>
@@ -350,7 +350,7 @@ export default function ApiSettings() {
                                         setNewKeyData(null);
                                         setShowCreateModal(false);
                                     }}
-                                    className="w-full px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg font-medium transition-colors text-white"
+                                    className="w-full px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg font-medium transition-colors text-gray-900"
                                 >
                                     Done
                                 </button>
@@ -364,7 +364,7 @@ export default function ApiSettings() {
                                     <input
                                         type="text"
                                         {...register('name')}
-                                        className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white placeholder-gray-500"
+                                        className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900 placeholder-gray-500"
                                         placeholder="Production API Key"
                                     />
                                     {errors.name && <p className="mt-1 text-sm text-red-400">{errors.name.message}</p>}
@@ -375,7 +375,7 @@ export default function ApiSettings() {
                                     <label className="block text-sm font-medium text-gray-300 mb-2">Environment</label>
                                     <select
                                         {...register('environment')}
-                                        className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white"
+                                        className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900"
                                     >
                                         <option value="">Select environment</option>
                                         <option value="production">Production</option>
@@ -393,14 +393,14 @@ export default function ApiSettings() {
                                             setShowCreateModal(false);
                                             reset();
                                         }}
-                                        className="flex-1 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg font-medium transition-colors text-white"
+                                        className="flex-1 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg font-medium transition-colors text-gray-900"
                                     >
                                         Cancel
                                     </button>
                                     <button
                                         type="submit"
                                         disabled={creating}
-                                        className="flex-1 px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg font-medium transition-colors text-white"
+                                        className="flex-1 px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg font-medium transition-colors text-gray-900"
                                     >
                                         {creating ? 'Creating...' : 'Create Key'}
                                     </button>

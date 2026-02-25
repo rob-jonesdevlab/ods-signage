@@ -241,14 +241,14 @@ export default function TeamSettings() {
                         <Users className="w-6 h-6 text-blue-400" />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-bold text-white">Team Members</h1>
+                        <h1 className="text-2xl font-bold text-gray-900">Team Members</h1>
                         <p className="text-gray-400">Manage your team and invitations</p>
                     </div>
                 </div>
                 {isAdmin && (
                     <button
                         onClick={() => setShowInviteModal(true)}
-                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-colors flex items-center gap-2 text-white"
+                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-colors flex items-center gap-2 text-gray-900"
                     >
                         <UserPlus className="w-4 h-4" />
                         Invite Member
@@ -271,12 +271,12 @@ export default function TeamSettings() {
                             >
                                 <div className="flex items-center gap-4">
                                     {/* Avatar */}
-                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white font-semibold">
+                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-gray-900 font-semibold">
                                         {member.full_name?.charAt(0).toUpperCase() || member.email.charAt(0).toUpperCase()}
                                     </div>
                                     {/* Info */}
                                     <div>
-                                        <p className="text-sm font-medium text-white">{member.full_name || 'No Name'}</p>
+                                        <p className="text-sm font-medium text-gray-900">{member.full_name || 'No Name'}</p>
                                         <p className="text-xs text-gray-400">{member.email}</p>
                                     </div>
                                 </div>
@@ -294,7 +294,7 @@ export default function TeamSettings() {
                                             <select
                                                 value={member.role}
                                                 onChange={(e) => handleRoleChange(member.id, e.target.value, member.full_name || member.email)}
-                                                className="px-3 py-1 bg-gray-800 border border-gray-700 rounded-lg text-sm text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                className="px-3 py-1 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                             >
                                                 <option value="standard">Standard</option>
                                                 <option value="supervisor">Supervisor</option>
@@ -341,7 +341,7 @@ export default function TeamSettings() {
                                 <div className="flex items-center gap-4">
                                     <Mail className="w-5 h-5 text-yellow-400" />
                                     <div>
-                                        <p className="text-sm font-medium text-white">{invitation.email}</p>
+                                        <p className="text-sm font-medium text-gray-900">{invitation.email}</p>
                                         <p className="text-xs text-gray-400">
                                             Invited {new Date(invitation.created_at).toLocaleDateString()} • Expires{' '}
                                             {new Date(invitation.expires_at).toLocaleDateString()}
@@ -369,8 +369,8 @@ export default function TeamSettings() {
             {/* Invite Member Modal */}
             {showInviteModal && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-slate-900 rounded-xl border border-slate-800 max-w-md w-full p-6">
-                        <h2 className="text-xl font-bold text-white mb-4">Invite Team Member</h2>
+                    <div className="bg-gray-100 rounded-xl border border-gray-200 max-w-md w-full p-6">
+                        <h2 className="text-xl font-bold text-gray-900 mb-4">Invite Team Member</h2>
 
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                             {/* Email */}
@@ -379,7 +379,7 @@ export default function TeamSettings() {
                                 <input
                                     type="email"
                                     {...register('email')}
-                                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500"
+                                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
                                     placeholder="colleague@example.com"
                                 />
                                 {errors.email && <p className="mt-1 text-sm text-red-400">{errors.email.message}</p>}
@@ -390,7 +390,7 @@ export default function TeamSettings() {
                                 <label className="block text-sm font-medium text-gray-300 mb-2">Role</label>
                                 <select
                                     {...register('role')}
-                                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white"
+                                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                                 >
                                     <option value="">Select a role</option>
                                     <option value="standard">Standard - Basic user access</option>
@@ -408,7 +408,7 @@ export default function TeamSettings() {
                                 <textarea
                                     {...register('message')}
                                     rows={3}
-                                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500 resize-none"
+                                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500 resize-none"
                                     placeholder="Add a personal message to the invitation..."
                                 />
                                 {errors.message && <p className="mt-1 text-sm text-red-400">{errors.message.message}</p>}
@@ -422,14 +422,14 @@ export default function TeamSettings() {
                                         setShowInviteModal(false);
                                         reset();
                                     }}
-                                    className="flex-1 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg font-medium transition-colors text-white"
+                                    className="flex-1 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg font-medium transition-colors text-gray-900"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={inviting}
-                                    className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg font-medium transition-colors text-white"
+                                    className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg font-medium transition-colors text-gray-900"
                                 >
                                     {inviting ? 'Sending...' : 'Send Invitation'}
                                 </button>
@@ -445,35 +445,35 @@ export default function TeamSettings() {
                     <div className="flex items-start gap-3 p-3 bg-gray-800/20 rounded-lg">
                         <Shield className="w-5 h-5 text-purple-400 mt-0.5" />
                         <div>
-                            <p className="text-sm font-medium text-white">System</p>
+                            <p className="text-sm font-medium text-gray-900">System</p>
                             <p className="text-xs text-gray-400">Full system access (not assignable)</p>
                         </div>
                     </div>
                     <div className="flex items-start gap-3 p-3 bg-gray-800/20 rounded-lg">
                         <Shield className="w-5 h-5 text-red-400 mt-0.5" />
                         <div>
-                            <p className="text-sm font-medium text-white">ODS Admin</p>
+                            <p className="text-sm font-medium text-gray-900">ODS Admin</p>
                             <p className="text-xs text-gray-400">Organization admin, can manage all users and settings</p>
                         </div>
                     </div>
                     <div className="flex items-start gap-3 p-3 bg-gray-800/20 rounded-lg">
                         <Shield className="w-5 h-5 text-blue-400 mt-0.5" />
                         <div>
-                            <p className="text-sm font-medium text-white">ODS Manager</p>
+                            <p className="text-sm font-medium text-gray-900">ODS Manager</p>
                             <p className="text-xs text-gray-400">Can manage content, players, and playlists</p>
                         </div>
                     </div>
                     <div className="flex items-start gap-3 p-3 bg-gray-800/20 rounded-lg">
                         <Shield className="w-5 h-5 text-green-400 mt-0.5" />
                         <div>
-                            <p className="text-sm font-medium text-white">Supervisor</p>
+                            <p className="text-sm font-medium text-gray-900">Supervisor</p>
                             <p className="text-xs text-gray-400">Can view and approve content</p>
                         </div>
                     </div>
                     <div className="flex items-start gap-3 p-3 bg-gray-800/20 rounded-lg">
                         <Shield className="w-5 h-5 text-gray-400 mt-0.5" />
                         <div>
-                            <p className="text-sm font-medium text-white">Standard</p>
+                            <p className="text-sm font-medium text-gray-900">Standard</p>
                             <p className="text-xs text-gray-400">Basic user access</p>
                         </div>
                     </div>

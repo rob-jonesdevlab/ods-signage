@@ -171,7 +171,7 @@ export default function NotificationsSettings() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-2xl font-bold text-white mb-2">Notifications</h1>
+                <h1 className="text-2xl font-bold text-gray-900 mb-2">Notifications</h1>
                 <p className="text-gray-400">
                     Manage how you receive notifications and alerts.
                 </p>
@@ -187,7 +187,7 @@ export default function NotificationsSettings() {
                         {/* Master toggle */}
                         <div className="flex items-center justify-between">
                             <div>
-                                <label className="text-sm font-medium text-white">
+                                <label className="text-sm font-medium text-gray-900">
                                     Enable Email Notifications
                                 </label>
                                 <p className="text-xs text-gray-400 mt-1">
@@ -200,7 +200,7 @@ export default function NotificationsSettings() {
                                     {...register('emailNotifications')}
                                     className="sr-only peer"
                                 />
-                                <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                             </label>
                         </div>
 
@@ -261,7 +261,7 @@ export default function NotificationsSettings() {
                         {/* Master toggle */}
                         <div className="flex items-center justify-between">
                             <div>
-                                <label className="text-sm font-medium text-white">
+                                <label className="text-sm font-medium text-gray-900">
                                     Enable Push Notifications
                                 </label>
                                 <p className="text-xs text-gray-400 mt-1">
@@ -275,7 +275,7 @@ export default function NotificationsSettings() {
                                     onChange={(e) => handlePushToggle(e.target.checked)}
                                     className="sr-only peer"
                                 />
-                                <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                             </label>
                         </div>
 
@@ -307,7 +307,7 @@ export default function NotificationsSettings() {
                         {/* Enable quiet hours */}
                         <div className="flex items-center justify-between">
                             <div>
-                                <label className="text-sm font-medium text-white">
+                                <label className="text-sm font-medium text-gray-900">
                                     Enable Quiet Hours
                                 </label>
                                 <p className="text-xs text-gray-400 mt-1">
@@ -320,7 +320,7 @@ export default function NotificationsSettings() {
                                     {...register('quietHoursEnabled')}
                                     className="sr-only peer"
                                 />
-                                <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                             </label>
                         </div>
 
@@ -328,13 +328,13 @@ export default function NotificationsSettings() {
                         {quietHoursEnabled && (
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-white mb-2">
+                                    <label className="block text-sm font-medium text-gray-900 mb-2">
                                         Start Time
                                     </label>
                                     <input
                                         type="time"
                                         {...register('quietHoursStart')}
-                                        className="w-full px-3 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     />
                                     {errors.quietHoursStart && (
                                         <p className="mt-1 text-xs text-red-400">
@@ -343,13 +343,13 @@ export default function NotificationsSettings() {
                                     )}
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-white mb-2">
+                                    <label className="block text-sm font-medium text-gray-900 mb-2">
                                         End Time
                                     </label>
                                     <input
                                         type="time"
                                         {...register('quietHoursEnd')}
-                                        className="w-full px-3 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     />
                                 </div>
                             </div>
@@ -369,14 +369,14 @@ export default function NotificationsSettings() {
                         type="button"
                         onClick={() => reset()}
                         disabled={!isDirty || saving}
-                        className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                         Cancel
                     </button>
                     <button
                         type="submit"
                         disabled={!isDirty || saving}
-                        className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                        className="px-6 py-2 bg-blue-600 text-gray-900 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
                     >
                         {saving ? (
                             <>
@@ -403,12 +403,12 @@ function ToggleItem({ label, description, ...props }: ToggleItemProps) {
     return (
         <div className="flex items-center justify-between">
             <div>
-                <label className="text-sm font-medium text-white">{label}</label>
+                <label className="text-sm font-medium text-gray-900">{label}</label>
                 <p className="text-xs text-gray-400">{description}</p>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" {...props} className="sr-only peer" />
-                <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
             </label>
         </div>
     );

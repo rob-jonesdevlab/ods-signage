@@ -29,14 +29,14 @@ export default function SettingsCard({
 }: SettingsCardProps) {
     return (
         <div
-            className={`bg-slate-900/70 backdrop-blur-md border border-slate-800/50 rounded-xl shadow-xl overflow-hidden ${className}`}
+            className={`bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden ${className}`}
         >
             {/* Header (if title or badge provided) */}
             {(title || badge) && (
-                <div className="px-6 py-5 border-b border-slate-800 flex justify-between items-center">
+                <div className="px-6 py-5 border-b border-gray-200 flex justify-between items-center">
                     <div>
-                        {title && <h3 className="text-lg font-semibold text-white">{title}</h3>}
-                        {description && <p className="text-sm text-slate-400 mt-1">{description}</p>}
+                        {title && <h3 className="text-lg font-semibold text-gray-900">{title}</h3>}
+                        {description && <p className="text-sm text-gray-500 mt-1">{description}</p>}
                     </div>
                     {badge && (
                         <div

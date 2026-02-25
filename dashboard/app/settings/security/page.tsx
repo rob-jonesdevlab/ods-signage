@@ -118,7 +118,7 @@ export default function SecuritySettings() {
                     <Shield className="w-6 h-6 text-blue-400" />
                 </div>
                 <div>
-                    <h1 className="text-2xl font-bold text-white">Security Settings</h1>
+                    <h1 className="text-2xl font-bold text-gray-900">Security Settings</h1>
                     <p className="text-gray-400">Manage your account security and authentication</p>
                 </div>
             </div>
@@ -137,7 +137,7 @@ export default function SecuritySettings() {
                         <input
                             type="password"
                             {...register('currentPassword')}
-                            className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500"
+                            className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
                             placeholder="Enter your current password"
                         />
                         {errors.currentPassword && (
@@ -153,7 +153,7 @@ export default function SecuritySettings() {
                         <input
                             type="password"
                             {...register('newPassword')}
-                            className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500"
+                            className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
                             placeholder="Enter your new password"
                         />
                         {errors.newPassword && (
@@ -172,7 +172,7 @@ export default function SecuritySettings() {
                         <input
                             type="password"
                             {...register('confirmPassword')}
-                            className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-gray-500"
+                            className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
                             placeholder="Confirm your new password"
                         />
                         {errors.confirmPassword && (
@@ -183,7 +183,7 @@ export default function SecuritySettings() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg font-medium transition-colors text-white"
+                        className="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg font-medium transition-colors text-gray-900"
                     >
                         {loading ? 'Changing Password...' : 'Change Password'}
                     </button>
@@ -203,7 +203,7 @@ export default function SecuritySettings() {
                     </div>
                     <button
                         onClick={handleSignOutOtherDevices}
-                        className="px-6 py-2 bg-red-600 hover:bg-red-700 rounded-lg font-medium transition-colors flex items-center gap-2 text-white"
+                        className="px-6 py-2 bg-red-600 hover:bg-red-700 rounded-lg font-medium transition-colors flex items-center gap-2 text-gray-900"
                     >
                         <LogOut className="w-4 h-4" />
                         Sign Out All Other Devices
@@ -229,7 +229,7 @@ export default function SecuritySettings() {
                                     className="flex justify-between items-center py-3 px-4 bg-gray-800/30 rounded-lg border border-gray-700/50"
                                 >
                                     <div>
-                                        <p className="text-sm font-medium text-white">
+                                        <p className="text-sm font-medium text-gray-900">
                                             {formatEventType(event.event_type)}
                                         </p>
                                         <p className="text-xs text-gray-400">

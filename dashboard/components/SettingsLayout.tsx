@@ -30,12 +30,12 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
     const isActive = (href: string) => pathname === href;
 
     return (
-        <div className="min-h-screen bg-slate-950">
+        <div className="min-h-screen bg-gray-50">
             <main className="max-w-7xl w-full mx-auto p-6 md:p-8">
                 {/* Header */}
                 <header className="mb-8">
-                    <h1 className="text-2xl font-bold text-white">Account Settings</h1>
-                    <p className="text-slate-400 mt-1">Manage your profile details and workspace preferences.</p>
+                    <h1 className="text-2xl font-bold text-gray-900">Account Settings</h1>
+                    <p className="text-gray-500 mt-1">Manage your profile details and workspace preferences.</p>
                 </header>
 
                 {/* Grid Layout */}
@@ -48,14 +48,14 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
                                     key={item.key}
                                     href={item.href}
                                     className={`flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors group ${isActive(item.href)
-                                            ? 'text-white bg-blue-600 shadow-lg shadow-blue-500/20'
-                                            : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-300'
+                                        ? 'text-white bg-blue-600 shadow-lg shadow-blue-500/20'
+                                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                                         }`}
                                 >
                                     <span
                                         className={`material-symbols-outlined text-[20px] ${isActive(item.href)
-                                                ? 'text-white'
-                                                : 'text-slate-400 group-hover:text-slate-300'
+                                            ? 'text-white'
+                                            : 'text-gray-400 group-hover:text-gray-600'
                                             }`}
                                     >
                                         {item.icon}

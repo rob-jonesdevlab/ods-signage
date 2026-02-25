@@ -141,8 +141,8 @@ export default function ProfilePage() {
             {/* Profile Card */}
             <SettingsCard noPadding>
                 {/* Header Background */}
-                <div className="relative h-32 bg-gradient-to-r from-slate-800 via-slate-900 to-black">
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-slate-900/50"></div>
+                <div className="relative h-32 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600">
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white/10"></div>
                 </div>
 
                 {/* Profile Content */}
@@ -152,7 +152,7 @@ export default function ProfilePage() {
                             {/* Avatar */}
                             <div className="relative group">
                                 <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 p-[2px] shadow-2xl shadow-blue-500/30">
-                                    <div className="w-full h-full rounded-[14px] bg-slate-900 flex items-center justify-center relative overflow-hidden">
+                                    <div className="w-full h-full rounded-[14px] bg-white flex items-center justify-center relative overflow-hidden">
                                         {avatarPreview || profile?.avatar_url ? (
                                             <img
                                                 src={avatarPreview || profile?.avatar_url || ''}
@@ -161,7 +161,7 @@ export default function ProfilePage() {
                                             />
                                         ) : (
                                             <>
-                                                <span className="text-3xl font-bold text-white z-10">
+                                                <span className="text-3xl font-bold text-blue-600 z-10">
                                                     {getInitials()}
                                                 </span>
                                                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-indigo-600/20"></div>
@@ -178,7 +178,7 @@ export default function ProfilePage() {
                                     type="button"
                                     onClick={handleAvatarClick}
                                     disabled={isUploading}
-                                    className="absolute -bottom-2 -right-2 w-8 h-8 bg-slate-700 rounded-full flex items-center justify-center shadow-lg border border-slate-600 text-slate-200 hover:bg-blue-600 hover:text-white transition-all disabled:opacity-50"
+                                    className="absolute -bottom-2 -right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg border border-gray-200 text-gray-500 hover:bg-blue-600 hover:text-white transition-all disabled:opacity-50"
                                 >
                                     <span className="material-symbols-outlined text-[16px]">edit</span>
                                 </button>
@@ -193,10 +193,10 @@ export default function ProfilePage() {
 
                             {/* Name & Title */}
                             <div className="mb-2">
-                                <h2 className="text-2xl font-bold text-white">
+                                <h2 className="text-2xl font-bold text-gray-900">
                                     {formValues.firstName} {formValues.lastName}
                                 </h2>
-                                <p className="text-slate-400 text-sm">
+                                <p className="text-gray-500 text-sm">
                                     {formValues.jobTitle || 'No job title'} @ {formValues.organization || 'No organization'}
                                 </p>
                             </div>
@@ -208,7 +208,7 @@ export default function ProfilePage() {
                                 type="button"
                                 onClick={handleAvatarClick}
                                 disabled={isUploading}
-                                className="flex-1 md:flex-none px-4 py-2 text-sm font-medium text-slate-300 bg-slate-800 border border-slate-600 rounded-lg hover:bg-slate-700 transition-colors shadow-sm disabled:opacity-50"
+                                className="flex-1 md:flex-none px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors shadow-sm disabled:opacity-50"
                             >
                                 {isUploading ? 'Uploading...' : 'Change Avatar'}
                             </button>
@@ -220,12 +220,12 @@ export default function ProfilePage() {
                         {/* Name Fields */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-1">
-                                <label className="block text-sm font-medium text-slate-300" htmlFor="firstName">
+                                <label className="block text-sm font-medium text-gray-700" htmlFor="firstName">
                                     First Name
                                 </label>
                                 <input
                                     {...register('firstName')}
-                                    className={`block w-full px-4 py-2.5 bg-slate-800/50 border rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm ${errors.firstName ? 'border-red-500' : 'border-slate-700'
+                                    className={`block w-full px-4 py-2.5 bg-white border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm ${errors.firstName ? 'border-red-500' : 'border-gray-300'
                                         }`}
                                     id="firstName"
                                     type="text"
@@ -237,12 +237,12 @@ export default function ProfilePage() {
                             </div>
 
                             <div className="space-y-1">
-                                <label className="block text-sm font-medium text-slate-300" htmlFor="lastName">
+                                <label className="block text-sm font-medium text-gray-700" htmlFor="lastName">
                                     Last Name
                                 </label>
                                 <input
                                     {...register('lastName')}
-                                    className={`block w-full px-4 py-2.5 bg-slate-800/50 border rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm ${errors.lastName ? 'border-red-500' : 'border-slate-700'
+                                    className={`block w-full px-4 py-2.5 bg-white border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm ${errors.lastName ? 'border-red-500' : 'border-gray-300'
                                         }`}
                                     id="lastName"
                                     type="text"
@@ -255,36 +255,36 @@ export default function ProfilePage() {
 
                             {/* Email */}
                             <div className="space-y-1">
-                                <label className="block text-sm font-medium text-slate-300" htmlFor="email">
+                                <label className="block text-sm font-medium text-gray-700" htmlFor="email">
                                     Email Address
                                 </label>
                                 <div className="relative">
-                                    <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                    <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                                         <span className="material-symbols-outlined text-[20px]">mail</span>
                                     </span>
                                     <input
-                                        className="block w-full pl-10 pr-3 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-slate-500 placeholder-slate-400 focus:outline-none sm:text-sm cursor-not-allowed"
+                                        className="block w-full pl-10 pr-3 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-gray-500 placeholder-gray-400 focus:outline-none sm:text-sm cursor-not-allowed"
                                         id="email"
                                         type="email"
                                         value={user?.email || ''}
                                         disabled
                                     />
                                 </div>
-                                <p className="text-xs text-slate-500 mt-1">Email cannot be changed</p>
+                                <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
                             </div>
 
                             {/* Organization */}
                             <div className="space-y-1">
-                                <label className="block text-sm font-medium text-slate-300" htmlFor="organization">
+                                <label className="block text-sm font-medium text-gray-700" htmlFor="organization">
                                     Organization
                                 </label>
                                 <div className="relative">
-                                    <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                    <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                                         <span className="material-symbols-outlined text-[20px]">business</span>
                                     </span>
                                     <input
                                         {...register('organization')}
-                                        className={`block w-full pl-10 pr-3 py-2.5 bg-slate-800/50 border rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm ${errors.organization ? 'border-red-500' : 'border-slate-700'
+                                        className={`block w-full pl-10 pr-3 py-2.5 bg-white border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm ${errors.organization ? 'border-red-500' : 'border-gray-300'
                                             }`}
                                         id="organization"
                                         type="text"
@@ -299,12 +299,12 @@ export default function ProfilePage() {
 
                         {/* Job Title */}
                         <div className="space-y-1">
-                            <label className="block text-sm font-medium text-slate-300" htmlFor="jobTitle">
+                            <label className="block text-sm font-medium text-gray-700" htmlFor="jobTitle">
                                 Job Title
                             </label>
                             <input
                                 {...register('jobTitle')}
-                                className={`block w-full px-4 py-2.5 bg-slate-800/50 border rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm ${errors.jobTitle ? 'border-red-500' : 'border-slate-700'
+                                className={`block w-full px-4 py-2.5 bg-white border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm ${errors.jobTitle ? 'border-red-500' : 'border-gray-300'
                                     }`}
                                 id="jobTitle"
                                 type="text"
@@ -317,12 +317,12 @@ export default function ProfilePage() {
 
                         {/* Bio */}
                         <div className="space-y-1">
-                            <label className="block text-sm font-medium text-slate-300" htmlFor="bio">
+                            <label className="block text-sm font-medium text-gray-700" htmlFor="bio">
                                 Personal Bio
                             </label>
                             <textarea
                                 {...register('bio')}
-                                className={`block w-full px-4 py-3 bg-slate-800/50 border rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm resize-none h-24 ${errors.bio ? 'border-red-500' : 'border-slate-700'
+                                className={`block w-full px-4 py-3 bg-white border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm resize-none h-24 ${errors.bio ? 'border-red-500' : 'border-gray-300'
                                     }`}
                                 id="bio"
                                 placeholder="Tell us a little about yourself..."
@@ -332,23 +332,23 @@ export default function ProfilePage() {
                                 {errors.bio && (
                                     <p className="text-xs text-red-400">{errors.bio.message}</p>
                                 )}
-                                <p className={`text-xs text-slate-500 ml-auto ${bioCharCount > bioMaxChars ? 'text-red-400' : ''}`}>
+                                <p className={`text-xs text-gray-500 ml-auto ${bioCharCount > bioMaxChars ? 'text-red-400' : ''}`}>
                                     {bioMaxChars - bioCharCount} characters left
                                 </p>
                             </div>
                         </div>
 
                         {/* Role & Permissions */}
-                        <div className="border-t border-slate-800 pt-6">
+                        <div className="border-t border-gray-200 pt-6">
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                                 <div>
-                                    <h3 className="text-sm font-semibold text-white">Role & Permissions</h3>
+                                    <h3 className="text-sm font-semibold text-gray-900">Role & Permissions</h3>
                                     <div className="mt-2 flex items-center gap-2">
                                         <div className="bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full text-xs font-semibold border border-blue-500/20 flex items-center gap-1">
                                             <span className="material-symbols-outlined text-[14px]">verified_user</span>
                                             {profile?.role === 'odsadmin' ? 'System Admin' : profile?.role || 'User'}
                                         </div>
-                                        <span className="text-xs text-slate-500">Full access to all resources</span>
+                                        <span className="text-xs text-gray-500">Full access to all resources</span>
                                     </div>
                                 </div>
 
@@ -357,7 +357,7 @@ export default function ProfilePage() {
                                     <button
                                         type="button"
                                         onClick={() => reset()}
-                                        className="px-5 py-2.5 text-sm font-medium text-slate-300 bg-transparent hover:bg-slate-800 rounded-lg transition-colors"
+                                        className="px-5 py-2.5 text-sm font-medium text-gray-500 bg-transparent hover:bg-gray-100 rounded-lg transition-colors"
                                     >
                                         Cancel
                                     </button>
@@ -376,11 +376,11 @@ export default function ProfilePage() {
             </SettingsCard>
 
             {/* Account Status Card */}
-            <SettingsCard className="border border-slate-800/50">
+            <SettingsCard className="border border-gray-200">
                 <div className="flex items-start justify-between">
                     <div>
-                        <h3 className="text-base font-semibold text-white">Account Status</h3>
-                        <p className="text-sm text-slate-400 mt-1">
+                        <h3 className="text-base font-semibold text-gray-900">Account Status</h3>
+                        <p className="text-sm text-gray-500 mt-1">
                             Your account is fully active. Next billing date: {new Date(Date.now() + 12 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}.
                         </p>
                     </div>
