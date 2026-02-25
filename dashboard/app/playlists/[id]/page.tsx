@@ -104,7 +104,7 @@ function SortablePlaylistItem({ content, index, onRemove }: { content: PlaylistC
 
             {/* Thumbnail */}
             <div className="w-24 h-14 bg-black rounded overflow-hidden mr-4 relative shrink-0 border border-white/10">
-                {content.url.startsWith('http') ? (
+                {content.url?.startsWith('http') ? (
                     <img
                         src={content.url}
                         alt={content.name}
@@ -496,7 +496,7 @@ export default function PlaylistEditorPage() {
                                             className="group relative bg-slate-800 rounded-lg border border-slate-700 overflow-hidden hover:border-slate-600 transition-all cursor-pointer"
                                         >
                                             <div className="aspect-video relative bg-black">
-                                                {asset.url.startsWith('http') ? (
+                                                {asset.url?.startsWith('http') ? (
                                                     <img
                                                         src={asset.url}
                                                         alt={asset.name}
