@@ -4,6 +4,7 @@
 export const dynamic = 'force-dynamic';
 
 import { API_URL } from '@/lib/api';
+import { authenticatedFetch } from '@/lib/auth';
 
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import Header from '@/components/Header';
@@ -70,9 +71,7 @@ export default function OperationsPage() {
     const fetchOperationsData = useCallback(async () => {
         try {
             // Fetch real system metrics
-            const metricsRes = await fetch(`${API_URL}/api/system-metrics`, {
-                credentials: 'include'
-            });
+            const metricsRes = await authenticatedFetch(`${API_URL}/api/system-metrics`);
             const metricsData = await metricsRes.json();
 
             setStats({
@@ -84,9 +83,7 @@ export default function OperationsPage() {
             });
 
             // Fetch players for alert generation
-            const playersRes = await fetch(`${API_URL}/api/players`, {
-                credentials: 'include'
-            });
+            const playersRes = await authenticatedFetch(`${API_URL}/api/players`);
             const players = await playersRes.json();
 
             // Generate alerts from offline players and storage
@@ -115,9 +112,7 @@ export default function OperationsPage() {
 
             // Fetch scheduled updates
             try {
-                const scheduledRes = await fetch(`${API_URL}/api/scheduled-updates`, {
-                    credentials: 'include'
-                });
+                const scheduledRes = await authenticatedFetch(`${API_URL}/api/scheduled-updates`);
                 const scheduledData = await scheduledRes.json();
                 setScheduledUpdates(scheduledData);
             } catch (error) {
@@ -126,9 +121,7 @@ export default function OperationsPage() {
 
             // Fetch audit logs
             try {
-                const auditRes = await fetch(`${API_URL}/api/audit-logs?limit=10`, {
-                    credentials: 'include'
-                });
+                const auditRes = await authenticatedFetch(`${API_URL}/api/audit-logs?limit=10`);
                 const auditData = await auditRes.json();
                 setAuditLogs(auditData);
             } catch (error) {
@@ -159,10 +152,8 @@ export default function OperationsPage() {
                 : `${API_URL}/api/scheduled-updates`;
             const method = isEditing ? 'PATCH' : 'POST';
 
-            const response = await fetch(url, {
+            const response = await authenticatedFetch(url, {
                 method,
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
                 body: JSON.stringify({
                     title: scheduleData.title,
                     type: scheduleData.type,
@@ -205,9 +196,8 @@ export default function OperationsPage() {
         }
 
         try {
-            const response = await fetch(`${API_URL}/api/scheduled-updates/${scheduleId}`, {
-                method: 'DELETE',
-                credentials: 'include'
+            const response = await authenticatedFetch(`${API_URL}/api/scheduled-updates/${scheduleId}`, {
+                method: 'DELETE'
             });
 
             if (!response.ok) {
