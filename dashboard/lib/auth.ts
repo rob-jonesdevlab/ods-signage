@@ -11,7 +11,7 @@ export interface User {
     effective_organization_id: string;
 }
 
-export type UserRole = 'Owner' | 'Manager' | 'Viewer' | 'Integrations' | 'ODSAdmin' | 'ODSTech';
+export type UserRole = 'system' | 'owner' | 'manager' | 'viewer' | 'integrations' | 'odsadmin' | 'odstech';
 
 export interface ViewAsContext {
     mode: 'tech' | 'customer';
@@ -79,7 +79,7 @@ export async function getCurrentUser(): Promise<User | null> {
         id: user.id,
         email: user.email!,
         organization_id: jwtPayload.organization_id || '',
-        role: jwtPayload.app_role || 'Viewer',
+        role: jwtPayload.app_role || 'viewer',
         view_as: viewAs,
         effective_organization_id: viewAs?.organization_id || jwtPayload.organization_id || ''
     };
@@ -196,6 +196,8 @@ export async function authenticatedFetch(url: string, options: RequestInit = {})
 export function hasRole(user: User | null, ...roles: UserRole[]): boolean {
     if (!user) return false;
     const effectiveRole = user.view_as?.original_role || user.role;
+    // System role bypasses all checks
+    if (effectiveRole === 'system') return true;
     return roles.includes(effectiveRole);
 }
 
@@ -203,28 +205,28 @@ export function hasRole(user: User | null, ...roles: UserRole[]): boolean {
  * Check if user is ODS staff (ODSAdmin or ODSTech)
  */
 export function isODSStaff(user: User | null): boolean {
-    return hasRole(user, 'ODSAdmin', 'ODSTech');
+    return hasRole(user, 'odsadmin', 'odstech');
 }
 
 /**
  * Check if user is customer (Owner, Manager, Viewer, Integrations)
  */
 export function isCustomer(user: User | null): boolean {
-    return hasRole(user, 'Owner', 'Manager', 'Viewer', 'Integrations');
+    return hasRole(user, 'owner', 'manager', 'viewer', 'integrations');
 }
 
 /**
  * Check if user has write access (Owner, Manager, ODSAdmin)
  */
 export function hasWriteAccess(user: User | null): boolean {
-    return hasRole(user, 'Owner', 'Manager', 'ODSAdmin');
+    return hasRole(user, 'owner', 'manager', 'odsadmin');
 }
 
 /**
  * Check if user is Owner or ODSAdmin
  */
 export function isOwner(user: User | null): boolean {
-    return hasRole(user, 'Owner', 'ODSAdmin');
+    return hasRole(user, 'owner', 'odsadmin');
 }
 
 /**

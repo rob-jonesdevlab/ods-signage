@@ -1,8 +1,9 @@
 'use client';
 
-import { useAuth } from './AuthProvider';
-import { UserRole } from '@/lib/auth';
+import { useAuth } from '@/contexts/AuthContext';
 import { ReactNode, useEffect } from 'react';
+
+type UserRole = 'system' | 'owner' | 'manager' | 'viewer' | 'integrations' | 'odsadmin' | 'odstech';
 
 interface RoleGateProps {
     allowedRoles: UserRole[];
@@ -12,27 +13,30 @@ interface RoleGateProps {
 
 /**
  * RoleGate component - Shows/hides content based on user role
- * 
+ * System role bypasses all gates — sees everything.
+ *
  * @example
- * <RoleGate allowedRoles={['Owner', 'Manager']}>
+ * <RoleGate allowedRoles={['owner', 'manager']}>
  *     <button>Delete Player</button>
  * </RoleGate>
  */
 export function RoleGate({ allowedRoles, children, fallback = null }: RoleGateProps) {
-    const { user, loading } = useAuth();
+    const { profile, loading } = useAuth();
 
     if (loading) {
         return <>{fallback}</>;
     }
 
-    if (!user) {
+    if (!profile) {
         return <>{fallback}</>;
     }
 
-    // Check original role if viewing as another org
-    const effectiveRole = user.view_as?.original_role || user.role;
+    // System role sees everything — no gates apply
+    if (profile.role === 'system') {
+        return <>{children}</>;
+    }
 
-    if (!allowedRoles.includes(effectiveRole)) {
+    if (!allowedRoles.includes(profile.role)) {
         return <>{fallback}</>;
     }
 
@@ -53,8 +57,8 @@ export function RequireAuth({ children }: { children: ReactNode }) {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-                <div className="text-white">Loading...</div>
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="text-gray-500">Loading...</div>
             </div>
         );
     }
