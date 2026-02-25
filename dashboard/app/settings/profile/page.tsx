@@ -146,73 +146,70 @@ export default function ProfilePage() {
                 </div>
 
                 {/* Profile Content */}
-                <div className="px-6 md:px-10 pb-10 -mt-12">
-                    <div className="flex flex-col md:flex-row items-end md:items-center justify-between gap-6 mb-8">
-                        <div className="flex items-end gap-6">
-                            {/* Avatar */}
-                            <div className="relative group">
-                                <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 p-[2px] shadow-2xl shadow-blue-500/30">
-                                    <div className="w-full h-full rounded-[14px] bg-white flex items-center justify-center relative overflow-hidden">
-                                        {avatarPreview || profile?.avatar_url ? (
-                                            <img
-                                                src={avatarPreview || profile?.avatar_url || ''}
-                                                alt="Avatar"
-                                                className="w-full h-full object-cover rounded-[14px]"
-                                            />
-                                        ) : (
-                                            <>
-                                                <span className="text-3xl font-bold text-blue-600 z-10">
-                                                    {getInitials()}
-                                                </span>
-                                                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-indigo-600/20"></div>
-                                            </>
-                                        )}
-                                        {isUploading && (
-                                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-                                            </div>
-                                        )}
-                                    </div>
+                <div className="px-6 md:px-10 pb-10">
+                    {/* Avatar — overlaps banner */}
+                    <div className="flex items-end justify-between -mt-12 mb-4">
+                        <div className="relative group">
+                            <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 p-[2px] shadow-2xl shadow-blue-500/30">
+                                <div className="w-full h-full rounded-[14px] bg-white flex items-center justify-center relative overflow-hidden">
+                                    {avatarPreview || profile?.avatar_url ? (
+                                        <img
+                                            src={avatarPreview || profile?.avatar_url || ''}
+                                            alt="Avatar"
+                                            className="w-full h-full object-cover rounded-[14px]"
+                                        />
+                                    ) : (
+                                        <>
+                                            <span className="text-3xl font-bold text-blue-600 z-10">
+                                                {getInitials()}
+                                            </span>
+                                            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-indigo-600/20"></div>
+                                        </>
+                                    )}
+                                    {isUploading && (
+                                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                                        </div>
+                                    )}
                                 </div>
-                                <button
-                                    type="button"
-                                    onClick={handleAvatarClick}
-                                    disabled={isUploading}
-                                    className="absolute -bottom-2 -right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg border border-gray-200 text-gray-500 hover:bg-blue-600 hover:text-white transition-all disabled:opacity-50"
-                                >
-                                    <span className="material-symbols-outlined text-[16px]">edit</span>
-                                </button>
-                                <input
-                                    ref={fileInputRef}
-                                    type="file"
-                                    accept="image/jpeg,image/png,image/webp"
-                                    onChange={handleAvatarChange}
-                                    className="hidden"
-                                />
                             </div>
-
-                            {/* Name & Title */}
-                            <div className="mb-2">
-                                <h2 className="text-2xl font-bold text-gray-900">
-                                    {formValues.firstName} {formValues.lastName}
-                                </h2>
-                                <p className="text-gray-500 text-sm">
-                                    {formValues.jobTitle || 'No job title'} @ {formValues.organization || 'No organization'}
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* Change Avatar Button */}
-                        <div className="flex gap-3 w-full md:w-auto">
                             <button
                                 type="button"
                                 onClick={handleAvatarClick}
                                 disabled={isUploading}
-                                className="flex-1 md:flex-none px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors shadow-sm disabled:opacity-50"
+                                className="absolute -bottom-2 -right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg border border-gray-200 text-gray-500 hover:bg-blue-600 hover:text-white transition-all disabled:opacity-50"
                             >
-                                {isUploading ? 'Uploading...' : 'Change Avatar'}
+                                <span className="material-symbols-outlined text-[16px]">edit</span>
                             </button>
+                            <input
+                                ref={fileInputRef}
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp"
+                                onChange={handleAvatarChange}
+                                className="hidden"
+                            />
                         </div>
+                    </div>
+
+                    {/* Name, Title & Change Avatar Button */}
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                        <div>
+                            <h2 className="text-2xl font-bold text-gray-900">
+                                {formValues.firstName} {formValues.lastName}
+                            </h2>
+                            <p className="text-gray-500 text-sm">
+                                {formValues.jobTitle || 'No job title'} @ {formValues.organization || 'No organization'}
+                            </p>
+                        </div>
+
+                        <button
+                            type="button"
+                            onClick={handleAvatarClick}
+                            disabled={isUploading}
+                            className="w-full md:w-auto px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors shadow-sm disabled:opacity-50"
+                        >
+                            {isUploading ? 'Uploading...' : 'Change Avatar'}
+                        </button>
                     </div>
 
                     {/* Profile Form */}
