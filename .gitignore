@@ -48,3 +48,4 @@ server/ods-server.service
 # Large image assets (backed up to nvme_vault)
 resources/utils/atlas-img/
 dietpi-imager
+*.mov
