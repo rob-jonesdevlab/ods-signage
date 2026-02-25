@@ -74,7 +74,7 @@ function SortablePlaylistItem({ content, index, onRemove }: { content: PlaylistC
         zIndex: isDragging ? 10 : 1,
     };
 
-    const isVideo = content.type === 'video' || content.url.includes('.mp4') || content.url.includes('.webm');
+    const isVideo = content.type === 'video' || content.url?.includes('.mp4') || content.url?.includes('.webm');
 
     return (
         <div
@@ -488,7 +488,7 @@ export default function PlaylistEditorPage() {
                             <div className="grid grid-cols-2 gap-3">
                                 {filteredAssets.map((asset) => {
                                     const isAssigned = playlistContent.some((item) => item.id === asset.id);
-                                    const isVideo = asset.type === 'video' || asset.url.includes('.mp4') || asset.url.includes('.webm');
+                                    const isVideo = asset.type === 'video' || asset.url?.includes('.mp4') || asset.url?.includes('.webm');
 
                                     return (
                                         <div
