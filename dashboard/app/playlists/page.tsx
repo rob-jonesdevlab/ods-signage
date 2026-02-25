@@ -4,6 +4,7 @@
 export const dynamic = 'force-dynamic';
 
 import { API_URL } from '@/lib/api';
+import { authenticatedFetch } from '@/lib/auth';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -80,7 +81,7 @@ export default function PlaylistsPage() {
 
     const fetchPlaylists = async () => {
         try {
-            const response = await fetch('/api/playlists');
+            const response = await authenticatedFetch(`${API_URL}/api/playlists`);
             const data = await response.json();
             setPlaylists(data);
         } catch (error) {
@@ -92,7 +93,7 @@ export default function PlaylistsPage() {
 
     const fetchTemplates = async () => {
         try {
-            const response = await fetch('/api/playlist-templates');
+            const response = await authenticatedFetch(`${API_URL}/api/playlist-templates`);
             const data = await response.json();
             setTemplates(data);
         } catch (error) {
@@ -104,9 +105,8 @@ export default function PlaylistsPage() {
         if (!newPlaylistName.trim()) return;
 
         try {
-            const response = await fetch(`${API_URL}/api/playlists`, {
+            const response = await authenticatedFetch(`${API_URL}/api/playlists`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     name: newPlaylistName,
                     description: newPlaylistDescription,
@@ -148,9 +148,8 @@ export default function PlaylistsPage() {
     // Template handlers
     const handleCreateTemplate = async (name: string, description: string, durationPerItem: number) => {
         try {
-            const response = await fetch('/api/playlist-templates', {
+            const response = await authenticatedFetch(`${API_URL}/api/playlist-templates`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, description, duration_per_item: durationPerItem, content_items: [] })
             });
 
@@ -173,9 +172,8 @@ export default function PlaylistsPage() {
             const template = templates.find(t => t.id === templateId);
             if (!template) return;
 
-            const response = await fetch(`/api/playlist-templates/${templateId}`, {
+            const response = await authenticatedFetch(`${API_URL}/api/playlist-templates/${templateId}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ...template, name: newName })
             });
 
@@ -195,7 +193,7 @@ export default function PlaylistsPage() {
 
     const handleDeleteTemplate = async (templateId: string) => {
         try {
-            const response = await fetch(`/api/playlist-templates/${templateId}`, {
+            const response = await authenticatedFetch(`${API_URL}/api/playlist-templates/${templateId}`, {
                 method: 'DELETE'
             });
 
@@ -220,9 +218,8 @@ export default function PlaylistsPage() {
         if (!selectedTemplate) return;
 
         try {
-            const response = await fetch(`/api/playlist-templates/${selectedTemplate.id}/create-playlist`, {
+            const response = await authenticatedFetch(`${API_URL}/api/playlist-templates/${selectedTemplate.id}/create-playlist`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name })
             });
 

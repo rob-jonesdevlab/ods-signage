@@ -4,6 +4,7 @@
 export const dynamic = 'force-dynamic';
 
 import { API_URL } from '@/lib/api';
+import { authenticatedFetch } from '@/lib/auth';
 
 import { useEffect, useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
@@ -115,7 +116,7 @@ export default function ContentLibraryPage() {
     // Fetch folders
     const fetchFolders = useCallback(async () => {
         try {
-            const res = await fetch(`${API_URL}/api/folders/tree`);
+            const res = await authenticatedFetch(`${API_URL}/api/folders/tree`);
             if (!res.ok) {
                 console.error('Failed to fetch folders:', res.status);
                 setFolders([]);
@@ -143,10 +144,10 @@ export default function ContentLibraryPage() {
 
             const queryString = params.toString();
             const url = selectedFolderId
-                ? `http://localhost:3001/api/folders/${selectedFolderId}/content${queryString ? `?${queryString}` : ''}`
-                : `http://localhost:3001/api/content${queryString ? `?${queryString}` : ''}`;
+                ? `${API_URL}/api/folders/${selectedFolderId}/content${queryString ? `?${queryString}` : ''}`
+                : `${API_URL}/api/content${queryString ? `?${queryString}` : ''}`;
 
-            const res = await fetch(url);
+            const res = await authenticatedFetch(url);
             const data = await res.json();
             setContent(data);
         } catch (error) {
@@ -207,9 +208,8 @@ export default function ContentLibraryPage() {
     // Create new folder
     const handleCreateFolder = async (name: string, parentId: string | null) => {
         try {
-            const res = await fetch(`${API_URL}/api/folders`, {
+            const res = await authenticatedFetch(`${API_URL}/api/folders`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, parent_id: parentId }),
             });
 
@@ -236,7 +236,7 @@ export default function ContentLibraryPage() {
             formData.append('name', file.name);
 
             try {
-                const res = await fetch(`${API_URL}/api/content`, {
+                const res = await authenticatedFetch(`${API_URL}/api/content`, {
                     method: 'POST',
                     body: formData,
                 });
@@ -290,7 +290,7 @@ export default function ContentLibraryPage() {
         if (!confirm('Are you sure you want to delete this content?')) return;
 
         try {
-            const res = await fetch(`http://localhost:3001/api/content/${id}`, {
+            const res = await authenticatedFetch(`${API_URL}/api/content/${id}`, {
                 method: 'DELETE',
             });
 
@@ -332,9 +332,8 @@ export default function ContentLibraryPage() {
         }
 
         try {
-            const res = await fetch(`${API_URL}/api/content/url`, {
+            const res = await authenticatedFetch(`${API_URL}/api/content/url`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     name: urlForm.name,
                     url: urlForm.url,
@@ -370,9 +369,8 @@ export default function ContentLibraryPage() {
         if (!draggedContent) return;
 
         try {
-            const res = await fetch(`http://localhost:3001/api/folders/${folderId}/content`, {
+            const res = await authenticatedFetch(`${API_URL}/api/folders/${folderId}/content`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ content_id: draggedContent }),
             });
 
@@ -404,9 +402,8 @@ export default function ContentLibraryPage() {
 
     const handleRenameFolder = async (folderId: string, newName: string) => {
         try {
-            const res = await fetch(`http://localhost:3001/api/folders/${folderId}`, {
+            const res = await authenticatedFetch(`${API_URL}/api/folders/${folderId}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: newName }),
             });
 
@@ -424,7 +421,7 @@ export default function ContentLibraryPage() {
 
     const handleDeleteFolder = async (folderId: string) => {
         try {
-            const res = await fetch(`http://localhost:3001/api/folders/${folderId}`, {
+            const res = await authenticatedFetch(`${API_URL}/api/folders/${folderId}`, {
                 method: 'DELETE',
             });
 
@@ -459,7 +456,7 @@ export default function ContentLibraryPage() {
 
         try {
             await Promise.all(selectedItems.map(item =>
-                fetch(`http://localhost:3001/api/content/${item.id}`, { method: 'DELETE' })
+                authenticatedFetch(`${API_URL}/api/content/${item.id}`, { method: 'DELETE' })
             ));
 
             await fetchContent();
@@ -483,9 +480,8 @@ export default function ContentLibraryPage() {
 
     const handleMoveFolder = async (folderId: string, newParentId: string | null) => {
         try {
-            const res = await fetch(`http://localhost:3001/api/folders/${folderId}/move`, {
+            const res = await authenticatedFetch(`${API_URL}/api/folders/${folderId}/move`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ parent_id: newParentId }),
             });
 
@@ -778,7 +774,7 @@ export default function ContentLibraryPage() {
                                         <div className="relative aspect-video bg-gray-100 overflow-hidden">
                                             {item.metadata.thumbnail ? (
                                                 <img
-                                                    src={`http://localhost:3001${item.metadata.thumbnail}`}
+                                                    src={`${API_URL}${item.metadata.thumbnail}`}
                                                     alt={item.name}
                                                     className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
                                                 />

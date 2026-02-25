@@ -6,6 +6,8 @@ export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { API_URL } from '@/lib/api';
+import { authenticatedFetch } from '@/lib/auth';
 import {
     DndContext,
     closestCenter,
@@ -179,7 +181,7 @@ export default function PlaylistEditorPage() {
 
     // Fetch playlist details
     useEffect(() => {
-        fetch(`http://localhost:3001/api/playlists/${playlistId}`)
+        authenticatedFetch(`${API_URL}/api/playlists/${playlistId}`)
             .then((res) => res.json())
             .then((data) => setPlaylist(data))
             .catch((err) => console.error('Failed to fetch playlist:', err));
@@ -196,14 +198,14 @@ export default function PlaylistEditorPage() {
     }, [playlistId]);
 
     const fetchPlaylistContent = () => {
-        fetch(`http://localhost:3001/api/playlists/${playlistId}/content`)
+        authenticatedFetch(`${API_URL}/api/playlists/${playlistId}/content`)
             .then((res) => res.json())
             .then((data) => setPlaylistContent(data))
             .catch((err) => console.error('Failed to fetch playlist content:', err));
     };
 
     const fetchAssetDirectory = () => {
-        fetch(`http://localhost:3001/api/playlists/${playlistId}/assets`)
+        authenticatedFetch(`${API_URL}/api/playlists/${playlistId}/assets`)
             .then((res) => res.json())
             .then((data) => setAssetDirectory(data))
             .catch((err) => console.error('Failed to fetch asset directory:', err));
@@ -242,9 +244,8 @@ export default function PlaylistEditorPage() {
         const nextOrder = playlistContent.length;
 
         try {
-            const response = await fetch(`http://localhost:3001/api/playlists/${playlistId}/content`, {
+            const response = await authenticatedFetch(`${API_URL}/api/playlists/${playlistId}/content`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     content_id: asset.id,
                     display_order: nextOrder,
@@ -262,8 +263,8 @@ export default function PlaylistEditorPage() {
     // Remove content from playlist
     const handleRemoveContent = async (content: PlaylistContent) => {
         try {
-            const response = await fetch(
-                `http://localhost:3001/api/playlists/${playlistId}/content/${content.id}`,
+            const response = await authenticatedFetch(
+                `${API_URL}/api/playlists/${playlistId}/content/${content.id}`,
                 { method: 'DELETE' }
             );
 
@@ -284,9 +285,8 @@ export default function PlaylistEditorPage() {
             // Update display_order for each item
             await Promise.all(
                 playlistContent.map((item) =>
-                    fetch(`http://localhost:3001/api/playlists/${playlistId}/content/${item.id}/order`, {
+                    authenticatedFetch(`${API_URL}/api/playlists/${playlistId}/content/${item.id}/order`, {
                         method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ display_order: item.display_order }),
                     })
                 )

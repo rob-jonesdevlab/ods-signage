@@ -4,6 +4,7 @@
 export const dynamic = 'force-dynamic';
 
 import { API_URL } from '@/lib/api';
+import { authenticatedFetch } from '@/lib/auth';
 
 import { useState, useEffect, useCallback } from 'react';
 import Header from '@/components/Header';
@@ -85,9 +86,9 @@ export default function AnalyticsPage() {
         try {
             // Fetch all data sources
             const [playersRes, contentRes, playlistsRes] = await Promise.all([
-                fetch(`${API_URL}/api/players`),
-                fetch(`${API_URL}/api/content`),
-                fetch(`${API_URL}/api/playlists`)
+                authenticatedFetch(`${API_URL}/api/players`),
+                authenticatedFetch(`${API_URL}/api/content`),
+                authenticatedFetch(`${API_URL}/api/playlists`)
             ]);
 
             const players = await playersRes.json();
