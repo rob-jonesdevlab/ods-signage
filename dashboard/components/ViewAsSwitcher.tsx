@@ -22,7 +22,6 @@ export default function ViewAsSwitcher() {
 
     // Only render for ODS staff
     const isODSStaff = profile?.role === 'odsadmin' || profile?.role === 'odstech';
-    if (!isODSStaff) return null;
 
     // Close dropdown on outside click
     useEffect(() => {
@@ -41,6 +40,9 @@ export default function ViewAsSwitcher() {
             fetchOrganizations();
         }
     }, [isOpen]);
+
+    // Early return AFTER all hooks (Rules of Hooks compliance)
+    if (!isODSStaff) return null;
 
     const fetchOrganizations = async () => {
         setLoading(true);
