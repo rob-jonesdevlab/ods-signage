@@ -327,7 +327,7 @@ export default function ContentLibraryPage() {
         e.preventDefault();
 
         if (!urlForm.url || !urlForm.name) {
-            alert('Please provide both name and URL');
+            showToast({ type: 'error', title: 'Missing Fields', message: 'Please provide both name and URL' });
             return;
         }
 
@@ -347,11 +347,11 @@ export default function ContentLibraryPage() {
                 setUrlForm({ name: '', url: '', duration: 10, isNonStop: false });
                 fetchContent();
             } else {
-                alert('Failed to add URL');
+                showToast({ type: 'error', title: 'Failed', message: 'Failed to add URL content' });
             }
         } catch (error) {
             console.error('Error adding URL:', error);
-            alert('Error adding URL');
+            showToast({ type: 'error', title: 'Error', message: 'Error adding URL content' });
         }
     };
 
@@ -375,15 +375,15 @@ export default function ContentLibraryPage() {
             });
 
             if (res.ok) {
-                alert('✅ Content added to folder successfully!');
+                showToast({ type: 'success', title: 'Added', message: 'Content added to folder' });
                 await fetchFolders();
                 await fetchContent();
             } else {
-                alert('❌ Failed to add content to folder');
+                showToast({ type: 'error', title: 'Failed', message: 'Failed to add content to folder' });
             }
         } catch (error) {
             console.error('Error adding content to folder:', error);
-            alert('❌ Error adding content to folder');
+            showToast({ type: 'error', title: 'Error', message: 'Error adding content to folder' });
         } finally {
             setDraggedContent(null);
             setDragOverFolder(null);
@@ -408,14 +408,14 @@ export default function ContentLibraryPage() {
             });
 
             if (res.ok) {
-                alert('✅ Folder renamed successfully!');
+                showToast({ type: 'success', title: 'Renamed', message: 'Folder renamed successfully' });
                 await fetchFolders();
             } else {
-                alert('❌ Failed to rename folder');
+                showToast({ type: 'error', title: 'Failed', message: 'Failed to rename folder' });
             }
         } catch (error) {
             console.error('Error renaming folder:', error);
-            alert('❌ Error renaming folder');
+            showToast({ type: 'error', title: 'Error', message: 'Error renaming folder' });
         }
     };
 
@@ -426,7 +426,7 @@ export default function ContentLibraryPage() {
             });
 
             if (res.ok) {
-                alert('✅ Folder deleted successfully!');
+                showToast({ type: 'success', title: 'Deleted', message: 'Folder deleted successfully' });
                 await fetchFolders();
                 await fetchContent();
                 // If deleted folder was selected, reset to all content
@@ -436,13 +436,13 @@ export default function ContentLibraryPage() {
                 }
             } else if (res.status === 403) {
                 const data = await res.json();
-                alert('🔒 ' + (data.error || 'Cannot delete system folder'));
+                showToast({ type: 'error', title: 'Restricted', message: data.error || 'Cannot delete system folder' });
             } else {
-                alert('❌ Failed to delete folder');
+                showToast({ type: 'error', title: 'Failed', message: 'Failed to delete folder' });
             }
         } catch (error) {
             console.error('Error deleting folder:', error);
-            alert('❌ Error deleting folder');
+            showToast({ type: 'error', title: 'Error', message: 'Error deleting folder' });
         }
     };
 
@@ -486,14 +486,14 @@ export default function ContentLibraryPage() {
             });
 
             if (res.ok) {
-                alert('✅ Folder moved successfully!');
+                showToast({ type: 'success', title: 'Moved', message: 'Folder moved successfully' });
                 await fetchFolders();
             } else {
-                alert('❌ Failed to move folder');
+                showToast({ type: 'error', title: 'Failed', message: 'Failed to move folder' });
             }
         } catch (error) {
             console.error('Error moving folder:', error);
-            alert('❌ Error moving folder');
+            showToast({ type: 'error', title: 'Error', message: 'Error moving folder' });
         }
     };
 

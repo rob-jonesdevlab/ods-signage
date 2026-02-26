@@ -153,7 +153,7 @@ export default function DashboardPage() {
                 activities.push({
                     id: `content-${item.id}`,
                     type: 'content',
-                    message: `Content Upload: ${item.filename}`,
+                    message: `Content Upload: ${item.filename || item.name || 'Untitled'}`,
                     details: `Uploaded by System • ${sizeInMB}MB`,
                     timestamp: item.created_at,
                     color: 'purple',
@@ -302,7 +302,7 @@ export default function DashboardPage() {
                             </div>
                             <div className="flex items-center text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-200">
                                 <span className="material-symbols-outlined text-sm mr-0.5">trending_up</span>
-                                +3
+                                +{stats.activePlayers}
                             </div>
                         </div>
                         <div className="mb-2">
@@ -333,7 +333,7 @@ export default function DashboardPage() {
                                 <span className="material-symbols-outlined text-xl">perm_media</span>
                             </div>
                             <div className="text-xs font-medium text-gray-500">
-                                75% Used
+                                {Math.round(stats.storagePercentage)}% Used
                             </div>
                         </div>
                         <div className="mb-2">
@@ -465,7 +465,7 @@ export default function DashboardPage() {
                     <div className="lg:col-span-3 rounded-lg p-6 border border-gray-200 bg-white shadow-sm">
                         <div className="flex items-center justify-between mb-4">
                             <h2 className="text-lg font-semibold text-gray-900">Recent Activity</h2>
-                            <button className="text-xs font-medium text-blue-600 hover:text-blue-700">View All</button>
+                            <a href="/operations" className="text-xs font-medium text-blue-600 hover:text-blue-700">View All</a>
                         </div>
 
                         <div className="relative pl-4 border-l border-gray-200 space-y-8">

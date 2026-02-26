@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ReactNode } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface SettingsLayoutProps {
     children: ReactNode;
@@ -15,8 +16,8 @@ interface NavItem {
     key: string;
 }
 
-const navItems: NavItem[] = [
-    { href: '/settings/organization', label: 'Organization', icon: 'business', key: 'organization' },
+// Base nav items visible to all users
+const baseNavItems: NavItem[] = [
     { href: '/settings/profile', label: 'Profile', icon: 'person', key: 'profile' },
     { href: '/settings/security', label: 'Security', icon: 'lock', key: 'security' },
     { href: '/settings/notifications', label: 'Notifications', icon: 'notifications', key: 'notifications' },
@@ -25,10 +26,29 @@ const navItems: NavItem[] = [
     { href: '/settings/api', label: 'API Access', icon: 'api', key: 'api' },
 ];
 
+// Organization nav item (shown only to odsadmin, owner, or odstech in View As)
+const orgNavItem: NavItem = {
+    href: '/settings/organization',
+    label: 'Organization',
+    icon: 'business',
+    key: 'organization'
+};
+
 export default function SettingsLayout({ children }: SettingsLayoutProps) {
     const pathname = usePathname();
+    const { profile } = useAuth();
 
     const isActive = (href: string) => pathname === href;
+
+    // Role-gated Organization section:
+    // - odsadmin: always visible
+    // - owner: always visible (managing their own org)
+    // - odstech: visible only when using View As for an owner role
+    //   (view_as context not yet in AuthContext, so odstech gets it later)
+    // - viewer/editor/manager: never
+    const canSeeOrg = profile?.role === 'odsadmin' || profile?.role === 'owner';
+
+    const navItems = canSeeOrg ? [orgNavItem, ...baseNavItems] : baseNavItems;
 
     return (
         <div className="min-h-screen bg-gray-50">

@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic';
 
 import { API_URL } from '@/lib/api';
 import { authenticatedFetch } from '@/lib/auth';
+import { useToast } from '@/hooks/useToast';
 
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import Header from '@/components/Header';
@@ -42,6 +43,7 @@ interface AuditLog {
 }
 
 export default function OperationsPage() {
+    const { showToast } = useToast();
     const [stats, setStats] = useState<OperationsStats>({
         serverUptime: 99.9,
         databaseLatency: 0,
@@ -173,7 +175,7 @@ export default function OperationsPage() {
             }
 
             // Show success message
-            alert(`Schedule ${isEditing ? 'updated' : 'created'} successfully!`);
+            showToast({ type: 'success', title: 'Saved', message: `Schedule ${isEditing ? 'updated' : 'created'} successfully` });
 
             // Close modal and reset editing state
             setIsScheduleModalOpen(false);
@@ -183,7 +185,7 @@ export default function OperationsPage() {
             await fetchOperationsData();
         } catch (error) {
             console.error('Error saving schedule:', error);
-            alert(`Failed to ${editingSchedule ? 'update' : 'create'} schedule. Please try again.`);
+            showToast({ type: 'error', title: 'Failed', message: `Failed to ${editingSchedule ? 'update' : 'create'} schedule` });
         }
     };
 
@@ -207,11 +209,11 @@ export default function OperationsPage() {
                 throw new Error(error.details || 'Failed to delete schedule');
             }
 
-            alert('Schedule deleted successfully!');
+            showToast({ type: 'success', title: 'Deleted', message: 'Schedule deleted successfully' });
             await fetchOperationsData();
         } catch (error) {
             console.error('Error deleting schedule:', error);
-            alert('Failed to delete schedule. Please try again.');
+            showToast({ type: 'error', title: 'Failed', message: 'Failed to delete schedule' });
         }
     };
 
