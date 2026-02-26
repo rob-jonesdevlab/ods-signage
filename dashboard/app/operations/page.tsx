@@ -9,6 +9,7 @@ import { authenticatedFetch } from '@/lib/auth';
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import Header from '@/components/Header';
 import NewScheduleModal, { ScheduleFormData } from '@/components/NewScheduleModal';
+import ScheduleCalendar from '@/components/ScheduleCalendar';
 import AuditTrailModal, { AuditLogDetail } from '@/components/AuditTrailModal';
 import SearchBar from '@/components/SearchBar';
 import FilterDropdown from '@/components/FilterDropdown';
@@ -67,6 +68,7 @@ export default function OperationsPage() {
 
     // Scheduled updates state
     const [scheduledUpdates, setScheduledUpdates] = useState<any[]>([]);
+    const [showCalendar, setShowCalendar] = useState(false);
 
     const fetchOperationsData = useCallback(async () => {
         try {
@@ -461,82 +463,96 @@ export default function OperationsPage() {
                                     Scheduled Updates
                                 </h2>
                                 <button
-                                    onClick={() => alert('Calendar view coming soon! This will show a monthly calendar view of all scheduled updates.')}
-                                    className="text-sm text-blue-600 hover:text-blue-500 font-medium"
+                                    onClick={() => setShowCalendar(!showCalendar)}
+                                    className="text-sm text-blue-600 hover:text-blue-500 font-medium flex items-center gap-1"
                                 >
-                                    View Calendar
+                                    <span className="material-symbols-outlined text-[16px]">
+                                        {showCalendar ? 'view_list' : 'calendar_month'}
+                                    </span>
+                                    {showCalendar ? 'List View' : 'Calendar View'}
                                 </button>
                             </div>
-                            <div className="relative pl-4 border-l border-gray-200 space-y-8">
-                                {loading ? (
-                                    <>
-                                        <div className="h-20 bg-gray-100 rounded-lg animate-pulse"></div>
-                                        <div className="h-20 bg-gray-100 rounded-lg animate-pulse"></div>
-                                    </>
-                                ) : scheduledUpdates.length === 0 ? (
-                                    <p className="text-sm text-gray-500 text-center py-8">
-                                        No scheduled updates. Click "New Schedule" to create one.
-                                    </p>
-                                ) : (
-                                    scheduledUpdates.map((update, index) => {
-                                        const typeColors: Record<string, string> = {
-                                            playlist: 'bg-purple-100 text-purple-600',
-                                            firmware: 'bg-blue-100 text-blue-600',
-                                            maintenance: 'bg-amber-100 text-amber-600',
-                                            content: 'bg-green-100 text-green-600'
-                                        };
 
-                                        const scheduleDateTime = new Date(`${update.schedule_date}T${update.schedule_time}`);
-                                        const isToday = scheduleDateTime.toDateString() === new Date().toDateString();
-                                        const isSoon = index === 0; // First item is upcoming
+                            {showCalendar ? (
+                                <ScheduleCalendar
+                                    updates={scheduledUpdates}
+                                    onClose={() => setShowCalendar(false)}
+                                    onEdit={handleEditSchedule}
+                                    onDelete={handleDeleteSchedule}
+                                />
+                            ) : (
+                                /* Timeline list view */
+                                <div className="relative pl-4 border-l border-gray-200 space-y-8">
+                                    {loading ? (
+                                        <>
+                                            <div className="h-20 bg-gray-100 rounded-lg animate-pulse"></div>
+                                            <div className="h-20 bg-gray-100 rounded-lg animate-pulse"></div>
+                                        </>
+                                    ) : scheduledUpdates.length === 0 ? (
+                                        <p className="text-sm text-gray-500 text-center py-8">
+                                            No scheduled updates. Click "New Schedule" to create one.
+                                        </p>
+                                    ) : (
+                                        scheduledUpdates.map((update, index) => {
+                                            const typeColors: Record<string, string> = {
+                                                playlist: 'bg-purple-100 text-purple-600',
+                                                firmware: 'bg-blue-100 text-blue-600',
+                                                maintenance: 'bg-amber-100 text-amber-600',
+                                                content: 'bg-green-100 text-green-600'
+                                            };
 
-                                        return (
-                                            <div key={update.id} className="relative group">
-                                                <div className={`absolute -left-[21px] top-1 h-3 w-3 rounded-full border-2 ${isSoon ? 'border-blue-500 bg-white group-hover:bg-blue-500' : 'border-gray-300 bg-white group-hover:bg-gray-400'
-                                                    } transition-colors`}></div>
-                                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors border border-transparent hover:border-gray-200">
-                                                    <div>
-                                                        <div className="flex items-center gap-2 mb-1">
-                                                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${typeColors[update.type]}`}>
-                                                                {update.type}
-                                                            </span>
-                                                            <h3 className="text-sm font-semibold text-gray-900">{update.title}</h3>
+                                            const scheduleDateTime = new Date(`${update.schedule_date}T${update.schedule_time}`);
+                                            const isToday = scheduleDateTime.toDateString() === new Date().toDateString();
+                                            const isSoon = index === 0; // First item is upcoming
+
+                                            return (
+                                                <div key={update.id} className="relative group">
+                                                    <div className={`absolute -left-[21px] top-1 h-3 w-3 rounded-full border-2 ${isSoon ? 'border-blue-500 bg-white group-hover:bg-blue-500' : 'border-gray-300 bg-white group-hover:bg-gray-400'
+                                                        } transition-colors`}></div>
+                                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors border border-transparent hover:border-gray-200">
+                                                        <div>
+                                                            <div className="flex items-center gap-2 mb-1">
+                                                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${typeColors[update.type]}`}>
+                                                                    {update.type}
+                                                                </span>
+                                                                <h3 className="text-sm font-semibold text-gray-900">{update.title}</h3>
+                                                            </div>
+                                                            <p className="text-xs text-gray-500">
+                                                                Target: {Array.isArray(update.targets) ? update.targets.length : 0} device{update.targets?.length !== 1 ? 's' : ''}
+                                                            </p>
                                                         </div>
-                                                        <p className="text-xs text-gray-500">
-                                                            Target: {Array.isArray(update.targets) ? update.targets.length : 0} device{update.targets?.length !== 1 ? 's' : ''}
-                                                        </p>
-                                                    </div>
-                                                    <div className="flex items-center gap-4 text-xs">
-                                                        <div className="flex items-center gap-1 text-gray-500">
-                                                            <span className="material-symbols-outlined text-[16px]">schedule</span>
-                                                            {isToday ? 'Today, ' : ''}{scheduleDateTime.toLocaleString([], {
-                                                                month: 'short',
-                                                                day: 'numeric',
-                                                                hour: '2-digit',
-                                                                minute: '2-digit'
-                                                            })}
-                                                        </div>
-                                                        <div className="flex items-center gap-2">
-                                                            <button
-                                                                onClick={() => handleEditSchedule(update)}
-                                                                className="px-3 py-1.5 rounded-md bg-white border border-gray-200 text-gray-700 hover:text-blue-600 transition-colors"
-                                                            >
-                                                                Edit
-                                                            </button>
-                                                            <button
-                                                                onClick={() => handleDeleteSchedule(update.id)}
-                                                                className="px-3 py-1.5 rounded-md bg-white border border-gray-200 text-gray-700 hover:text-red-600 transition-colors"
-                                                            >
-                                                                Delete
-                                                            </button>
+                                                        <div className="flex items-center gap-4 text-xs">
+                                                            <div className="flex items-center gap-1 text-gray-500">
+                                                                <span className="material-symbols-outlined text-[16px]">schedule</span>
+                                                                {isToday ? 'Today, ' : ''}{scheduleDateTime.toLocaleString([], {
+                                                                    month: 'short',
+                                                                    day: 'numeric',
+                                                                    hour: '2-digit',
+                                                                    minute: '2-digit'
+                                                                })}
+                                                            </div>
+                                                            <div className="flex items-center gap-2">
+                                                                <button
+                                                                    onClick={() => handleEditSchedule(update)}
+                                                                    className="px-3 py-1.5 rounded-md bg-white border border-gray-200 text-gray-700 hover:text-blue-600 transition-colors"
+                                                                >
+                                                                    Edit
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => handleDeleteSchedule(update.id)}
+                                                                    className="px-3 py-1.5 rounded-md bg-white border border-gray-200 text-gray-700 hover:text-red-600 transition-colors"
+                                                                >
+                                                                    Delete
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        );
-                                    })
-                                )}
-                            </div>
+                                            );
+                                        })
+                                    )}
+                                </div>
+                            )}
                         </div>
 
                         {/* Active Alerts */}
