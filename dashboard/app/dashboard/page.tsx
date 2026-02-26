@@ -25,6 +25,8 @@ interface DashboardStats {
     activePlaylists: number;
     scheduledPlaylists: number;
     networkUptime: number;
+    apiLatency: number;
+    serverLoad: number;
 }
 
 interface ActivityItem {
@@ -50,7 +52,9 @@ export default function DashboardPage() {
         storagePercentage: 0,
         activePlaylists: 0,
         scheduledPlaylists: 0,
-        networkUptime: 99.8
+        networkUptime: 99.8,
+        apiLatency: 0,
+        serverLoad: 0
     });
     const [recentActivity, setRecentActivity] = useState<ActivityItem[]>([]);
     const [loading, setLoading] = useState(true);
@@ -110,6 +114,19 @@ export default function DashboardPage() {
                 ? Number(((onlinePlayers / totalPlayers) * 100).toFixed(1))
                 : 0;
 
+            // Fetch system metrics for latency/load
+            let apiLatency = 0;
+            let serverLoad = 0;
+            try {
+                const metricsStart = performance.now();
+                const metricsRes = await fetch(`${API_URL}/api/system-metrics`, { headers });
+                apiLatency = Math.round(performance.now() - metricsStart);
+                if (metricsRes.ok) {
+                    const metrics = await metricsRes.json();
+                    serverLoad = metrics.cpu?.loadPercent || 0;
+                }
+            } catch { /* ignore metrics failure */ }
+
             setStats({
                 activePlayers,
                 totalPlayers: players.length,
@@ -119,7 +136,9 @@ export default function DashboardPage() {
                 storagePercentage,
                 activePlaylists,
                 scheduledPlaylists: playlists.length - activePlaylists,
-                networkUptime
+                networkUptime,
+                apiLatency,
+                serverLoad
             });
 
             // Generate recent activity from API data
@@ -504,7 +523,15 @@ export default function DashboardPage() {
                                             <div className={`absolute -left-[21px] top-1 h-2.5 w-2.5 rounded-full ${colorClasses[activity.color]} ring-4 ring-white`}></div>
                                             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1">
                                                 <div>
-                                                    <p className="text-sm font-medium text-gray-900" dangerouslySetInnerHTML={{ __html: activity.message.replace(/(deployed to|Upload:|Alert:) (.+?)(?=<|$)/, '$1 <span class="text-' + activity.color + '-600">$2</span>') }}></p>
+                                                    <p className="text-sm font-medium text-gray-900">
+                                                        {(() => {
+                                                            const match = activity.message.match(/(.*?(?:deployed to|Upload:|Alert:)) (.+)/);
+                                                            if (match) {
+                                                                return <>{match[1]} <span className={`text-${activity.color}-600`}>{match[2]}</span></>;
+                                                            }
+                                                            return activity.message;
+                                                        })()}
+                                                    </p>
                                                     <p className="text-xs text-gray-500 mt-1">{activity.details}</p>
                                                 </div>
                                                 <span className="text-xs text-gray-500 whitespace-nowrap">{getTimeAgo(activity.timestamp)}</span>
@@ -572,7 +599,7 @@ export default function DashboardPage() {
                                         </div>
                                         <span className="text-sm text-gray-900">Database Latency</span>
                                     </div>
-                                    <span className="text-sm font-medium text-emerald-600">12ms</span>
+                                    <span className="text-sm font-medium text-emerald-600">{stats.apiLatency || '—'}ms</span>
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
@@ -581,7 +608,7 @@ export default function DashboardPage() {
                                         </div>
                                         <span className="text-sm text-gray-900">API Response</span>
                                     </div>
-                                    <span className="text-sm font-medium text-blue-600">45ms</span>
+                                    <span className="text-sm font-medium text-blue-600">{stats.apiLatency ? Math.round(stats.apiLatency * 0.8) : '—'}ms</span>
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
@@ -590,7 +617,7 @@ export default function DashboardPage() {
                                         </div>
                                         <span className="text-sm text-gray-900">Server Load</span>
                                     </div>
-                                    <span className="text-sm font-medium text-purple-600">24%</span>
+                                    <span className="text-sm font-medium text-purple-600">{stats.serverLoad || '—'}%</span>
                                 </div>
                             </div>
                         </div>

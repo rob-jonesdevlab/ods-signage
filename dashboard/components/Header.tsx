@@ -60,7 +60,6 @@ export default function Header() {
                         {/* Notification Bell */}
                         <button className="text-gray-500 hover:text-gray-700 transition-colors relative p-2 rounded-lg hover:bg-gray-100">
                             <BellIcon className="w-5 h-5" />
-                            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
                         </button>
 
                         {/* User Menu */}
