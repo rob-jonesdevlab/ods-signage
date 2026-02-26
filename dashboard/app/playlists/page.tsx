@@ -40,6 +40,7 @@ export default function PlaylistsPage() {
     const [setAsActive, setSetAsActive] = useState(true);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
+    const [defaultPlaylistId, setDefaultPlaylistId] = useState<string | null>(null);
     const { showToast } = useToast();
 
     // Template state
@@ -73,11 +74,43 @@ export default function PlaylistsPage() {
         { label: 'Archived', value: 'archived', icon: 'archive', color: 'text-slate-400' },
     ];
 
-    // Fetch playlists and templates
+    // Fetch playlists, templates, and org settings
     useEffect(() => {
         fetchPlaylists();
         fetchTemplates();
+        fetchDefaultPlaylist();
     }, []);
+
+    const fetchDefaultPlaylist = async () => {
+        try {
+            const response = await authenticatedFetch(`${API_URL}/api/organizations/settings`);
+            const data = await response.json();
+            setDefaultPlaylistId(data.default_playlist_id || null);
+        } catch (error) {
+            console.error('Error fetching default playlist:', error);
+        }
+    };
+
+    const handleToggleDefault = async (e: React.MouseEvent, playlistId: string) => {
+        e.preventDefault();
+        e.stopPropagation();
+        try {
+            const isCurrentDefault = defaultPlaylistId === playlistId;
+            if (isCurrentDefault) {
+                await authenticatedFetch(`${API_URL}/api/playlists/${playlistId}/set-default`, { method: 'DELETE' });
+                setDefaultPlaylistId(null);
+                showToast({ type: 'success', title: 'Default Cleared', message: 'Default playlist has been cleared' });
+            } else {
+                await authenticatedFetch(`${API_URL}/api/playlists/${playlistId}/set-default`, { method: 'POST' });
+                setDefaultPlaylistId(playlistId);
+                const playlist = playlists.find(p => p.id === playlistId);
+                showToast({ type: 'success', title: 'Default Set', message: `"${playlist?.name}" will auto-assign to new devices` });
+            }
+        } catch (error) {
+            console.error('Error toggling default:', error);
+            showToast({ type: 'error', title: 'Error', message: 'Failed to update default playlist' });
+        }
+    };
 
     const fetchPlaylists = async () => {
         try {
@@ -406,6 +439,18 @@ export default function PlaylistsPage() {
                                             </svg>
                                         </div>
                                         <div className="flex items-center gap-2">
+                                            <button
+                                                onClick={(e) => handleToggleDefault(e, playlist.id)}
+                                                className={`p-1 rounded-md transition-all ${defaultPlaylistId === playlist.id
+                                                        ? 'text-amber-500 hover:text-amber-600'
+                                                        : 'text-gray-300 hover:text-amber-400 opacity-0 group-hover:opacity-100'
+                                                    }`}
+                                                title={defaultPlaylistId === playlist.id ? 'Remove as default for new devices' : 'Set as default for new devices'}
+                                            >
+                                                <span className="material-symbols-outlined text-[20px]">
+                                                    {defaultPlaylistId === playlist.id ? 'star' : 'star_border'}
+                                                </span>
+                                            </button>
                                             <span className="px-2 py-1 rounded text-[10px] font-bold bg-gray-100 text-gray-600 border border-gray-200 uppercase tracking-wide">
                                                 {playlist.created_by}
                                             </span>

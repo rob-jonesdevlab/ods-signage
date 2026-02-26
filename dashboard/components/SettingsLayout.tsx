@@ -16,6 +16,7 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
+    { href: '/settings/organization', label: 'Organization', icon: 'business', key: 'organization' },
     { href: '/settings/profile', label: 'Profile', icon: 'person', key: 'profile' },
     { href: '/settings/security', label: 'Security', icon: 'lock', key: 'security' },
     { href: '/settings/notifications', label: 'Notifications', icon: 'notifications', key: 'notifications' },
