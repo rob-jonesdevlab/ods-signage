@@ -20,6 +20,7 @@ import NewGroupModal from '@/components/NewGroupModal';
 import GroupContextMenu from '@/components/GroupContextMenu';
 import RenameGroupModal from '@/components/RenameGroupModal';
 import DeleteGroupModal from '@/components/DeleteGroupModal';
+import DeployPlaylistModal from '@/components/DeployPlaylistModal';
 
 interface Player {
     id: string;
@@ -47,6 +48,8 @@ export default function PlayersPage() {
     const [showRenameGroupModal, setShowRenameGroupModal] = useState(false);
     const [showDeleteGroupModal, setShowDeleteGroupModal] = useState(false);
     const [showBulkAssignModal, setShowBulkAssignModal] = useState(false);
+    const [showDeployModal, setShowDeployModal] = useState(false);
+    const [deployGroupId, setDeployGroupId] = useState<string | null>(null);
 
     // Context menu
     const [contextMenu, setContextMenu] = useState<{ groupId: string; x: number; y: number } | null>(null);
@@ -174,7 +177,7 @@ export default function PlayersPage() {
     const handleRenameGroup = async (groupId: string, newName: string) => {
         try {
             const group = groups.find(g => g.id === groupId);
-            const res = await fetch(`http://localhost:3001/api/player-groups/${groupId}`, {
+            const res = await authenticatedFetch(`${API_URL}/api/player-groups/${groupId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: newName, description: group?.description, location: group?.location })
@@ -191,7 +194,7 @@ export default function PlayersPage() {
 
     const handleDeleteGroup = async (groupId: string) => {
         try {
-            const res = await fetch(`http://localhost:3001/api/player-groups/${groupId}`, {
+            const res = await authenticatedFetch(`${API_URL}/api/player-groups/${groupId}`, {
                 method: 'DELETE'
             });
 
@@ -234,7 +237,7 @@ export default function PlayersPage() {
 
     const handleBulkAssignGroup = async (groupId: string) => {
         try {
-            const res = await fetch(`http://localhost:3001/api/player-groups/${groupId}/assign-players`, {
+            const res = await authenticatedFetch(`${API_URL}/api/player-groups/${groupId}/assign-players`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ player_ids: selectedPlayers })
@@ -265,7 +268,7 @@ export default function PlayersPage() {
         try {
             await Promise.all(
                 selectedPlayers.map(id =>
-                    fetch(`http://localhost:3001/api/players/${id}`, { method: 'DELETE' })
+                    authenticatedFetch(`${API_URL}/api/players/${id}`, { method: 'DELETE' })
                 )
             );
 
@@ -292,7 +295,7 @@ export default function PlayersPage() {
         if (!draggedPlayerId) return;
 
         try {
-            const res = await fetch(`http://localhost:3001/api/player-groups/${groupId}/assign-players`, {
+            const res = await authenticatedFetch(`${API_URL}/api/player-groups/${groupId}/assign-players`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ player_ids: [draggedPlayerId] })
@@ -701,11 +704,27 @@ export default function PlayersPage() {
                     onRename={() => setShowRenameGroupModal(true)}
                     onDelete={() => setShowDeleteGroupModal(true)}
                     onDeploy={() => {
-                        // TODO: Implement deploy modal
-                        showToast({ type: 'info', title: 'Coming Soon', message: 'Deploy playlist feature' });
+                        setDeployGroupId(contextMenu.groupId);
+                        setShowDeployModal(true);
+                        setContextMenu(null);
                     }}
                 />
             )}
+            {/* Deploy Playlist Modal */}
+            <DeployPlaylistModal
+                isOpen={showDeployModal}
+                groupId={deployGroupId}
+                groupName={groups.find(g => g.id === deployGroupId)?.name || ''}
+                playerCount={players.filter(p => p.group_id === deployGroupId).length}
+                onClose={() => {
+                    setShowDeployModal(false);
+                    setDeployGroupId(null);
+                }}
+                onDeployed={() => {
+                    fetchPlayers();
+                    showToast({ type: 'success', title: 'Deployed', message: 'Playlist deployed to group' });
+                }}
+            />
         </div>
     );
 }
