@@ -81,7 +81,8 @@ function PairDeviceContent() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     pairing_code: pairingCode.toUpperCase(),
-                    account_id: profile.organization_id,
+                    account_id: user.id,
+                    organization_id: profile.organization_id,
                     device_name: deviceName || undefined
                 })
             });
