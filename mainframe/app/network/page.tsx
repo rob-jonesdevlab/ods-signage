@@ -7,6 +7,7 @@ import { API_URL } from '@/lib/api';
 import { authenticatedFetch } from '@/lib/auth';
 
 import { useEffect, useState, useCallback, useMemo } from 'react';
+import Link from 'next/link';
 import Header from '@/components/Header';
 import SearchBar from '@/components/SearchBar';
 import FilterDropdown from '@/components/FilterDropdown';
@@ -509,9 +510,9 @@ export default function NetworkPage() {
                 <div className="flex flex-col gap-4 pb-8">
                     <div className="flex items-center justify-between px-1">
                         <h2 className="text-lg font-bold text-gray-900">Recently Added Content</h2>
-                        <a className="text-sm text-blue-600 hover:text-blue-500 font-medium flex items-center gap-1" href="#">
-                            View Library <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-                        </a>
+                        <Link className="text-sm text-blue-600 hover:text-blue-500 font-medium flex items-center gap-1" href="/content">
+                            View Library
+                        </Link>
                     </div>
                     <div className="relative w-full overflow-hidden group">
                         <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x">
