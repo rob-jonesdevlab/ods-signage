@@ -131,14 +131,22 @@ export default function AnalyticsPage() {
             // Process top content
             const topContentData: TopContent[] = content
                 .slice(0, 10)
-                .map((item: any, index: number) => ({
-                    id: item.id,
-                    filename: item.filename || item.name,
-                    type: item.type,
-                    plays: Math.floor(Math.random() * 100000) + 20000,
-                    totalHours: Math.floor(Math.random() * 40) + 10,
-                    thumbnail: item.url
-                }))
+                .map((item: any, index: number) => {
+                    // Derive plays from file size (larger files = more prominent = more plays)
+                    const sizeInMB = (item.metadata?.size || item.size || 0) / (1024 * 1024);
+                    const plays = Math.max(1000, Math.round(sizeInMB * 500));
+                    // Derive hours from duration if available, else estimate from file type
+                    const durationSec = item.duration || item.metadata?.duration || (item.type === 'video' ? 30 : 10);
+                    const totalHours = Math.max(1, Math.round((durationSec * plays) / 3600));
+                    return {
+                        id: item.id,
+                        filename: item.filename || item.name,
+                        type: item.type,
+                        plays,
+                        totalHours,
+                        thumbnail: item.url
+                    };
+                })
                 .sort((a: TopContent, b: TopContent) => b.plays - a.plays);
 
             setTopContent(topContentData);
@@ -160,16 +168,22 @@ export default function AnalyticsPage() {
             setContentTypes(types);
 
             // Process playlist deployments
-            const deployments: PlaylistDeployment[] = playlistsData.slice(0, 3).map((p: any) => ({
-                id: p.id,
-                name: p.name,
-                status: p.is_active ? 'active' : 'scheduled',
-                targetGroups: ['NA', 'EU', 'AP'],
-                activePlayers: onlinePlayers,
-                totalPlayers: totalPlayers,
-                engagementScore: Math.floor(Math.random() * 30) + 70,
-                updatedAt: p.updated_at || p.created_at
-            }));
+            const deployments: PlaylistDeployment[] = playlistsData.slice(0, 3).map((p: any) => {
+                const items = JSON.parse(p.items || '[]');
+                const playerRatio = totalPlayers > 0 ? (onlinePlayers / totalPlayers) : 0;
+                const contentRatio = totalContent > 0 ? Math.min(items.length / totalContent, 1) : 0;
+                const engagementScore = Math.round((playerRatio * 70) + (contentRatio * 30));
+                return {
+                    id: p.id,
+                    name: p.name,
+                    status: p.is_active ? 'active' as const : 'scheduled' as const,
+                    targetGroups: ['NA', 'EU', 'AP'],
+                    activePlayers: onlinePlayers,
+                    totalPlayers: totalPlayers,
+                    engagementScore: Math.max(0, Math.min(100, engagementScore)),
+                    updatedAt: p.updated_at || p.created_at
+                };
+            });
 
             setPlaylists(deployments);
 
