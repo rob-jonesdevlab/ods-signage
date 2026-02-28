@@ -114,17 +114,14 @@ export default function PlayersPage() {
         const newSocket = io(`${API_URL}`);
 
         newSocket.on('connect', () => {
-            console.log('✅ Connected to server');
             setConnected(true);
         });
 
         newSocket.on('disconnect', () => {
-            console.log('❌ Disconnected from server');
             setConnected(false);
         });
 
         newSocket.on('player:status', (data) => {
-            console.log('📊 Player status update:', data);
 
             const player = data.player;
             const wasOnline = players.find(p => p.id === player.id)?.status === 'online';

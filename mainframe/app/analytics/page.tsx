@@ -7,6 +7,7 @@ import { API_URL } from '@/lib/api';
 import { authenticatedFetch } from '@/lib/auth';
 
 import { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import Header from '@/components/Header';
 import DateRangePicker from '@/components/DateRangePicker';
 import FilterDropdown from '@/components/FilterDropdown';
@@ -370,7 +371,7 @@ export default function AnalyticsPage() {
                     <div className="lg:col-span-3 bg-white border border-gray-200 rounded-lg flex flex-col max-h-[600px] shadow-sm">
                         <div className="p-4 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white z-10 rounded-t-lg">
                             <h3 className="font-semibold text-gray-900">Top Content</h3>
-                            <button className="text-xs text-blue-600 hover:text-blue-500 font-medium">View All</button>
+                            <Link href="/content" className="text-xs text-blue-600 hover:text-blue-500 font-medium">View All</Link>
                         </div>
                         <div className="overflow-y-auto flex-1 p-2 space-y-1">
                             {loading ? (
@@ -615,9 +616,9 @@ export default function AnalyticsPage() {
                                                     </span>
                                                 </td>
                                                 <td className="px-6 py-4 text-right">
-                                                    <button className="p-1.5 hover:bg-gray-100 rounded text-gray-400 hover:text-gray-700 transition-colors">
-                                                        <span className="material-symbols-outlined text-[20px]">more_vert</span>
-                                                    </button>
+                                                    <Link href={`/playlists/${playlist.id}`} className="p-1.5 hover:bg-gray-100 rounded text-gray-400 hover:text-gray-700 transition-colors inline-flex">
+                                                        <span className="material-symbols-outlined text-[20px]">open_in_new</span>
+                                                    </Link>
                                                 </td>
                                             </tr>
                                         ))

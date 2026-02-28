@@ -242,7 +242,6 @@ export default function ContentLibraryPage() {
                 });
 
                 if (res.ok) {
-                    console.log('✅ Uploaded:', file.name);
                     successCount++;
                 } else {
                     console.error('❌ Upload failed:', file.name);

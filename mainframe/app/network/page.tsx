@@ -35,6 +35,8 @@ interface ContentItem {
     filename: string;
     type: string;
     size: number;
+    duration?: number;
+    metadata?: { size?: number };
     created_at: string;
 }
 
@@ -70,9 +72,11 @@ export default function NetworkPage() {
             const onlinePlayers = players.filter((p: any) => p.status === 'online').length;
             const offlinePlayers = players.filter((p: any) => p.status === 'offline').length;
 
-            // Mock warnings and syncs (can be enhanced with real data)
-            const warnings = Math.floor(onlinePlayers * 0.05); // 5% of online players
-            const activeSyncs = Math.floor(onlinePlayers * 0.3); // 30% actively syncing
+            // Real warnings: players with warning status
+            const warnings = players.filter((p: any) => p.status === 'warning').length;
+            // Real syncs: online players seen in the last 5 minutes
+            const fiveMinAgo = Date.now() - 5 * 60 * 1000;
+            const activeSyncs = players.filter((p: any) => p.status === 'online' && p.last_seen && new Date(p.last_seen).getTime() > fiveMinAgo).length;
 
             setStats({
                 onlinePlayers,
@@ -525,7 +529,8 @@ export default function NetworkPage() {
                             ) : recentContent.length > 0 ? (
                                 recentContent.map((item) => {
                                     const isVideo = item.type?.toLowerCase().includes('video') || item.filename?.toLowerCase().endsWith('.mp4');
-                                    const sizeInMB = (item.size / (1024 * 1024)).toFixed(1);
+                                    const rawSize = item.size || item.metadata?.size || 0;
+                                    const sizeInMB = rawSize > 0 ? (rawSize / (1024 * 1024)).toFixed(1) : '0';
                                     const timeAgo = new Date(item.created_at).toLocaleString();
 
                                     return (
@@ -535,7 +540,9 @@ export default function NetworkPage() {
                                                     <span className="material-symbols-outlined text-6xl">{isVideo ? 'play_circle' : 'image'}</span>
                                                 </div>
                                                 {isVideo && (
-                                                    <div className="absolute bottom-2 right-2 px-1.5 py-0.5 bg-black/70 rounded text-[10px] font-medium text-white">0:15</div>
+                                                    <div className="absolute bottom-2 right-2 px-1.5 py-0.5 bg-black/70 rounded text-[10px] font-medium text-white">
+                                                        {item.duration ? `${Math.floor(item.duration / 60)}:${String(Math.floor(item.duration % 60)).padStart(2, '0')}` : '—'}
+                                                    </div>
                                                 )}
                                                 <div className="absolute top-2 left-2 px-2 py-0.5 bg-blue-500/90 rounded text-[10px] font-bold text-white">NEW</div>
                                             </div>

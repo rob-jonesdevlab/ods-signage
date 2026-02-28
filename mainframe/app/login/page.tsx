@@ -23,9 +23,7 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      console.log('Attempting sign in for:', email)
       const result = await signIn(email, password)
-      console.log('Sign in successful:', result)
 
       // Use window.location for reliable redirect after login
       window.location.href = '/dashboard'

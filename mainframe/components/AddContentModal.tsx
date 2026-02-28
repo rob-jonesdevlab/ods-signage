@@ -148,15 +148,6 @@ export default function AddContentModal({ isOpen, onClose, playlistId, onContent
                             Images
                         </button>
                         <button
-                            onClick={() => setFilterType('folders')}
-                            className={`pb-4 transition-colors ${filterType === 'folders'
-                                ? 'text-blue-500 border-b-2 border-blue-500'
-                                : 'text-slate-400 hover:text-white'
-                                }`}
-                        >
-                            Folders
-                        </button>
-                        <button
                             onClick={() => setFilterType('urls')}
                             className={`pb-4 transition-colors ${filterType === 'urls'
                                 ? 'text-blue-500 border-b-2 border-blue-500'
