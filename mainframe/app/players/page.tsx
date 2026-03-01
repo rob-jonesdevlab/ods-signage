@@ -21,6 +21,7 @@ import GroupContextMenu from '@/components/GroupContextMenu';
 import RenameGroupModal from '@/components/RenameGroupModal';
 import DeleteGroupModal from '@/components/DeleteGroupModal';
 import DeployPlaylistModal from '@/components/DeployPlaylistModal';
+import PlayerDetailModal from '@/components/PlayerDetailModal';
 
 interface Player {
     id: string;
@@ -29,18 +30,40 @@ interface Player {
     status: string;
     last_seen: string | null;
     created_at: string;
-    paired_at: string | null;
-    pairing_code: string | null;
-    group_id: string | null;
-    current_page: string | null;
-    cache_asset_count: number | null;
-    cache_last_sync: string | null;
+    paired_at?: string;
+    pairing_code?: string;
+    group_id?: string;
+    current_page?: string;
+    cache_asset_count?: number;
+    cache_last_sync?: string;
+    // Phase A: Capture Everything fields
+    hostname?: string;
+    rustdesk_id?: string;
+    ip_address?: string;
+    mac_address?: string;
+    os_version?: string;
+    disk_free_mb?: number;
+    memory_total_mb?: number;
+    uptime_seconds?: number;
+    screen_resolution?: string;
+    device_uuid?: string;
+    account_id?: string;
+    playlist_id?: string;
+    updated_at?: string;
+    config?: string;
+}
+
+interface SimplePlaylist {
+    id: string;
+    name: string;
 }
 
 export default function PlayersPage() {
     const [players, setPlayers] = useState<Player[]>([]);
     const [groups, setGroups] = useState<PlayerGroup[]>([]);
+    const [playlists, setPlaylists] = useState<SimplePlaylist[]>([]);
     const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
+    const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
     const [socket, setSocket] = useState<Socket | null>(null);
     const [connected, setConnected] = useState(false);
     const { showToast } = useToast();
@@ -92,6 +115,18 @@ export default function PlayersPage() {
         }
     };
 
+    // Fetch playlists for modal
+    const fetchPlaylists = async () => {
+        try {
+            const res = await authenticatedFetch(`${API_URL}/api/playlists`);
+            if (!res.ok) return;
+            const data = await res.json();
+            setPlaylists(Array.isArray(data) ? data.map((p: { id: string; name: string }) => ({ id: p.id, name: p.name })) : []);
+        } catch (error) {
+            console.error('Error fetching playlists:', error);
+        }
+    };
+
     // Fetch players
     const fetchPlayers = async () => {
         try {
@@ -112,6 +147,7 @@ export default function PlayersPage() {
     useEffect(() => {
         fetchPlayers();
         fetchGroups();
+        fetchPlaylists();
 
         // Connect to WebSocket
         const newSocket = io(`${API_URL}`);
@@ -375,7 +411,7 @@ export default function PlayersPage() {
         return new Date(dateString).toLocaleString();
     };
 
-    const getPageLabel = (page: string | null) => {
+    const getPageLabel = (page: string | null | undefined) => {
         switch (page) {
             case 'content_manager': return { icon: 'slideshow', label: 'Content', color: 'text-emerald-600' };
             case 'status': return { icon: 'info', label: 'Status', color: 'text-blue-600' };
@@ -562,10 +598,11 @@ export default function PlayersPage() {
                                         {filteredPlayers.map((player) => (
                                             <tr
                                                 key={player.id}
-                                                className="hover:bg-gray-50 transition-colors cursor-move"
+                                                className="hover:bg-gray-50 transition-colors cursor-pointer"
                                                 draggable
                                                 onDragStart={() => handlePlayerDragStart(player.id)}
                                                 onDragEnd={() => setDraggedPlayerId(null)}
+                                                onClick={() => setSelectedPlayer(player)}
                                             >
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <input
@@ -771,6 +808,18 @@ export default function PlayersPage() {
                 onDeployed={() => {
                     fetchPlayers();
                     showToast({ type: 'success', title: 'Deployed', message: 'Playlist deployed to group' });
+                }}
+            />
+            {/* Player Detail Modal */}
+            <PlayerDetailModal
+                isOpen={!!selectedPlayer}
+                onClose={() => setSelectedPlayer(null)}
+                player={selectedPlayer}
+                groups={groups}
+                playlists={playlists}
+                onPlayerUpdated={() => {
+                    fetchPlayers();
+                    fetchGroups();
                 }}
             />
         </div>
