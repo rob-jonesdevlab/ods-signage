@@ -27,6 +27,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import AddContentModal from '../../../components/AddContentModal';
+import PlaylistScheduler, { PlaylistSchedule } from '../../../components/PlaylistScheduler';
 
 // ── Types ───────────────────────────────────────────────────
 interface Content {
@@ -55,6 +56,7 @@ interface Playlist {
     description: string;
     created_by: string;
     created_at: string;
+    schedule: PlaylistSchedule | null;
 }
 
 // ── Transition Options ──────────────────────────────────────
@@ -131,8 +133,8 @@ function SortablePlaylistItem({
             ref={setNodeRef}
             style={style}
             className={`group flex items-center rounded-xl p-3 select-none transition-all ${isDragging
-                    ? 'bg-blue-50 border-2 border-blue-400 shadow-lg ring-2 ring-blue-200 relative z-10'
-                    : 'bg-white border border-gray-200 hover:border-blue-300 hover:shadow-sm'
+                ? 'bg-blue-50 border-2 border-blue-400 shadow-lg ring-2 ring-blue-200 relative z-10'
+                : 'bg-white border border-gray-200 hover:border-blue-300 hover:shadow-sm'
                 }`}
         >
             {/* Drag Handle */}
@@ -179,10 +181,10 @@ function SortablePlaylistItem({
                 <h3 className="text-sm font-medium text-gray-900 truncate">{content.name}</h3>
                 <div className="flex items-center gap-2 mt-0.5">
                     <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium uppercase tracking-wide ${content.type === 'video'
-                            ? 'text-blue-600 bg-blue-50 border border-blue-200'
-                            : content.type === 'image'
-                                ? 'text-purple-600 bg-purple-50 border border-purple-200'
-                                : 'text-emerald-600 bg-emerald-50 border border-emerald-200'
+                        ? 'text-blue-600 bg-blue-50 border border-blue-200'
+                        : content.type === 'image'
+                            ? 'text-purple-600 bg-purple-50 border border-purple-200'
+                            : 'text-emerald-600 bg-emerald-50 border border-emerald-200'
                         }`}>
                         {content.type}
                     </span>
@@ -259,8 +261,8 @@ function PreviewModal({ content, onClose }: { content: PlaylistContent | null; o
                 <div className="flex items-center justify-between p-4 border-b border-gray-200">
                     <div className="flex items-center gap-3">
                         <span className={`text-xs px-2 py-1 rounded-full font-medium uppercase ${content.type === 'video' ? 'text-blue-600 bg-blue-50' :
-                                content.type === 'image' ? 'text-purple-600 bg-purple-50' :
-                                    'text-emerald-600 bg-emerald-50'
+                            content.type === 'image' ? 'text-purple-600 bg-purple-50' :
+                                'text-emerald-600 bg-emerald-50'
                             }`}>{content.type}</span>
                         <h3 className="text-lg font-semibold text-gray-900">{content.name}</h3>
                     </div>
@@ -328,6 +330,8 @@ export default function PlaylistEditorPage() {
     const [isSaving, setIsSaving] = useState(false);
     const [showAddModal, setShowAddModal] = useState(false);
     const [previewContent, setPreviewContent] = useState<PlaylistContent | null>(null);
+    const [schedule, setSchedule] = useState<PlaylistSchedule | null>(null);
+    const [sidebarTab, setSidebarTab] = useState<'assets' | 'schedule'>('assets');
 
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -338,7 +342,7 @@ export default function PlaylistEditorPage() {
     useEffect(() => {
         authenticatedFetch(`${API_URL}/api/playlists/${playlistId}`)
             .then(res => res.json())
-            .then(data => setPlaylist(data))
+            .then(data => { setPlaylist(data); setSchedule(data.schedule || null); })
             .catch(err => console.error('Failed to fetch playlist:', err));
     }, [playlistId]);
 
@@ -439,6 +443,11 @@ export default function PlaylistEditorPage() {
         }
     };
 
+    const handleScheduleChange = (newSchedule: PlaylistSchedule) => {
+        setSchedule(newSchedule);
+        setHasChanges(true);
+    };
+
     const handleSave = async () => {
         setIsSaving(true);
         try {
@@ -453,6 +462,11 @@ export default function PlaylistEditorPage() {
                         transition: item.transition || 'fade',
                     })),
                 }),
+            });
+            // Save schedule
+            await authenticatedFetch(`${API_URL}/api/playlists/${playlistId}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ schedule }),
             });
             setHasChanges(false);
             setOriginalContent(JSON.parse(JSON.stringify(playlistContent)));
@@ -619,97 +633,125 @@ export default function PlaylistEditorPage() {
 
                 {/* Right: Asset Directory */}
                 <aside className="w-80 bg-white border-l border-gray-200 flex flex-col shrink-0">
-                    {/* Header */}
-                    <div className="p-4 border-b border-gray-200 shrink-0">
-                        <h2 className="text-sm font-semibold text-gray-900 mb-3">Asset Library</h2>
-                        <div className="flex bg-gray-100 p-0.5 rounded-lg">
-                            {(['all', 'assigned', 'unassigned'] as const).map(type => (
-                                <button
-                                    key={type}
-                                    onClick={() => setFilterType(type)}
-                                    className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-colors capitalize ${filterType === type
-                                            ? 'text-white bg-blue-600 shadow-sm'
-                                            : 'text-gray-500 hover:text-gray-700'
-                                        }`}
-                                >
-                                    {type}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Asset Grid */}
-                    <div className="flex-1 overflow-y-auto p-4 min-h-0">
-                        {filteredAssets.length === 0 ? (
-                            <div className="h-full flex flex-col items-center justify-center text-center p-6">
-                                <span className="material-symbols-outlined text-5xl text-gray-300 mb-3">folder_open</span>
-                                <p className="text-sm text-gray-400">
-                                    {filterType === 'all' ? 'No assets yet' : filterType === 'assigned' ? 'No assigned assets' : 'No unassigned assets'}
-                                </p>
-                            </div>
-                        ) : (
-                            <div className="grid grid-cols-2 gap-2">
-                                {filteredAssets.map(asset => {
-                                    const isAssigned = playlistContent.some(item => item.id === asset.id);
-                                    const isVideo = asset.type === 'video' || asset.url?.includes('.mp4');
-                                    return (
-                                        <div key={asset.id} className="group relative bg-white rounded-lg border border-gray-200 overflow-hidden hover:border-blue-300 hover:shadow-sm transition-all">
-                                            <div className="aspect-video relative bg-gray-100">
-                                                {asset.url?.startsWith('http') ? (
-                                                    <img src={asset.url} alt={asset.name} className="w-full h-full object-cover" />
-                                                ) : (
-                                                    <div className="w-full h-full flex items-center justify-center">
-                                                        <span className="material-symbols-outlined text-3xl text-gray-300">
-                                                            {asset.type === 'url' ? 'language' : 'image'}
-                                                        </span>
-                                                    </div>
-                                                )}
-                                                {isVideo && (
-                                                    <div className="absolute inset-0 flex items-center justify-center">
-                                                        <span className="material-symbols-outlined text-white text-xl drop-shadow-md">play_circle</span>
-                                                    </div>
-                                                )}
-                                                {asset.duration && (
-                                                    <span className="absolute bottom-1 right-1 bg-black/60 text-white text-[9px] px-1 py-0.5 rounded font-mono">
-                                                        {asset.duration}s
-                                                    </span>
-                                                )}
-                                                <div className="absolute top-1 right-1">
-                                                    {!isAssigned ? (
-                                                        <button
-                                                            onClick={() => handleAddAssetToPlaylist(asset)}
-                                                            className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-md opacity-0 group-hover:opacity-100 transition-all hover:scale-110"
-                                                        >
-                                                            <span className="material-symbols-outlined text-[14px]">add</span>
-                                                        </button>
-                                                    ) : (
-                                                        <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-md">
-                                                            <span className="material-symbols-outlined text-[14px]">check</span>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                            <div className="p-2">
-                                                <h3 className="text-xs font-medium text-gray-900 truncate">{asset.name}</h3>
-                                                <span className="text-[10px] text-gray-400 capitalize">{asset.type}</span>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Add Button */}
-                    <div className="p-3 border-t border-gray-200 shrink-0">
+                    {/* Sidebar Tabs */}
+                    <div className="flex border-b border-gray-200 shrink-0">
                         <button
-                            onClick={() => setShowAddModal(true)}
-                            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
+                            onClick={() => setSidebarTab('assets')}
+                            className={`flex-1 py-3 text-sm font-medium transition-colors flex items-center justify-center gap-1.5 ${sidebarTab === 'assets' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
                         >
-                            <span className="material-symbols-outlined text-[18px]">add</span>
-                            Add Content
+                            <span className="material-symbols-outlined text-[16px]">perm_media</span>
+                            Assets
+                        </button>
+                        <button
+                            onClick={() => setSidebarTab('schedule')}
+                            className={`flex-1 py-3 text-sm font-medium transition-colors flex items-center justify-center gap-1.5 ${sidebarTab === 'schedule' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                        >
+                            <span className="material-symbols-outlined text-[16px]">calendar_month</span>
+                            Schedule
+                            {schedule && schedule.blocks.length > 0 && (
+                                <span className="w-2 h-2 rounded-full bg-blue-500" />
+                            )}
                         </button>
                     </div>
+
+                    {sidebarTab === 'assets' ? (
+                        <>
+                            {/* Filter Tabs */}
+                            <div className="p-4 border-b border-gray-200 shrink-0">
+                                <div className="flex bg-gray-100 p-0.5 rounded-lg">
+                                    {(['all', 'assigned', 'unassigned'] as const).map(type => (
+                                        <button
+                                            key={type}
+                                            onClick={() => setFilterType(type)}
+                                            className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-colors capitalize ${filterType === type ? 'text-white bg-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                                        >
+                                            {type}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Asset Grid */}
+                            <div className="flex-1 overflow-y-auto p-4 min-h-0">
+                                {filteredAssets.length === 0 ? (
+                                    <div className="h-full flex flex-col items-center justify-center text-center p-6">
+                                        <span className="material-symbols-outlined text-5xl text-gray-300 mb-3">folder_open</span>
+                                        <p className="text-sm text-gray-400">
+                                            {filterType === 'all' ? 'No assets yet' : filterType === 'assigned' ? 'No assigned assets' : 'No unassigned assets'}
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {filteredAssets.map(asset => {
+                                            const isAssigned = playlistContent.some(item => item.id === asset.id);
+                                            const isVideo = asset.type === 'video' || asset.url?.includes('.mp4');
+                                            return (
+                                                <div key={asset.id} className="group relative bg-white rounded-lg border border-gray-200 overflow-hidden hover:border-blue-300 hover:shadow-sm transition-all">
+                                                    <div className="aspect-video relative bg-gray-100">
+                                                        {asset.url?.startsWith('http') ? (
+                                                            <img src={asset.url} alt={asset.name} className="w-full h-full object-cover" />
+                                                        ) : (
+                                                            <div className="w-full h-full flex items-center justify-center">
+                                                                <span className="material-symbols-outlined text-3xl text-gray-300">
+                                                                    {asset.type === 'url' ? 'language' : 'image'}
+                                                                </span>
+                                                            </div>
+                                                        )}
+                                                        {isVideo && (
+                                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                                <span className="material-symbols-outlined text-white text-xl drop-shadow-md">play_circle</span>
+                                                            </div>
+                                                        )}
+                                                        {asset.duration && (
+                                                            <span className="absolute bottom-1 right-1 bg-black/60 text-white text-[9px] px-1 py-0.5 rounded font-mono">
+                                                                {asset.duration}s
+                                                            </span>
+                                                        )}
+                                                        <div className="absolute top-1 right-1">
+                                                            {!isAssigned ? (
+                                                                <button
+                                                                    onClick={() => handleAddAssetToPlaylist(asset)}
+                                                                    className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-md opacity-0 group-hover:opacity-100 transition-all hover:scale-110"
+                                                                >
+                                                                    <span className="material-symbols-outlined text-[14px]">add</span>
+                                                                </button>
+                                                            ) : (
+                                                                <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-md">
+                                                                    <span className="material-symbols-outlined text-[14px]">check</span>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    <div className="p-2">
+                                                        <h3 className="text-xs font-medium text-gray-900 truncate">{asset.name}</h3>
+                                                        <span className="text-[10px] text-gray-400 capitalize">{asset.type}</span>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Add Button */}
+                            <div className="p-3 border-t border-gray-200 shrink-0">
+                                <button
+                                    onClick={() => setShowAddModal(true)}
+                                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
+                                >
+                                    <span className="material-symbols-outlined text-[18px]">add</span>
+                                    Add Content
+                                </button>
+                            </div>
+                        </>
+                    ) : (
+                        <div className="flex-1 overflow-y-auto p-4">
+                            <PlaylistScheduler
+                                schedule={schedule}
+                                onChange={handleScheduleChange}
+                            />
+                        </div>
+                    )}
                 </aside>
             </main>
 
