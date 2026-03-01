@@ -12,7 +12,7 @@ interface OrgSettings {
     default_group_id: string | null;
     offline_threshold_minutes: number;
     offline_border_template: number;
-    offline_border_size: string;
+    offline_border_width: string;
     offline_border_enabled: boolean;
     offline_border_custom_colors?: string[];
     offline_border_custom_animation?: string;
@@ -99,8 +99,8 @@ export default function OrganizationSettingsPage() {
             if (settingsData.offline_border_template !== undefined) {
                 setBorderTemplate(settingsData.offline_border_template);
             }
-            if (settingsData.offline_border_size) {
-                setBorderSize(settingsData.offline_border_size);
+            if (settingsData.offline_border_width) {
+                setBorderSize(settingsData.offline_border_width);
             }
             if (settingsData.offline_border_enabled !== undefined) {
                 setBorderEnabled(settingsData.offline_border_enabled);
@@ -132,7 +132,7 @@ export default function OrganizationSettingsPage() {
                     default_group_id: defaultGroupId || null,
                     offline_threshold_minutes: offlineThreshold,
                     offline_border_template: borderTemplate,
-                    offline_border_size: borderSize,
+                    offline_border_width: borderSize,
                     offline_border_enabled: borderEnabled,
                     offline_border_custom_colors: borderTemplate === 6 ? customColors : undefined,
                     offline_border_custom_animation: borderTemplate === 6 ? customAnimation : undefined,
