@@ -11,12 +11,36 @@ interface OrgSettings {
     default_playlist_id: string | null;
     default_group_id: string | null;
     offline_threshold_minutes: number;
+    offline_border_template: number;
+    offline_border_size: string;
+    offline_border_enabled: boolean;
 }
 
 interface SelectOption {
     id: string;
     name: string;
 }
+
+// ─── Offline Border Template Definitions ────────────────────────
+const BORDER_TEMPLATES = [
+    { id: 0, name: 'Standard Logic', colors: ['#FFFF00', '#FFA500', '#FF0000', '#FF0000'], animation: 'Marching Ants' },
+    { id: 1, name: 'Minimal & Neutral', colors: ['#F2D2BD', '#CC7722', '#361010', '#000000'], animation: 'Synchronous Blink' },
+    { id: 2, name: 'Tokyo Night', colors: ['#24283b', '#e0af68', '#f7768e', '#f7768e'], animation: 'Breathing Glow' },
+    { id: 3, name: 'Catppuccin', colors: ['#f5e0dc', '#fab387', '#eba0ac', '#eba0ac'], animation: 'Conic Rotation' },
+    { id: 4, name: 'Monokai Pro', colors: ['#a9dc76', '#fc9867', '#ff6188', '#ff6188'], animation: 'Marching Ants' },
+    { id: 5, name: 'Natural & Calm', colors: ['#87a980', '#d2b48c', '#e2725b', '#e2725b'], animation: 'Heartbeat' },
+];
+
+const BORDER_SIZE_PRESETS = [
+    { key: 'micro', label: 'Micro', px: 1 },
+    { key: 'mini', label: 'Mini', px: 2 },
+    { key: 'medium', label: 'Medium', px: 3 },
+    { key: 'major', label: 'Major', px: 4 },
+    { key: 'mega', label: 'Mega', px: 5 },
+    { key: 'mammoth', label: 'Mammoth', px: 6 },
+];
+
+const STAGE_LABELS = ['0-30m', '30-60m', '60-120m', '120m+'];
 
 export default function OrganizationSettingsPage() {
     const { showToast } = useToast();
@@ -30,6 +54,11 @@ export default function OrganizationSettingsPage() {
     const [orgName, setOrgName] = useState('');
     const [defaultGroupId, setDefaultGroupId] = useState<string>('');
     const [offlineThreshold, setOfflineThreshold] = useState(5);
+
+    // Offline border fields (mock-ready)
+    const [borderTemplate, setBorderTemplate] = useState(0);
+    const [borderSize, setBorderSize] = useState('micro');
+    const [borderEnabled, setBorderEnabled] = useState(true);
 
     useEffect(() => {
         fetchAll();
@@ -53,6 +82,17 @@ export default function OrganizationSettingsPage() {
             setDefaultGroupId(settingsData.default_group_id || '');
             setOfflineThreshold(settingsData.offline_threshold_minutes || 5);
 
+            // Load border settings if available from API
+            if (settingsData.offline_border_template !== undefined) {
+                setBorderTemplate(settingsData.offline_border_template);
+            }
+            if (settingsData.offline_border_size) {
+                setBorderSize(settingsData.offline_border_size);
+            }
+            if (settingsData.offline_border_enabled !== undefined) {
+                setBorderEnabled(settingsData.offline_border_enabled);
+            }
+
             setPlaylists(Array.isArray(playlistsData) ? playlistsData : []);
             setGroups(Array.isArray(groupsData) ? groupsData : []);
         } catch (error) {
@@ -71,7 +111,10 @@ export default function OrganizationSettingsPage() {
                 body: JSON.stringify({
                     name: orgName,
                     default_group_id: defaultGroupId || null,
-                    offline_threshold_minutes: offlineThreshold
+                    offline_threshold_minutes: offlineThreshold,
+                    offline_border_template: borderTemplate,
+                    offline_border_size: borderSize,
+                    offline_border_enabled: borderEnabled,
                 })
             });
 
@@ -99,6 +142,7 @@ export default function OrganizationSettingsPage() {
     }
 
     const defaultPlaylist = playlists.find(p => p.id === settings?.default_playlist_id);
+    const selectedTemplate = BORDER_TEMPLATES[borderTemplate];
 
     return (
         <div className="space-y-8">
@@ -169,6 +213,142 @@ export default function OrganizationSettingsPage() {
                 </div>
             </div>
 
+            {/* ─── Offline Border Settings ─── */}
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+                <div className="flex items-center justify-between mb-1">
+                    <h3 className="text-base font-semibold text-gray-900">Offline Border</h3>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                        <span className="text-sm text-gray-500">{borderEnabled ? 'Enabled' : 'Disabled'}</span>
+                        <button
+                            type="button"
+                            role="switch"
+                            aria-checked={borderEnabled}
+                            onClick={() => setBorderEnabled(!borderEnabled)}
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${borderEnabled ? 'bg-blue-600' : 'bg-gray-300'}`}
+                        >
+                            <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${borderEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
+                        </button>
+                    </label>
+                </div>
+                <p className="text-sm text-gray-500 mb-6">
+                    A colored border appears around the player screen when it loses connection. The border color escalates over time to indicate how long the player has been offline.
+                </p>
+
+                {borderEnabled && (
+                    <div className="space-y-6">
+                        {/* Template Picker */}
+                        <div>
+                            <h4 className="text-sm font-medium text-gray-700 mb-3">Color Template</h4>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                {BORDER_TEMPLATES.map((tmpl) => (
+                                    <button
+                                        key={tmpl.id}
+                                        type="button"
+                                        onClick={() => setBorderTemplate(tmpl.id)}
+                                        className={`relative p-4 rounded-lg border-2 text-left transition-all hover:shadow-md ${borderTemplate === tmpl.id
+                                                ? 'border-blue-500 bg-blue-50/50 ring-1 ring-blue-500/20'
+                                                : 'border-gray-200 bg-gray-50 hover:border-gray-300'
+                                            }`}
+                                    >
+                                        {borderTemplate === tmpl.id && (
+                                            <span className="absolute top-2 right-2 material-symbols-outlined text-blue-600 text-[18px]">check_circle</span>
+                                        )}
+                                        <div className="text-sm font-medium text-gray-900 mb-2">{tmpl.name}</div>
+                                        {/* Stage color swatches */}
+                                        <div className="flex items-center gap-1.5 mb-2">
+                                            {tmpl.colors.map((color, i) => (
+                                                <div key={i} className="flex flex-col items-center gap-0.5">
+                                                    <div
+                                                        className="w-7 h-7 rounded-md border border-gray-200/80 shadow-sm"
+                                                        style={{ backgroundColor: color }}
+                                                        title={`Stage ${i + 1}: ${STAGE_LABELS[i]}`}
+                                                    />
+                                                    <span className="text-[9px] text-gray-400 leading-none">{STAGE_LABELS[i]}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        {/* Animation label */}
+                                        <div className="flex items-center gap-1.5">
+                                            <span className="material-symbols-outlined text-gray-400 text-[14px]">animation</span>
+                                            <span className="text-xs text-gray-500">{tmpl.animation}</span>
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Border Size Presets */}
+                        <div>
+                            <h4 className="text-sm font-medium text-gray-700 mb-3">Border Width</h4>
+                            <div className="flex flex-wrap gap-2">
+                                {BORDER_SIZE_PRESETS.map((preset) => (
+                                    <button
+                                        key={preset.key}
+                                        type="button"
+                                        onClick={() => setBorderSize(preset.key)}
+                                        className={`px-4 py-2 rounded-lg border text-sm font-medium transition-all ${borderSize === preset.key
+                                                ? 'border-blue-500 bg-blue-50 text-blue-700 ring-1 ring-blue-500/20'
+                                                : 'border-gray-200 bg-gray-50 text-gray-600 hover:border-gray-300 hover:bg-gray-100'
+                                            }`}
+                                    >
+                                        {preset.label}
+                                        <span className="text-xs text-gray-400 ml-1.5">({preset.px}px)</span>
+                                    </button>
+                                ))}
+                            </div>
+                            <p className="text-xs text-gray-400 mt-2">
+                                This setting applies to all players in your organization.
+                            </p>
+                        </div>
+
+                        {/* Preview */}
+                        <div>
+                            <h4 className="text-sm font-medium text-gray-700 mb-3">Preview</h4>
+                            <div className="relative w-full max-w-md aspect-video bg-slate-900 rounded-lg overflow-hidden">
+                                {/* Simulated screen content */}
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <div className="text-center">
+                                        <span className="material-symbols-outlined text-slate-600 text-[48px]">tv</span>
+                                        <p className="text-slate-500 text-sm mt-2">Player Content</p>
+                                    </div>
+                                </div>
+                                {/* Border preview */}
+                                <div
+                                    className="absolute inset-0 pointer-events-none rounded-lg"
+                                    style={{
+                                        border: `${BORDER_SIZE_PRESETS.find(p => p.key === borderSize)?.px || 1}px solid ${selectedTemplate.colors[0]}`,
+                                    }}
+                                />
+                                {/* Stage indicator */}
+                                <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/60 rounded text-[10px] text-slate-300 backdrop-blur-sm">
+                                    Stage 1 · {selectedTemplate.name} · {BORDER_SIZE_PRESETS.find(p => p.key === borderSize)?.label}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {/* ─── Wallpaper (stub) ─── */}
+            <div className="bg-white rounded-xl border border-gray-200 p-6 opacity-60">
+                <div className="flex items-center gap-3 mb-1">
+                    <h3 className="text-base font-semibold text-gray-900">Player Wallpaper</h3>
+                    <span className="px-2 py-0.5 bg-gray-100 text-gray-500 text-xs font-medium rounded-full">Coming Soon</span>
+                </div>
+                <p className="text-sm text-gray-500 mb-4">Upload a custom wallpaper for the player status screen glass card background.</p>
+                <div className="flex items-center gap-4 max-w-md">
+                    <div className="w-20 h-20 rounded-lg bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-gray-400 text-[28px]">wallpaper</span>
+                    </div>
+                    <button
+                        disabled
+                        className="px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-400 bg-gray-50 cursor-not-allowed"
+                    >
+                        Upload Wallpaper
+                    </button>
+                </div>
+            </div>
+
             {/* Save Button */}
             <div className="flex justify-end">
                 <button
@@ -192,3 +372,4 @@ export default function OrganizationSettingsPage() {
         </div>
     );
 }
+

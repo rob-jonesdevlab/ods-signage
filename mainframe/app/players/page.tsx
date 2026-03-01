@@ -32,6 +32,9 @@ interface Player {
     paired_at: string | null;
     pairing_code: string | null;
     group_id: string | null;
+    current_page: string | null;
+    cache_asset_count: number | null;
+    cache_last_sync: string | null;
 }
 
 export default function PlayersPage() {
@@ -144,6 +147,16 @@ export default function PlayersPage() {
             }
 
             fetchPlayers();
+        });
+
+        // Deploy push acknowledgment (Phase 7 will emit this from server)
+        newSocket.on('deploy:ack', (data) => {
+            showToast({
+                type: 'success',
+                title: 'Playlist Received',
+                message: `${data.player_name || 'Player'} confirmed playlist deployment`,
+                duration: 5000
+            });
         });
 
         setSocket(newSocket);
@@ -362,6 +375,24 @@ export default function PlayersPage() {
         return new Date(dateString).toLocaleString();
     };
 
+    const getPageLabel = (page: string | null) => {
+        switch (page) {
+            case 'content_manager': return { icon: 'slideshow', label: 'Content', color: 'text-emerald-600' };
+            case 'status': return { icon: 'info', label: 'Status', color: 'text-blue-600' };
+            case 'registration': return { icon: 'app_registration', label: 'Registration', color: 'text-amber-600' };
+            default: return { icon: 'remove', label: '—', color: 'text-gray-400' };
+        }
+    };
+
+    const formatCacheInfo = (count: number | null, lastSync: string | null) => {
+        if (count === null && !lastSync) return '—';
+        const countStr = count !== null ? `${count} asset${count !== 1 ? 's' : ''}` : '';
+        if (!lastSync) return countStr || '—';
+        const ago = Math.round((Date.now() - new Date(lastSync).getTime()) / 60000);
+        const agoStr = ago < 1 ? 'just now' : ago < 60 ? `${ago}m ago` : `${Math.round(ago / 60)}h ago`;
+        return countStr ? `${countStr} · ${agoStr}` : agoStr;
+    };
+
     const selectedGroup = groups.find(g => g.id === contextMenu?.groupId);
 
     return (
@@ -505,6 +536,9 @@ export default function PlayersPage() {
                                                 Status
                                             </th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Page
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Pairing
                                             </th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -515,6 +549,9 @@ export default function PlayersPage() {
                                             </th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Last Seen
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Cache
                                             </th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Created
@@ -546,6 +583,17 @@ export default function PlayersPage() {
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
+                                                    {(() => {
+                                                        const pg = getPageLabel(player.current_page);
+                                                        return (
+                                                            <div className="flex items-center gap-1.5">
+                                                                <span className={`material-symbols-outlined text-[16px] ${pg.color}`}>{pg.icon}</span>
+                                                                <span className={`text-sm ${pg.color}`}>{pg.label}</span>
+                                                            </div>
+                                                        );
+                                                    })()}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
                                                     {player.paired_at ? (
                                                         <div className="flex items-center gap-2">
                                                             <span className="material-symbols-outlined text-emerald-600 text-lg">check_circle</span>
@@ -571,6 +619,9 @@ export default function PlayersPage() {
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                     {formatDate(player.last_seen)}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    {formatCacheInfo(player.cache_asset_count, player.cache_last_sync)}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                     {formatDate(player.created_at)}
