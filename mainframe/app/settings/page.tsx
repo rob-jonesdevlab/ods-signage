@@ -5,6 +5,8 @@ export const dynamic = 'force-dynamic';
 import { redirect } from 'next/navigation';
 
 export default function SettingsPage() {
-    // Redirect to profile as the default settings page
-    redirect('/settings/profile');
+    // Default to Organization for roles with access (odsadmin, owner)
+    // Profile is fallback — but since role check requires client-side auth,
+    // redirect to organization (it handles its own access check)
+    redirect('/settings/organization');
 }

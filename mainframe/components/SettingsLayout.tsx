@@ -63,7 +63,7 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                     {/* Sidebar Navigation */}
                     <aside className="lg:col-span-3">
-                        <nav className="space-y-1">
+                        <nav className="space-y-1 lg:sticky lg:top-24">
                             {navItems.map((item) => (
                                 <Link
                                     key={item.key}

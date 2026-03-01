@@ -25,7 +25,7 @@ interface SelectOption {
 
 // ─── Offline Border Template Definitions ────────────────────────
 const BORDER_TEMPLATES = [
-    { id: 0, name: 'Standard Logic', colors: ['#FFFF00', '#FFA500', '#FF0000', '#FF0000'], animation: 'Marching Ants' },
+    { id: 0, name: 'System Standard', colors: ['#FFFF00', '#FFA500', '#FF0000', '#FF0000'], animation: 'Breathing Glow' },
     { id: 1, name: 'Minimal & Neutral', colors: ['#F2D2BD', '#CC7722', '#361010', '#000000'], animation: 'Synchronous Blink' },
     { id: 2, name: 'Tokyo Night', colors: ['#24283b', '#e0af68', '#f7768e', '#f7768e'], animation: 'Breathing Glow' },
     { id: 3, name: 'Catppuccin', colors: ['#f5e0dc', '#fab387', '#eba0ac', '#eba0ac'], animation: 'Conic Rotation' },
@@ -64,6 +64,7 @@ export default function OrganizationSettingsPage() {
     // Editable fields
     const [orgName, setOrgName] = useState('');
     const [defaultGroupId, setDefaultGroupId] = useState<string>('');
+    const [defaultPlaylistId, setDefaultPlaylistId] = useState<string>('');
     const [offlineThreshold, setOfflineThreshold] = useState(5);
 
     // Offline border fields (mock-ready)
@@ -93,6 +94,7 @@ export default function OrganizationSettingsPage() {
             setSettings(settingsData);
             setOrgName(settingsData.name || '');
             setDefaultGroupId(settingsData.default_group_id || '');
+            setDefaultPlaylistId(settingsData.default_playlist_id || '');
             setOfflineThreshold(settingsData.offline_threshold_minutes || 5);
 
             // Load border settings if available from API
@@ -130,6 +132,7 @@ export default function OrganizationSettingsPage() {
                 body: JSON.stringify({
                     name: orgName,
                     default_group_id: defaultGroupId || null,
+                    default_playlist_id: defaultPlaylistId || null,
                     offline_threshold_minutes: offlineThreshold,
                     offline_border_template: borderTemplate,
                     offline_border_width: borderSize,
@@ -162,7 +165,7 @@ export default function OrganizationSettingsPage() {
         );
     }
 
-    const defaultPlaylist = playlists.find(p => p.id === settings?.default_playlist_id);
+    const defaultPlaylist = playlists.find(p => p.id === defaultPlaylistId);
     const isCustomTemplate = borderTemplate === 6;
     const selectedTemplate = isCustomTemplate
         ? { id: 6, name: 'Custom', colors: customColors, animation: customAnimation }
@@ -229,18 +232,20 @@ export default function OrganizationSettingsPage() {
                 <p className="text-xs text-gray-400 mt-2">Recommended: 5 minutes. Increase for locations with intermittent connectivity.</p>
             </div>
 
-            {/* Default Playlist (read-only, managed from Playlists page) */}
+            {/* Default Playlist */}
             <div className="bg-white rounded-xl border border-gray-200 p-6">
                 <h3 className="text-base font-semibold text-gray-900 mb-1">Default Playlist for New Devices</h3>
-                <p className="text-sm text-gray-500 mb-4">Set from the Playlists page by clicking the star icon on any playlist.</p>
-                <div className="flex items-center gap-3 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg max-w-md">
-                    <span className="material-symbols-outlined text-amber-500 text-[20px]">
-                        {defaultPlaylist ? 'star' : 'star_border'}
-                    </span>
-                    <span className="text-sm text-gray-700">
-                        {defaultPlaylist ? defaultPlaylist.name : 'No default playlist set'}
-                    </span>
-                </div>
+                <p className="text-sm text-gray-500 mb-4">Newly paired devices will automatically use this playlist.</p>
+                <select
+                    value={defaultPlaylistId}
+                    onChange={(e) => setDefaultPlaylistId(e.target.value)}
+                    className="w-full max-w-md px-4 py-2.5 border border-gray-200 rounded-lg text-gray-900 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                    <option value="">No default playlist</option>
+                    {playlists.map(playlist => (
+                        <option key={playlist.id} value={playlist.id}>{playlist.name}</option>
+                    ))}
+                </select>
             </div>
 
             {/* ─── Offline Border Settings ─── */}
