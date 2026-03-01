@@ -28,6 +28,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import AddContentModal from '../../../components/AddContentModal';
 import PlaylistScheduler, { PlaylistSchedule } from '../../../components/PlaylistScheduler';
+import DeployFromEditorModal from '../../../components/DeployFromEditorModal';
 
 // ── Types ───────────────────────────────────────────────────
 interface Content {
@@ -332,6 +333,7 @@ export default function PlaylistEditorPage() {
     const [previewContent, setPreviewContent] = useState<PlaylistContent | null>(null);
     const [schedule, setSchedule] = useState<PlaylistSchedule | null>(null);
     const [sidebarTab, setSidebarTab] = useState<'assets' | 'schedule'>('assets');
+    const [showDeploy, setShowDeploy] = useState(false);
 
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -560,7 +562,10 @@ export default function PlaylistEditorPage() {
                                 </button>
                             </>
                         )}
-                        <button className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors flex items-center gap-2">
+                        <button
+                            onClick={() => setShowDeploy(true)}
+                            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors flex items-center gap-2"
+                        >
                             <span className="material-symbols-outlined text-[16px]">rocket_launch</span>
                             Deploy
                         </button>
@@ -764,6 +769,13 @@ export default function PlaylistEditorPage() {
             />
 
             <PreviewModal content={previewContent} onClose={() => setPreviewContent(null)} />
+
+            <DeployFromEditorModal
+                isOpen={showDeploy}
+                playlistId={playlistId}
+                playlistName={playlist?.name || 'Playlist'}
+                onClose={() => setShowDeploy(false)}
+            />
         </div>
     );
 }
