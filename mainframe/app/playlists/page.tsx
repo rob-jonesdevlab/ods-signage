@@ -30,6 +30,9 @@ interface Playlist {
     created_by: string;
     created_at: string;
     updated_at: string;
+    item_count?: number;
+    total_duration?: number;
+    schedule?: any;
 }
 
 export default function PlaylistsPage() {
@@ -442,8 +445,8 @@ export default function PlaylistsPage() {
                                             <button
                                                 onClick={(e) => handleToggleDefault(e, playlist.id)}
                                                 className={`p-1 rounded-md transition-all ${defaultPlaylistId === playlist.id
-                                                        ? 'text-amber-500 hover:text-amber-600'
-                                                        : 'text-gray-300 hover:text-amber-400 opacity-0 group-hover:opacity-100'
+                                                    ? 'text-amber-500 hover:text-amber-600'
+                                                    : 'text-gray-300 hover:text-amber-400 opacity-0 group-hover:opacity-100'
                                                     }`}
                                                 title={defaultPlaylistId === playlist.id ? 'Remove as default for new devices' : 'Set as default for new devices'}
                                             >
@@ -465,14 +468,30 @@ export default function PlaylistsPage() {
                                         </p>
                                     )}
                                     <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-                                        <div className="flex items-center gap-2">
-                                            <div className="flex -space-x-2">
-                                                <div className="h-6 w-6 rounded-full bg-gray-300 border border-white"></div>
-                                                <div className="h-6 w-6 rounded-full bg-gray-200 border border-white"></div>
-                                            </div>
-                                            <span className="text-xs text-gray-500">0 items</span>
+                                        <div className="flex items-center gap-3">
+                                            <span className="flex items-center gap-1 text-xs text-gray-500">
+                                                <span className="material-symbols-outlined text-[14px]">perm_media</span>
+                                                {playlist.item_count || 0} item{(playlist.item_count || 0) !== 1 ? 's' : ''}
+                                            </span>
+                                            {(playlist.total_duration || 0) > 0 && (
+                                                <span className="flex items-center gap-1 text-xs text-gray-500">
+                                                    <span className="material-symbols-outlined text-[14px]">schedule</span>
+                                                    {playlist.total_duration! >= 3600
+                                                        ? `${Math.floor(playlist.total_duration! / 3600)}h ${Math.floor((playlist.total_duration! % 3600) / 60)}m`
+                                                        : playlist.total_duration! >= 60
+                                                            ? `${Math.floor(playlist.total_duration! / 60)}m ${playlist.total_duration! % 60}s`
+                                                            : `${playlist.total_duration}s`
+                                                    }
+                                                </span>
+                                            )}
+                                            {playlist.schedule && (
+                                                <span className="flex items-center gap-1 text-xs text-purple-500">
+                                                    <span className="material-symbols-outlined text-[14px]">calendar_month</span>
+                                                    Scheduled
+                                                </span>
+                                            )}
                                         </div>
-                                        <span className="text-xs text-gray-500">Created {formatDate(playlist.created_at)}</span>
+                                        <span className="text-xs text-gray-400">{formatDate(playlist.created_at)}</span>
                                     </div>
                                 </Link>
                             ))}
