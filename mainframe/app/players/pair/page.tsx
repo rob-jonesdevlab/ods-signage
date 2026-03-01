@@ -72,6 +72,12 @@ function PairDeviceContent() {
             return;
         }
 
+        if (!user) {
+            setError('Not authenticated. Please log in.');
+            setState('error');
+            return;
+        }
+
         setState('loading');
         setError('');
 
