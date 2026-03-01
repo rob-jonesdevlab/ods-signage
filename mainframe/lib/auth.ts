@@ -153,13 +153,19 @@ export async function authenticatedFetch(url: string, options: RequestInit = {})
         throw new Error('Not authenticated - please log in');
     }
 
+    // Don't set Content-Type for FormData — browser auto-sets multipart/form-data with boundary
+    const isFormData = options.body instanceof FormData;
+    const headers: Record<string, string> = {
+        ...options.headers as Record<string, string>,
+        'Authorization': `Bearer ${token}`,
+    };
+    if (!isFormData) {
+        headers['Content-Type'] = 'application/json';
+    }
+
     const response = await fetch(url, {
         ...options,
-        headers: {
-            ...options.headers,
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        }
+        headers
     });
 
     // Handle auth errors
@@ -170,14 +176,18 @@ export async function authenticatedFetch(url: string, options: RequestInit = {})
             const newToken = await getAccessToken();
 
             if (newToken) {
+                const retryHeaders: Record<string, string> = {
+                    ...options.headers as Record<string, string>,
+                    'Authorization': `Bearer ${newToken}`,
+                };
+                if (!isFormData) {
+                    retryHeaders['Content-Type'] = 'application/json';
+                }
+
                 // Retry request with new token
                 return fetch(url, {
                     ...options,
-                    headers: {
-                        ...options.headers,
-                        'Authorization': `Bearer ${newToken}`,
-                        'Content-Type': 'application/json'
-                    }
+                    headers: retryHeaders
                 });
             }
         } catch (refreshError) {
