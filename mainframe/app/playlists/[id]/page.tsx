@@ -648,7 +648,7 @@ export default function PlaylistEditorPage() {
                         >
                             <span className="material-symbols-outlined text-[16px]">calendar_month</span>
                             Schedule
-                            {schedule && schedule.blocks.length > 0 && (
+                            {(schedule?.blocks?.length ?? 0) > 0 && (
                                 <span className="w-2 h-2 rounded-full bg-blue-500" />
                             )}
                         </button>
