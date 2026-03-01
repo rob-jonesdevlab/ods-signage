@@ -15,7 +15,6 @@ import {
     getPaymentMethod,
     PLANS,
 } from '@/lib/api/billing';
-import { CreditCard, Download, Check, Award, TrendingUp } from 'lucide-react';
 
 interface Subscription {
     id: string | null;
@@ -145,36 +144,31 @@ export default function BillingSettings() {
     return (
         <div className="space-y-6">
             {/* Page Header */}
-            <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-600/20 rounded-lg">
-                    <CreditCard className="w-6 h-6 text-green-400" />
-                </div>
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Billing & Subscription</h1>
-                    <p className="text-gray-400">Manage your subscription plan, payment methods, and billing history.</p>
-                </div>
+            <div>
+                <h2 className="text-xl font-bold text-gray-900">Billing & Subscription</h2>
+                <p className="text-sm text-gray-500">Manage your subscription plan, payment methods, and billing history.</p>
             </div>
 
             {loading ? (
-                <p className="text-sm text-gray-400">Loading billing information...</p>
+                <p className="text-sm text-gray-500">Loading billing information...</p>
             ) : (
                 <>
                     {/* Current Plan - Glass Panel */}
-                    <div className="relative overflow-hidden rounded-xl shadow-lg bg-gray-200/70 backdrop-blur-md border border-white/8">
+                    <div className="relative overflow-hidden rounded-xl shadow-sm bg-white border border-gray-200">
                         {/* Watermark Icon */}
-                        <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
-                            <Award className="w-32 h-32 text-gray-900" />
+                        <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                            <span className="material-symbols-outlined text-[128px] text-gray-900">workspace_premium</span>
                         </div>
 
                         {/* Header */}
-                        <div className="px-6 py-5 border-b border-gray-300/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative z-10">
+                        <div className="px-6 py-5 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative z-10">
                             <div>
                                 <h3 className="text-lg font-semibold text-gray-900">Current Plan</h3>
                                 <p className="text-sm text-gray-500">
                                     You are currently on the <strong className="text-gray-900">{currentPlan?.name}</strong> plan.
                                 </p>
                             </div>
-                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-600/20 text-blue-400 border border-blue-600/30">
+                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-600 border border-blue-200">
                                 ACTIVE
                             </span>
                         </div>
@@ -191,7 +185,7 @@ export default function BillingSettings() {
                                     <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-gray-500">
                                         {currentPlan?.features.slice(0, 3).map((feature, index) => (
                                             <div key={index} className="flex items-center gap-2">
-                                                <Check className="w-4 h-4 text-blue-400" />
+                                                <span className="material-symbols-outlined text-[16px] text-blue-500">check</span>
                                                 <span>{feature}</span>
                                             </div>
                                         ))}
@@ -200,22 +194,22 @@ export default function BillingSettings() {
 
                                 {/* Actions */}
                                 <div className="flex flex-col gap-3 min-w-[160px]">
-                                    <button className="w-full px-4 py-2.5 text-sm font-medium text-gray-900 bg-blue-600 hover:bg-blue-700 rounded-lg shadow-lg shadow-blue-500/25 transition-all">
+                                    <button className="w-full px-4 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-lg shadow-blue-500/25 transition-all">
                                         Manage Plan
                                     </button>
-                                    <button className="w-full px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-200 border border-gray-400 rounded-lg transition-colors">
+                                    <button className="w-full px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 border border-gray-200 rounded-lg transition-colors">
                                         Contact Support
                                     </button>
                                 </div>
                             </div>
 
                             {/* Billing Countdown */}
-                            <div className="mt-8 pt-6 border-t border-gray-300/50">
+                            <div className="mt-8 pt-6 border-t border-gray-200">
                                 <div className="flex justify-between items-center text-sm mb-2">
                                     <span className="text-gray-500">
                                         Next billing date: <span className="text-gray-700">{subscription ? new Date(subscription.current_period_end).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'N/A'}</span>
                                     </span>
-                                    <div className="w-1/3 bg-gray-300 rounded-full h-2 overflow-hidden">
+                                    <div className="w-1/3 bg-gray-100 rounded-full h-2 overflow-hidden">
                                         <div className="bg-blue-500 h-2 rounded-full transition-all" style={{ width: `${getBillingProgress()}%` }} />
                                     </div>
                                 </div>
@@ -227,39 +221,39 @@ export default function BillingSettings() {
                     {/* Payment Method & Resource Usage */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Payment Method */}
-                        <div className="bg-gray-200 border border-gray-300 rounded-xl shadow-sm p-6 flex flex-col justify-between">
+                        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 flex flex-col justify-between">
                             <div>
                                 <div className="flex justify-between items-start mb-4">
                                     <h3 className="text-base font-semibold text-gray-900">Payment Method</h3>
-                                    <button className="text-sm text-blue-400 hover:text-blue-300 font-medium">Update</button>
+                                    <button className="text-sm text-blue-500 hover:text-blue-700 font-medium">Update</button>
                                 </div>
                                 {paymentMethod ? (
-                                    <div className="flex items-center gap-4 bg-white/50 p-4 rounded-lg border border-gray-300/50">
-                                        <div className="bg-white p-2 rounded border border-gray-300">
+                                    <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                        <div className="bg-white p-2 rounded border border-gray-200">
                                             <span className="font-bold text-blue-800 italic text-xl px-1">{paymentMethod.brand.toUpperCase()}</span>
                                         </div>
                                         <div>
                                             <p className="text-sm font-medium text-gray-900">{paymentMethod.brand} ending in {paymentMethod.last4}</p>
                                             <p className="text-xs text-gray-500">Expires {paymentMethod.exp_month}/{paymentMethod.exp_year}</p>
                                         </div>
-                                        <Check className="w-5 h-5 ml-auto text-emerald-500" />
+                                        <span className="material-symbols-outlined text-[20px] ml-auto text-emerald-500">check_circle</span>
                                     </div>
                                 ) : (
-                                    <button className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-colors text-gray-900">
+                                    <button className="w-full px-4 py-2.5 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-colors text-white text-sm">
                                         Add Payment Method
                                     </button>
                                 )}
                             </div>
                             {paymentMethod && (
-                                <div className="mt-4 pt-4 border-t border-gray-300">
+                                <div className="mt-4 pt-4 border-t border-gray-200">
                                     <p className="text-xs text-gray-500">Billing address: 1234 Silicon Ave, San Francisco, CA 94107</p>
                                 </div>
                             )}
                         </div>
 
                         {/* Resource Usage */}
-                        <div className="bg-gradient-to-br from-gray-200 to-gray-100 border border-gray-300/50 rounded-xl shadow-lg p-6 relative overflow-hidden group">
-                            <div className="absolute right-0 top-0 h-full w-2/3 bg-gradient-to-l from-blue-600/10 to-transparent pointer-events-none" />
+                        <div className="bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-xl shadow-sm p-6 relative overflow-hidden group">
+                            <div className="absolute right-0 top-0 h-full w-2/3 bg-gradient-to-l from-blue-50 to-transparent pointer-events-none" />
                             <h3 className="text-base font-semibold text-gray-900 mb-4 relative z-10">Resource Usage</h3>
                             {usageStats && (
                                 <div className="space-y-4 relative z-10">
@@ -269,7 +263,7 @@ export default function BillingSettings() {
                                             <span>Storage ({usageStats.storage.limit === -1 ? '∞' : `${usageStats.storage.limit}GB`})</span>
                                             <span className="text-gray-900">{usageStats.storage.used}GB</span>
                                         </div>
-                                        <div className="w-full bg-gray-300/50 rounded-full h-1.5">
+                                        <div className="w-full bg-gray-100 rounded-full h-1.5">
                                             <div
                                                 className="bg-blue-400 h-1.5 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)] transition-all"
                                                 style={{ width: `${getUsagePercentage(usageStats.storage.used, usageStats.storage.limit)}%` }}
@@ -283,7 +277,7 @@ export default function BillingSettings() {
                                             <span>Players</span>
                                             <span className="text-gray-900">{usageStats.players.used} / {usageStats.players.limit === -1 ? '∞' : usageStats.players.limit}</span>
                                         </div>
-                                        <div className="w-full bg-gray-300/50 rounded-full h-1.5">
+                                        <div className="w-full bg-gray-100 rounded-full h-1.5">
                                             <div
                                                 className="bg-emerald-400 h-1.5 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)] transition-all"
                                                 style={{ width: `${getUsagePercentage(usageStats.players.used, usageStats.players.limit)}%` }}
@@ -297,7 +291,7 @@ export default function BillingSettings() {
                                             <span>Users</span>
                                             <span className="text-gray-900">{usageStats.users.used} / {usageStats.users.limit === -1 ? '∞' : usageStats.users.limit}</span>
                                         </div>
-                                        <div className="w-full bg-gray-300/50 rounded-full h-1.5">
+                                        <div className="w-full bg-gray-100 rounded-full h-1.5">
                                             <div
                                                 className="bg-amber-400 h-1.5 rounded-full shadow-[0_0_10px_rgba(251,191,36,0.5)] transition-all"
                                                 style={{ width: `${getUsagePercentage(usageStats.users.used, usageStats.users.limit)}%` }}
@@ -310,14 +304,14 @@ export default function BillingSettings() {
                     </div>
 
                     {/* Billing History */}
-                    <div className="bg-gray-200 border border-gray-300 rounded-xl shadow-sm overflow-hidden">
-                        <div className="px-6 py-5 border-b border-gray-300 flex justify-between items-center">
+                    <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+                        <div className="px-6 py-5 border-b border-gray-200 flex justify-between items-center">
                             <div>
                                 <h3 className="text-lg font-semibold text-gray-900">Billing History</h3>
                                 <p className="text-sm text-gray-500">View and download your past invoices.</p>
                             </div>
                             <button className="p-2 text-gray-500 hover:text-gray-700 transition-colors">
-                                <TrendingUp className="w-5 h-5" />
+                                <span className="material-symbols-outlined text-[20px]">trending_up</span>
                             </button>
                         </div>
                         <div className="overflow-x-auto">
@@ -325,7 +319,7 @@ export default function BillingSettings() {
                                 <div className="px-6 py-8 text-center text-sm text-gray-500">No invoices yet</div>
                             ) : (
                                 <table className="w-full text-left text-sm text-gray-500">
-                                    <thead className="bg-white/50 text-xs uppercase font-semibold text-gray-500">
+                                    <thead className="bg-gray-50 text-xs uppercase font-semibold text-gray-500">
                                         <tr>
                                             <th className="px-6 py-3">Invoice ID</th>
                                             <th className="px-6 py-3">Date</th>
@@ -334,7 +328,7 @@ export default function BillingSettings() {
                                             <th className="px-6 py-3 text-right">Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-gray-300">
+                                    <tbody className="divide-y divide-gray-200">
                                         {invoices.map((invoice, index) => (
                                             <tr key={invoice.id} className="hover:bg-gray-100/30 transition-colors">
                                                 <td className="px-6 py-4 font-mono text-xs text-gray-700">{generateInvoiceId(index)}</td>
@@ -343,18 +337,18 @@ export default function BillingSettings() {
                                                 <td className="px-6 py-4">
                                                     <span
                                                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${invoice.status === 'paid'
-                                                            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                                                            ? 'bg-emerald-50 text-emerald-600 border-emerald-200'
                                                             : invoice.status === 'pending'
-                                                                ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
-                                                                : 'bg-gray-300 text-gray-700 border-gray-400'
+                                                                ? 'bg-yellow-50 text-yellow-600 border-yellow-200'
+                                                                : 'bg-gray-100 text-gray-600 border-gray-200'
                                                             }`}
                                                     >
                                                         {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
                                                     </span>
                                                 </td>
                                                 <td className="px-6 py-4 text-right">
-                                                    <button className="text-blue-400 hover:text-blue-300 font-medium text-xs flex items-center justify-end gap-1 ml-auto">
-                                                        <Download className="w-4 h-4" />
+                                                    <button className="text-blue-500 hover:text-blue-700 font-medium text-xs flex items-center justify-end gap-1 ml-auto">
+                                                        <span className="material-symbols-outlined text-[16px]">download</span>
                                                         PDF
                                                     </button>
                                                 </td>
@@ -365,17 +359,17 @@ export default function BillingSettings() {
                             )}
                         </div>
                         {invoices.length > 0 && (
-                            <div className="px-6 py-4 border-t border-gray-300 flex justify-center">
+                            <div className="px-6 py-4 border-t border-gray-200 flex justify-center">
                                 <button className="text-sm text-gray-500 hover:text-gray-900 font-medium flex items-center gap-1 transition-colors">
                                     Load More Invoices
-                                    <TrendingUp className="w-4 h-4 rotate-90" />
+                                    <span className="material-symbols-outlined text-[16px] rotate-90">trending_up</span>
                                 </button>
                             </div>
                         )}
                     </div>
 
                     {/* Available Plans */}
-                    <div className="bg-gray-200 border border-gray-300 rounded-xl shadow-sm p-6">
+                    <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
                         <div className="mb-6">
                             <h3 className="text-lg font-semibold text-gray-900">Available Plans</h3>
                             <p className="text-sm text-gray-500">Choose the plan that fits your needs</p>
@@ -387,8 +381,8 @@ export default function BillingSettings() {
                                     <div
                                         key={planId}
                                         className={`p-6 rounded-lg border ${isCurrentPlan
-                                            ? 'bg-blue-900/20 border-blue-600'
-                                            : 'bg-gray-100/30 border-gray-300/50'
+                                            ? 'bg-blue-50 border-blue-300'
+                                            : 'bg-gray-50 border-gray-200'
                                             }`}
                                     >
                                         <h3 className="text-lg font-semibold text-gray-900">{plan.name}</h3>
@@ -399,7 +393,7 @@ export default function BillingSettings() {
                                         <ul className="mt-4 space-y-2">
                                             {plan.features.map((feature, index) => (
                                                 <li key={index} className="flex items-center gap-2 text-sm text-gray-700">
-                                                    <Check className="w-4 h-4 text-green-400" />
+                                                    <span className="material-symbols-outlined text-[16px] text-emerald-500">check</span>
                                                     {feature}
                                                 </li>
                                             ))}
@@ -407,9 +401,9 @@ export default function BillingSettings() {
                                         <button
                                             onClick={() => handlePlanChange(planId)}
                                             disabled={isCurrentPlan || updating}
-                                            className={`w-full mt-6 px-4 py-2 rounded-lg font-medium transition-colors ${isCurrentPlan
-                                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                                : 'bg-blue-600 hover:bg-blue-700 text-gray-900'
+                                            className={`w-full mt-6 px-4 py-2.5 rounded-lg font-medium transition-colors text-sm ${isCurrentPlan
+                                                ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                                                : 'bg-blue-600 hover:bg-blue-700 text-white'
                                                 }`}
                                         >
                                             {isCurrentPlan ? 'Current Plan' : 'Select Plan'}

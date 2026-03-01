@@ -7,7 +7,6 @@ export const dynamic = 'force-dynamic';
 import { useState, useEffect } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Bell, Mail, Moon, Smartphone } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/useToast';
 import {
@@ -206,7 +205,7 @@ export default function NotificationsSettings() {
 
                         {/* Email categories */}
                         {emailNotifications && (
-                            <div className="pl-4 border-l-2 border-gray-700 space-y-3">
+                            <div className="pl-4 border-l-2 border-gray-200 space-y-3">
                                 <ToggleItem
                                     label="Player Offline Alerts"
                                     description="When a player goes offline"
@@ -289,7 +288,7 @@ export default function NotificationsSettings() {
 
                         {/* Push categories - same as email */}
                         {pushNotifications && pushPermission === 'granted' && (
-                            <div className="pl-4 border-l-2 border-gray-700">
+                            <div className="pl-4 border-l-2 border-gray-200">
                                 <p className="text-xs text-gray-400 mb-3">
                                     Push notifications follow the same preferences as email notifications
                                 </p>
@@ -334,7 +333,7 @@ export default function NotificationsSettings() {
                                     <input
                                         type="time"
                                         {...register('quietHoursStart')}
-                                        className="w-full px-3 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     />
                                     {errors.quietHoursStart && (
                                         <p className="mt-1 text-xs text-red-400">
@@ -349,7 +348,7 @@ export default function NotificationsSettings() {
                                     <input
                                         type="time"
                                         {...register('quietHoursEnd')}
-                                        className="w-full px-3 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     />
                                 </div>
                             </div>
@@ -369,14 +368,14 @@ export default function NotificationsSettings() {
                         type="button"
                         onClick={() => reset()}
                         disabled={!isDirty || saving}
-                        className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="px-4 py-2.5 text-sm font-medium text-gray-500 hover:text-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                         Cancel
                     </button>
                     <button
                         type="submit"
                         disabled={!isDirty || saving}
-                        className="px-6 py-2 bg-blue-600 text-gray-900 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                        className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 text-sm font-medium"
                     >
                         {saving ? (
                             <>

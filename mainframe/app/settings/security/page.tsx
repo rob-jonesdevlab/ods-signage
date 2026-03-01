@@ -12,7 +12,6 @@ import { useToast } from '@/hooks/useToast';
 import { changePasswordSchema, ChangePasswordData } from '@/lib/validations/security';
 import { changePassword, getSecurityActivity, revokeAllOtherSessions } from '@/lib/api/security';
 import SettingsCard from '@/components/SettingsCard';
-import { Shield, Key, Activity, LogOut } from 'lucide-react';
 
 export default function SecuritySettings() {
     const { user } = useAuth();
@@ -113,14 +112,9 @@ export default function SecuritySettings() {
     return (
         <div className="space-y-6">
             {/* Page Header */}
-            <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-600/20 rounded-lg">
-                    <Shield className="w-6 h-6 text-blue-400" />
-                </div>
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Security Settings</h1>
-                    <p className="text-gray-400">Manage your account security and authentication</p>
-                </div>
+            <div>
+                <h2 className="text-xl font-bold text-gray-900">Security Settings</h2>
+                <p className="text-sm text-gray-500">Manage your account security and authentication</p>
             </div>
 
             {/* Change Password */}
@@ -131,13 +125,13 @@ export default function SecuritySettings() {
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                     {/* Current Password */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                             Current Password
                         </label>
                         <input
                             type="password"
                             {...register('currentPassword')}
-                            className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
                             placeholder="Enter your current password"
                         />
                         {errors.currentPassword && (
@@ -147,13 +141,13 @@ export default function SecuritySettings() {
 
                     {/* New Password */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                             New Password
                         </label>
                         <input
                             type="password"
                             {...register('newPassword')}
-                            className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
                             placeholder="Enter your new password"
                         />
                         {errors.newPassword && (
@@ -166,13 +160,13 @@ export default function SecuritySettings() {
 
                     {/* Confirm Password */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                             Confirm New Password
                         </label>
                         <input
                             type="password"
                             {...register('confirmPassword')}
-                            className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
                             placeholder="Confirm your new password"
                         />
                         {errors.confirmPassword && (
@@ -183,7 +177,7 @@ export default function SecuritySettings() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg font-medium transition-colors text-gray-900"
+                        className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-lg font-medium transition-colors text-white text-sm"
                     >
                         {loading ? 'Changing Password...' : 'Change Password'}
                     </button>
@@ -196,16 +190,16 @@ export default function SecuritySettings() {
                 description="Manage devices that are currently signed in to your account"
             >
                 <div className="space-y-4">
-                    <div className="p-4 bg-blue-900/20 border border-blue-800/30 rounded-lg">
-                        <p className="text-sm text-blue-300">
+                    <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                        <p className="text-sm text-blue-700">
                             <strong>Note:</strong> Session management is currently limited. You can sign out all other devices, but individual session management is not yet available.
                         </p>
                     </div>
                     <button
                         onClick={handleSignOutOtherDevices}
-                        className="px-6 py-2 bg-red-600 hover:bg-red-700 rounded-lg font-medium transition-colors flex items-center gap-2 text-gray-900"
+                        className="px-6 py-2.5 bg-red-600 hover:bg-red-700 rounded-lg font-medium transition-colors flex items-center gap-2 text-white text-sm"
                     >
-                        <LogOut className="w-4 h-4" />
+                        <span className="material-symbols-outlined text-[18px]">logout</span>
                         Sign Out All Other Devices
                     </button>
                 </div>
@@ -218,28 +212,28 @@ export default function SecuritySettings() {
             >
                 <div className="space-y-2">
                     {loadingActivity ? (
-                        <p className="text-sm text-gray-400">Loading activity...</p>
+                        <p className="text-sm text-gray-500">Loading activity...</p>
                     ) : activityLog.length === 0 ? (
-                        <p className="text-sm text-gray-400">No recent activity</p>
+                        <p className="text-sm text-gray-500">No recent activity</p>
                     ) : (
                         <div className="space-y-2">
                             {activityLog.map((event: any) => (
                                 <div
                                     key={event.id}
-                                    className="flex justify-between items-center py-3 px-4 bg-gray-800/30 rounded-lg border border-gray-700/50"
+                                    className="flex justify-between items-center py-3 px-4 bg-gray-50 rounded-lg border border-gray-200"
                                 >
                                     <div>
                                         <p className="text-sm font-medium text-gray-900">
                                             {formatEventType(event.event_type)}
                                         </p>
-                                        <p className="text-xs text-gray-400">
+                                        <p className="text-xs text-gray-500">
                                             {new Date(event.created_at).toLocaleString()}
                                         </p>
                                     </div>
                                     <span
-                                        className={`text-xs px-2 py-1 rounded ${event.status === 'success'
-                                            ? 'bg-green-900/30 text-green-400'
-                                            : 'bg-red-900/30 text-red-400'
+                                        className={`text-xs px-2 py-1 rounded-full ${event.status === 'success'
+                                            ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
+                                            : 'bg-red-50 text-red-600 border border-red-200'
                                             }`}
                                     >
                                         {event.status}

@@ -19,7 +19,6 @@ import {
     removeMember,
 } from '@/lib/api/team';
 import SettingsCard from '@/components/SettingsCard';
-import { Users, UserPlus, Mail, Trash2, Shield } from 'lucide-react';
 
 interface TeamMember {
     id: string;
@@ -209,15 +208,15 @@ export default function TeamSettings() {
     const getRoleBadgeColor = (role: string) => {
         switch (role) {
             case 'system':
-                return 'bg-purple-900/30 text-purple-400 border-purple-800/30';
+                return 'bg-purple-50 text-purple-600 border-purple-200';
             case 'odsadmin':
-                return 'bg-red-900/30 text-red-400 border-red-800/30';
+                return 'bg-red-50 text-red-600 border-red-200';
             case 'odsmanager':
-                return 'bg-blue-900/30 text-blue-400 border-blue-800/30';
+                return 'bg-blue-50 text-blue-600 border-blue-200';
             case 'supervisor':
-                return 'bg-green-900/30 text-green-400 border-green-800/30';
+                return 'bg-emerald-50 text-emerald-600 border-emerald-200';
             default:
-                return 'bg-gray-900/30 text-gray-400 border-gray-800/30';
+                return 'bg-gray-50 text-gray-600 border-gray-200';
         }
     };
 
@@ -236,21 +235,16 @@ export default function TeamSettings() {
         <div className="space-y-6">
             {/* Page Header */}
             <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <div className="p-2 bg-blue-600/20 rounded-lg">
-                        <Users className="w-6 h-6 text-blue-400" />
-                    </div>
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Team Members</h1>
-                        <p className="text-gray-400">Manage your team and invitations</p>
-                    </div>
+                <div>
+                    <h2 className="text-xl font-bold text-gray-900">Team Members</h2>
+                    <p className="text-sm text-gray-500">Manage your team and invitations</p>
                 </div>
                 {isAdmin && (
                     <button
                         onClick={() => setShowInviteModal(true)}
-                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-colors flex items-center gap-2 text-gray-900"
+                        className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-colors flex items-center gap-2 text-white text-sm"
                     >
-                        <UserPlus className="w-4 h-4" />
+                        <span className="material-symbols-outlined text-[18px]">person_add</span>
                         Invite Member
                     </button>
                 )}
@@ -259,15 +253,15 @@ export default function TeamSettings() {
             {/* Team Members List */}
             <SettingsCard title="Team Members" description={`${members.length} member${members.length !== 1 ? 's' : ''}`}>
                 {loading ? (
-                    <p className="text-sm text-gray-400">Loading team members...</p>
+                    <p className="text-sm text-gray-500">Loading team members...</p>
                 ) : members.length === 0 ? (
-                    <p className="text-sm text-gray-400">No team members found</p>
+                    <p className="text-sm text-gray-500">No team members found</p>
                 ) : (
                     <div className="space-y-3">
                         {members.map((member) => (
                             <div
                                 key={member.id}
-                                className="flex items-center justify-between p-4 bg-gray-800/30 rounded-lg border border-gray-700/50"
+                                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200"
                             >
                                 <div className="flex items-center gap-4">
                                     {/* Avatar */}
@@ -277,7 +271,7 @@ export default function TeamSettings() {
                                     {/* Info */}
                                     <div>
                                         <p className="text-sm font-medium text-gray-900">{member.full_name || 'No Name'}</p>
-                                        <p className="text-xs text-gray-400">{member.email}</p>
+                                        <p className="text-xs text-gray-500">{member.email}</p>
                                     </div>
                                 </div>
 
@@ -294,7 +288,7 @@ export default function TeamSettings() {
                                             <select
                                                 value={member.role}
                                                 onChange={(e) => handleRoleChange(member.id, e.target.value, member.full_name || member.email)}
-                                                className="px-3 py-1 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                className="px-3 py-1 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                             >
                                                 <option value="standard">Standard</option>
                                                 <option value="supervisor">Supervisor</option>
@@ -305,17 +299,17 @@ export default function TeamSettings() {
                                             {/* Remove Button */}
                                             <button
                                                 onClick={() => handleRemoveMember(member.id, member.full_name || member.email)}
-                                                className="p-2 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded-lg transition-colors"
+                                                className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                                 title="Remove member"
                                             >
-                                                <Trash2 className="w-4 h-4" />
+                                                <span className="material-symbols-outlined text-[18px]">delete</span>
                                             </button>
                                         </div>
                                     )}
 
                                     {/* Current User Badge */}
                                     {member.id === user?.id && (
-                                        <span className="text-xs px-3 py-1 rounded-full bg-blue-900/30 text-blue-400 border border-blue-800/30">
+                                        <span className="text-xs px-3 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-200">
                                             You
                                         </span>
                                     )}
@@ -336,13 +330,13 @@ export default function TeamSettings() {
                         {invitations.map((invitation) => (
                             <div
                                 key={invitation.id}
-                                className="flex items-center justify-between p-4 bg-yellow-900/10 rounded-lg border border-yellow-800/30"
+                                className="flex items-center justify-between p-4 bg-amber-50 rounded-lg border border-amber-200"
                             >
                                 <div className="flex items-center gap-4">
-                                    <Mail className="w-5 h-5 text-yellow-400" />
+                                    <span className="material-symbols-outlined text-[20px] text-amber-500">mail</span>
                                     <div>
                                         <p className="text-sm font-medium text-gray-900">{invitation.email}</p>
-                                        <p className="text-xs text-gray-400">
+                                        <p className="text-xs text-gray-500">
                                             Invited {new Date(invitation.created_at).toLocaleDateString()} • Expires{' '}
                                             {new Date(invitation.expires_at).toLocaleDateString()}
                                         </p>
@@ -355,7 +349,7 @@ export default function TeamSettings() {
                                     </span>
                                     <button
                                         onClick={() => handleCancelInvitation(invitation.id, invitation.email)}
-                                        className="px-3 py-1 text-sm text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded-lg transition-colors"
+                                        className="px-3 py-1 text-sm text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
                                     >
                                         Cancel
                                     </button>
@@ -375,11 +369,11 @@ export default function TeamSettings() {
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                             {/* Email */}
                             <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
                                 <input
                                     type="email"
                                     {...register('email')}
-                                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+                                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
                                     placeholder="colleague@example.com"
                                 />
                                 {errors.email && <p className="mt-1 text-sm text-red-400">{errors.email.message}</p>}
@@ -387,10 +381,10 @@ export default function TeamSettings() {
 
                             {/* Role */}
                             <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-2">Role</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
                                 <select
                                     {...register('role')}
-                                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                                 >
                                     <option value="">Select a role</option>
                                     <option value="standard">Standard - Basic user access</option>
@@ -402,13 +396,13 @@ export default function TeamSettings() {
 
                             {/* Message (Optional) */}
                             <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-2">
-                                    Message <span className="text-gray-500">(Optional)</span>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Message <span className="text-gray-400">(Optional)</span>
                                 </label>
                                 <textarea
                                     {...register('message')}
                                     rows={3}
-                                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-500 resize-none"
+                                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400 resize-none"
                                     placeholder="Add a personal message to the invitation..."
                                 />
                                 {errors.message && <p className="mt-1 text-sm text-red-400">{errors.message.message}</p>}
@@ -422,14 +416,14 @@ export default function TeamSettings() {
                                         setShowInviteModal(false);
                                         reset();
                                     }}
-                                    className="flex-1 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg font-medium transition-colors text-gray-900"
+                                    className="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded-lg font-medium transition-colors text-gray-700 text-sm"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={inviting}
-                                    className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg font-medium transition-colors text-gray-900"
+                                    className="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-lg font-medium transition-colors text-white text-sm"
                                 >
                                     {inviting ? 'Sending...' : 'Send Invitation'}
                                 </button>
@@ -442,39 +436,39 @@ export default function TeamSettings() {
             {/* Role Descriptions */}
             <SettingsCard title="Role Permissions" description="Understanding team member roles">
                 <div className="space-y-3">
-                    <div className="flex items-start gap-3 p-3 bg-gray-800/20 rounded-lg">
-                        <Shield className="w-5 h-5 text-purple-400 mt-0.5" />
+                    <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        <span className="material-symbols-outlined text-[20px] text-purple-500 mt-0.5">shield</span>
                         <div>
                             <p className="text-sm font-medium text-gray-900">System</p>
-                            <p className="text-xs text-gray-400">Full system access (not assignable)</p>
+                            <p className="text-xs text-gray-500">Full system access (not assignable)</p>
                         </div>
                     </div>
-                    <div className="flex items-start gap-3 p-3 bg-gray-800/20 rounded-lg">
-                        <Shield className="w-5 h-5 text-red-400 mt-0.5" />
+                    <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        <span className="material-symbols-outlined text-[20px] text-red-500 mt-0.5">admin_panel_settings</span>
                         <div>
                             <p className="text-sm font-medium text-gray-900">ODS Admin</p>
-                            <p className="text-xs text-gray-400">Organization admin, can manage all users and settings</p>
+                            <p className="text-xs text-gray-500">Organization admin, can manage all users and settings</p>
                         </div>
                     </div>
-                    <div className="flex items-start gap-3 p-3 bg-gray-800/20 rounded-lg">
-                        <Shield className="w-5 h-5 text-blue-400 mt-0.5" />
+                    <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        <span className="material-symbols-outlined text-[20px] text-blue-500 mt-0.5">manage_accounts</span>
                         <div>
                             <p className="text-sm font-medium text-gray-900">ODS Manager</p>
-                            <p className="text-xs text-gray-400">Can manage content, players, and playlists</p>
+                            <p className="text-xs text-gray-500">Can manage content, players, and playlists</p>
                         </div>
                     </div>
-                    <div className="flex items-start gap-3 p-3 bg-gray-800/20 rounded-lg">
-                        <Shield className="w-5 h-5 text-green-400 mt-0.5" />
+                    <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        <span className="material-symbols-outlined text-[20px] text-emerald-500 mt-0.5">supervisor_account</span>
                         <div>
                             <p className="text-sm font-medium text-gray-900">Supervisor</p>
-                            <p className="text-xs text-gray-400">Can view and approve content</p>
+                            <p className="text-xs text-gray-500">Can view and approve content</p>
                         </div>
                     </div>
-                    <div className="flex items-start gap-3 p-3 bg-gray-800/20 rounded-lg">
-                        <Shield className="w-5 h-5 text-gray-400 mt-0.5" />
+                    <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        <span className="material-symbols-outlined text-[20px] text-gray-500 mt-0.5">person</span>
                         <div>
                             <p className="text-sm font-medium text-gray-900">Standard</p>
-                            <p className="text-xs text-gray-400">Basic user access</p>
+                            <p className="text-xs text-gray-500">Basic user access</p>
                         </div>
                     </div>
                 </div>
