@@ -433,46 +433,7 @@ export default function TeamSettings() {
                 </div>
             )}
 
-            {/* Role Descriptions */}
-            <SettingsCard title="Role Permissions" description="Understanding team member roles">
-                <div className="space-y-3">
-                    <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                        <span className="material-symbols-outlined text-[20px] text-purple-500 mt-0.5">shield</span>
-                        <div>
-                            <p className="text-sm font-medium text-gray-900">System</p>
-                            <p className="text-xs text-gray-500">Full system access (not assignable)</p>
-                        </div>
-                    </div>
-                    <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                        <span className="material-symbols-outlined text-[20px] text-red-500 mt-0.5">admin_panel_settings</span>
-                        <div>
-                            <p className="text-sm font-medium text-gray-900">ODS Admin</p>
-                            <p className="text-xs text-gray-500">Organization admin, can manage all users and settings</p>
-                        </div>
-                    </div>
-                    <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                        <span className="material-symbols-outlined text-[20px] text-blue-500 mt-0.5">manage_accounts</span>
-                        <div>
-                            <p className="text-sm font-medium text-gray-900">ODS Manager</p>
-                            <p className="text-xs text-gray-500">Can manage content, players, and playlists</p>
-                        </div>
-                    </div>
-                    <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                        <span className="material-symbols-outlined text-[20px] text-emerald-500 mt-0.5">supervisor_account</span>
-                        <div>
-                            <p className="text-sm font-medium text-gray-900">Supervisor</p>
-                            <p className="text-xs text-gray-500">Can view and approve content</p>
-                        </div>
-                    </div>
-                    <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                        <span className="material-symbols-outlined text-[20px] text-gray-500 mt-0.5">person</span>
-                        <div>
-                            <p className="text-sm font-medium text-gray-900">Standard</p>
-                            <p className="text-xs text-gray-500">Basic user access</p>
-                        </div>
-                    </div>
-                </div>
-            </SettingsCard>
+
         </div>
     );
 }

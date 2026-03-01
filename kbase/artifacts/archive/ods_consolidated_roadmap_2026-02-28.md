@@ -20,15 +20,17 @@
 | 4H | Device Config API | ✅ Complete |
 | 4I | **Player OS v10 Hardening** | ✅ Complete |
 | **5** | **Build v10-0-1-MANAGER P:0** | **✅ Complete (1.8G golden + 4.5G clone)** |
-| **6** | **🔥 ODS Cloud v10 Alignment** | **⬜ NEXT** |
-| 7 | **ODS Server v10 Enhancements** *(NEW)* | ⬜ Not started |
-| 8 | **Supabase Schema & RLS Updates** *(NEW)* | ⬜ Not started |
+| **6** | **🔥 ODS Cloud v10 Alignment** | **🟡 In Progress** |
+| 7 | **ODS Server v10 Enhancements** *(NEW)* | 🟡 In Progress |
+| 8 | **Supabase Schema & RLS Updates** *(NEW)* | ✅ Complete |
 | 9 | Advanced Playlist Builder | ⬜ Not started |
 | 10 | Analytics Dashboard | ⬜ Not started |
 | 11 | Network Monitoring | ⬜ Not started |
 | 12-14 | Operations, Content Tools, Enterprise | ⬜ Not started |
 | 15 | End-to-End Integration & QA | ⬜ Not started |
-| 16 | **Mobile App** *(NEW)* | ⬜ Not started |
+| 16 | **Notifications** *(NEW)* | ⬜ Not started |
+| 17 | **Shelly Plug US Integration** *(NEW)* | ⬜ Not started |
+| 18 | **Mobile App** *(NEW)* | ⬜ Not started |
 
 
 ### ODS Player OS (Atlas) — v10-0-0-MANAGER ✅
@@ -160,7 +162,7 @@ Connect the ODS Cloud org-level settings to the player via device config.
 |------|--------|
 | **Player cache status** | New columns: `cache_asset_count`, `cache_last_sync`, `cache_config_hash` |
 | **Player page state** | New column: `current_page` (status/content_manager/options) |
-| **Wallpaper storage** | Org-level: `wallpaper_url` (Supabase Storage bucket) |
+| **Wallpaper storage** | Org-level: `wallpaper_url` (Google Drive — URL reference) |
 | **Deploy acknowledgments** | New table or column: `last_deploy_ack`, `last_deploy_timestamp` |
 | **RLS policies** | Verify all new columns/tables respect org isolation |
 | **Migration files** | Create versioned migration files for all schema changes |
@@ -203,7 +205,32 @@ Connect the ODS Cloud org-level settings to the player via device config.
 
 ---
 
-## ⬜ Phase 16: Mobile App *(NEW)*
+## ⬜ Phase 16: Notifications *(NEW)*
+
+| Item | Detail |
+|------|--------|
+| **Email notifications** | Configurable alerts for player offline, deploy failures, and team changes |
+| **In-app notification center** | Bell icon in header → dropdown with recent activity feed |
+| **Quiet hours** | Org-level quiet hour settings to suppress non-critical alerts |
+| **Channel preferences** | Per-user email/in-app toggle for each notification category |
+| **Webhook support** | Optional webhook URL for external integrations (Slack, Teams, etc.) |
+
+---
+
+## ⬜ Phase 17: Shelly Plug US Integration *(NEW)*
+
+| Item | Detail |
+|------|--------|
+| **Device discovery** | Auto-detect Shelly Plug US devices on same network as players |
+| **Power monitoring** | Real-time wattage, voltage, and energy consumption per player |
+| **Remote power control** | Hard reboot unresponsive players via Shelly relay toggle |
+| **Scheduled power** | Auto on/off schedules for digital signage displays (business hours) |
+| **Cloud integration** | Shelly Cloud API for remote management outside local network |
+| **Dashboard widget** | Power status indicator on Players page — green/red power icon per device |
+
+---
+
+## ⬜ Phase 18: Mobile App *(NEW)*
 
 - iOS/Android mobile app with push notifications
 - Quick status check and emergency content push
@@ -221,16 +248,19 @@ graph TD
     P7 --> P8[Phase 8: Supabase Schema<br/>~3 days]
     P8 --> P9[Phase 9-14: Feature Phases]
     P9 --> P15[Phase 15: E2E QA<br/>~2 days]
-    P15 --> P16[Phase 16: Mobile App]
+    P15 --> P16[Phase 16: Notifications]
+    P16 --> P17[Phase 17: Shelly Plug US]
+    P17 --> P18[Phase 18: Mobile App]
 ```
 
 ---
 
 ## Design Constraints (All Phases)
 
-- Dark slate-950 theme with glass-card styling
-- Material Icons for all iconography
+- Light-mode UI with dark sidebar navigation
+- Material Symbols for all iconography
 - Real-time updates via WebSocket (Socket.IO)
 - Mobile-responsive layouts
 - RESTful API conventions
 - Supabase RLS for all authorization
+- Google Drive for content/media storage

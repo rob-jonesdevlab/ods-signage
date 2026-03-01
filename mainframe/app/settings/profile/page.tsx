@@ -222,7 +222,7 @@ export default function ProfilePage() {
                                 </label>
                                 <input
                                     {...register('firstName')}
-                                    className={`block w-full px-4 py-2.5 bg-white border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm ${errors.firstName ? 'border-red-500' : 'border-gray-300'
+                                    className={`block w-full px-4 py-2.5 bg-gray-50 border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm ${errors.firstName ? 'border-red-500' : 'border-gray-300'
                                         }`}
                                     id="firstName"
                                     type="text"
@@ -239,7 +239,7 @@ export default function ProfilePage() {
                                 </label>
                                 <input
                                     {...register('lastName')}
-                                    className={`block w-full px-4 py-2.5 bg-white border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm ${errors.lastName ? 'border-red-500' : 'border-gray-300'
+                                    className={`block w-full px-4 py-2.5 bg-gray-50 border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm ${errors.lastName ? 'border-red-500' : 'border-gray-300'
                                         }`}
                                     id="lastName"
                                     type="text"
@@ -281,7 +281,7 @@ export default function ProfilePage() {
                                     </span>
                                     <input
                                         {...register('organization')}
-                                        className={`block w-full pl-10 pr-3 py-2.5 bg-white border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm ${errors.organization ? 'border-red-500' : 'border-gray-300'
+                                        className={`block w-full pl-10 pr-3 py-2.5 bg-gray-50 border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm ${errors.organization ? 'border-red-500' : 'border-gray-300'
                                             }`}
                                         id="organization"
                                         type="text"
@@ -301,7 +301,7 @@ export default function ProfilePage() {
                             </label>
                             <input
                                 {...register('jobTitle')}
-                                className={`block w-full px-4 py-2.5 bg-white border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm ${errors.jobTitle ? 'border-red-500' : 'border-gray-300'
+                                className={`block w-full px-4 py-2.5 bg-gray-50 border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm ${errors.jobTitle ? 'border-red-500' : 'border-gray-300'
                                     }`}
                                 id="jobTitle"
                                 type="text"
@@ -319,7 +319,7 @@ export default function ProfilePage() {
                             </label>
                             <textarea
                                 {...register('bio')}
-                                className={`block w-full px-4 py-3 bg-white border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm resize-none h-24 ${errors.bio ? 'border-red-500' : 'border-gray-300'
+                                className={`block w-full px-4 py-3 bg-gray-50 border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm resize-none h-24 ${errors.bio ? 'border-red-500' : 'border-gray-300'
                                     }`}
                                 id="bio"
                                 placeholder="Tell us a little about yourself..."
