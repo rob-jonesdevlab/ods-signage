@@ -254,16 +254,16 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto"
             onClick={onClose}
         >
             {/* Modal Container */}
             <div
-                className="relative w-full max-w-4xl bg-slate-900 border border-slate-700 rounded-xl shadow-2xl flex flex-col max-h-[95vh]"
+                className="relative w-full max-w-4xl bg-white border border-gray-200 rounded-xl shadow-2xl flex flex-col max-h-[95vh]"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
-                <div className="flex items-start justify-between p-6 border-b border-slate-700">
+                <div className="flex items-start justify-between p-6 border-b border-gray-200">
                     <div className="flex flex-col gap-1 flex-1 min-w-0 mr-4">
                         {/* Player Name (editable) */}
                         {isEditing ? (
@@ -273,22 +273,22 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                                     value={editName}
                                     onChange={(e) => setEditName(e.target.value)}
                                     onKeyDown={(e) => { if (e.key === 'Enter') handleRename(); if (e.key === 'Escape') setIsEditing(false); }}
-                                    className="text-2xl font-semibold text-white tracking-tight bg-slate-800 border border-blue-500 rounded-lg px-3 py-1 outline-none w-full"
+                                    className="text-2xl font-semibold text-gray-900 tracking-tight bg-gray-50 border border-blue-500 rounded-lg px-3 py-1 outline-none w-full"
                                     autoFocus
                                 />
-                                <button onClick={handleRename} className="text-blue-400 hover:text-blue-300">
+                                <button onClick={handleRename} className="text-blue-600 hover:text-blue-500">
                                     <span className="material-symbols-outlined">check</span>
                                 </button>
-                                <button onClick={() => { setIsEditing(false); setEditName(player.name); }} className="text-slate-400 hover:text-white">
+                                <button onClick={() => { setIsEditing(false); setEditName(player.name); }} className="text-gray-400 hover:text-gray-900">
                                     <span className="material-symbols-outlined">close</span>
                                 </button>
                             </div>
                         ) : (
                             <div className="flex items-center gap-2 group">
-                                <h2 className="text-2xl font-semibold text-white tracking-tight truncate">{player.name}</h2>
+                                <h2 className="text-2xl font-semibold text-gray-900 tracking-tight truncate">{player.name}</h2>
                                 <button
                                     onClick={() => setIsEditing(true)}
-                                    className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-white transition-opacity"
+                                    className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-900 transition-opacity"
                                 >
                                     <span className="material-symbols-outlined text-lg">edit</span>
                                 </button>
@@ -297,19 +297,19 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                         {/* Status + Group Tags */}
                         <div className="flex items-center gap-3 mt-1">
                             <div className="flex items-center gap-1.5">
-                                <div className={`w-2.5 h-2.5 rounded-full ${isOnline ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'}`}></div>
-                                <span className={`text-sm font-medium ${isOnline ? 'text-emerald-400' : 'text-slate-400'}`}>
+                                <div className={`w-2.5 h-2.5 rounded-full ${isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-gray-400'}`}></div>
+                                <span className={`text-sm font-medium ${isOnline ? 'text-emerald-600' : 'text-gray-500'}`}>
                                     {isOnline ? 'Online' : 'Offline'}
                                 </span>
                             </div>
                             {isPaired && (
-                                <span className="text-xs px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">Paired</span>
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 border border-blue-200">Paired</span>
                             )}
                             {!isPaired && (
-                                <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">Unpaired</span>
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-amber-50 text-amber-600 border border-amber-200">Unpaired</span>
                             )}
                             {currentGroup && (
-                                <span className="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-purple-50 text-purple-600 border border-purple-200">
                                     {currentGroup.name}
                                 </span>
                             )}
@@ -317,7 +317,7 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                     </div>
                     <button
                         onClick={onClose}
-                        className="text-slate-400 hover:text-white transition-colors rounded-lg p-2 hover:bg-white/5"
+                        className="text-gray-400 hover:text-gray-900 transition-colors rounded-lg p-2 hover:bg-gray-100"
                     >
                         <span className="material-symbols-outlined text-2xl">close</span>
                     </button>
@@ -327,7 +327,7 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                 <div className="flex-1 overflow-y-auto">
                     {/* Remote Viewer Viewport */}
                     <div className="p-6 pb-0">
-                        <div className="relative w-full aspect-video bg-black rounded-lg overflow-hidden shadow-lg border border-slate-700">
+                        <div className="relative w-full aspect-video bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-200">
                             {player.rustdesk_id && isODS && remoteViewerActive ? (
                                 // Live RustDesk web client iframe
                                 <>
@@ -348,10 +348,10 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                                 </>
                             ) : player.rustdesk_id && isODS ? (
                                 // ODS: Ready to connect
-                                <div className="w-full h-full flex flex-col items-center justify-center bg-slate-800/80">
+                                <div className="w-full h-full flex flex-col items-center justify-center bg-gray-800/90">
                                     <span className="material-symbols-outlined text-6xl text-blue-400 mb-3">desktop_windows</span>
                                     <p className="text-white text-lg font-medium">Remote View Available</p>
-                                    <p className="text-slate-400 text-sm mt-1">RustDesk ID: <span className="font-mono text-blue-400">{player.rustdesk_id}</span></p>
+                                    <p className="text-gray-300 text-sm mt-1">RustDesk ID: <span className="font-mono text-blue-400">{player.rustdesk_id}</span></p>
                                     <button
                                         onClick={() => setRemoteViewerActive(true)}
                                         className="mt-4 px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors flex items-center gap-2 shadow-lg shadow-blue-600/20"
@@ -362,25 +362,25 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                                 </div>
                             ) : player.rustdesk_id && !isODS ? (
                                 // Non-ODS users: Show remote access indicator (no iframe)
-                                <div className="w-full h-full flex flex-col items-center justify-center bg-slate-800/80">
+                                <div className="w-full h-full flex flex-col items-center justify-center bg-gray-800/90">
                                     <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4 bg-blue-500/20">
                                         <span className="material-symbols-outlined text-5xl text-blue-400">desktop_windows</span>
                                     </div>
                                     <p className="text-white text-lg font-medium">Remote Access Configured</p>
-                                    <p className="text-slate-400 text-sm mt-1">Contact ODS support for remote assistance</p>
+                                    <p className="text-gray-300 text-sm mt-1">Contact ODS support for remote assistance</p>
                                 </div>
                             ) : (
                                 // No RustDesk ID yet — show status display
-                                <div className="w-full h-full flex flex-col items-center justify-center bg-slate-800/80">
-                                    <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-4 ${isOnline ? 'bg-emerald-500/20' : 'bg-slate-700'}`}>
-                                        <span className={`material-symbols-outlined text-5xl ${isOnline ? 'text-emerald-400' : 'text-slate-500'}`}>
+                                <div className="w-full h-full flex flex-col items-center justify-center bg-gray-800/90">
+                                    <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-4 ${isOnline ? 'bg-emerald-500/20' : 'bg-gray-700'}`}>
+                                        <span className={`material-symbols-outlined text-5xl ${isOnline ? 'text-emerald-400' : 'text-gray-400'}`}>
                                             {isOnline ? 'monitor_heart' : 'desktop_access_disabled'}
                                         </span>
                                     </div>
                                     <p className="text-white text-lg font-medium">
                                         {isOnline ? 'Player Active' : 'Player Offline'}
                                     </p>
-                                    <p className="text-slate-400 text-sm mt-1">
+                                    <p className="text-gray-300 text-sm mt-1">
                                         {isOnline ? 'Remote viewer will be available once RustDesk ID is reported' : `Last seen: ${formatRelativeTime(player.last_seen)}`}
                                     </p>
                                 </div>
@@ -390,72 +390,72 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
 
                     {/* Device Info Grid — role-based views */}
                     <div className="p-6">
-                        <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4 px-2">Device Information</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-0 bg-slate-800/50 rounded-lg border border-slate-700 overflow-hidden">
+                        <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4 px-2">Device Information</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-0 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
                             {/* Row 1 — ODS only: CPU Serial, RustDesk ID, Paired At */}
                             {isODS && (
                                 <>
-                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700 md:border-r">
-                                        <span className="text-slate-400 text-sm">CPU Serial</span>
-                                        <span className="text-white text-sm font-mono mt-1 sm:mt-0 truncate max-w-[140px]" title={player.cpu_serial}>{player.cpu_serial || '—'}</span>
+                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200 md:border-r">
+                                        <span className="text-gray-500 text-sm">CPU Serial</span>
+                                        <span className="text-gray-900 text-sm font-mono mt-1 sm:mt-0 truncate max-w-[140px]" title={player.cpu_serial}>{player.cpu_serial || '—'}</span>
                                     </div>
-                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700 md:border-r">
-                                        <span className="text-slate-400 text-sm">RustDesk ID</span>
-                                        <span className="text-white text-sm font-mono mt-1 sm:mt-0">{player.rustdesk_id || '—'}</span>
+                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200 md:border-r">
+                                        <span className="text-gray-500 text-sm">RustDesk ID</span>
+                                        <span className="text-gray-900 text-sm font-mono mt-1 sm:mt-0">{player.rustdesk_id || '—'}</span>
                                     </div>
-                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700">
-                                        <span className="text-slate-400 text-sm">Paired At</span>
-                                        <span className="text-white text-sm font-medium mt-1 sm:mt-0">{formatDate(player.paired_at)}</span>
+                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200">
+                                        <span className="text-gray-500 text-sm">Paired At</span>
+                                        <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{formatDate(player.paired_at)}</span>
                                     </div>
                                 </>
                             )}
 
                             {/* Row 2 — shared: Hostname, OS Version, IP Address/Created */}
-                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700 md:border-r">
-                                <span className="text-slate-400 text-sm">Hostname</span>
-                                <span className="text-white text-sm font-medium mt-1 sm:mt-0">{player.hostname || '—'}</span>
+                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200 md:border-r">
+                                <span className="text-gray-500 text-sm">Hostname</span>
+                                <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{player.hostname || '—'}</span>
                             </div>
-                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700 md:border-r">
-                                <span className="text-slate-400 text-sm">OS Version</span>
-                                <span className="text-white text-sm font-medium mt-1 sm:mt-0">{player.os_version || '—'}</span>
+                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200 md:border-r">
+                                <span className="text-gray-500 text-sm">OS Version</span>
+                                <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{player.os_version || '—'}</span>
                             </div>
                             {isODS ? (
-                                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700">
-                                    <span className="text-slate-400 text-sm">Created</span>
-                                    <span className="text-white text-sm font-medium mt-1 sm:mt-0">{formatDate(player.created_at)}</span>
+                                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200">
+                                    <span className="text-gray-500 text-sm">Created</span>
+                                    <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{formatDate(player.created_at)}</span>
                                 </div>
                             ) : (
-                                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700">
-                                    <span className="text-slate-400 text-sm">Created</span>
-                                    <span className="text-white text-sm font-medium mt-1 sm:mt-0">{formatDate(player.created_at)}</span>
+                                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200">
+                                    <span className="text-gray-500 text-sm">Created</span>
+                                    <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{formatDate(player.created_at)}</span>
                                 </div>
                             )}
 
                             {/* Row 3 — ODS: IP, MAC, Disk; User: IP, Uptime, Resolution */}
-                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700 md:border-r">
-                                <span className="text-slate-400 text-sm">IP Address</span>
-                                <span className="text-white text-sm font-mono mt-1 sm:mt-0">{player.ip_address || '—'}</span>
+                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200 md:border-r">
+                                <span className="text-gray-500 text-sm">IP Address</span>
+                                <span className="text-gray-900 text-sm font-mono mt-1 sm:mt-0">{player.ip_address || '—'}</span>
                             </div>
                             {isODS ? (
                                 <>
-                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700 md:border-r">
-                                        <span className="text-slate-400 text-sm">MAC Address</span>
-                                        <span className="text-white text-sm font-mono mt-1 sm:mt-0">{player.mac_address || '—'}</span>
+                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200 md:border-r">
+                                        <span className="text-gray-500 text-sm">MAC Address</span>
+                                        <span className="text-gray-900 text-sm font-mono mt-1 sm:mt-0">{player.mac_address || '—'}</span>
                                     </div>
-                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700">
-                                        <span className="text-slate-400 text-sm">Disk Free</span>
-                                        <span className="text-white text-sm font-medium mt-1 sm:mt-0">{formatDiskFree(player.disk_free_mb)}</span>
+                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200">
+                                        <span className="text-gray-500 text-sm">Disk Free</span>
+                                        <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{formatDiskFree(player.disk_free_mb)}</span>
                                     </div>
                                 </>
                             ) : (
                                 <>
-                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700 md:border-r">
-                                        <span className="text-slate-400 text-sm">Uptime</span>
-                                        <span className="text-white text-sm font-medium mt-1 sm:mt-0">{formatUptime(player.uptime_seconds)}</span>
+                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200 md:border-r">
+                                        <span className="text-gray-500 text-sm">Uptime</span>
+                                        <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{formatUptime(player.uptime_seconds)}</span>
                                     </div>
-                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700">
-                                        <span className="text-slate-400 text-sm">Resolution</span>
-                                        <span className="text-white text-sm font-medium mt-1 sm:mt-0">{player.screen_resolution || '—'}</span>
+                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200">
+                                        <span className="text-gray-500 text-sm">Resolution</span>
+                                        <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{player.screen_resolution || '—'}</span>
                                     </div>
                                 </>
                             )}
@@ -463,43 +463,43 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                             {/* Row 4 — ODS: Memory, Uptime, Resolution; User: Last Seen, Cache, (none) */}
                             {isODS ? (
                                 <>
-                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700 md:border-r">
-                                        <span className="text-slate-400 text-sm">Memory</span>
-                                        <span className="text-white text-sm font-medium mt-1 sm:mt-0">{formatMemory(player.memory_total_mb)}</span>
+                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200 md:border-r">
+                                        <span className="text-gray-500 text-sm">Memory</span>
+                                        <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{formatMemory(player.memory_total_mb)}</span>
                                     </div>
-                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700 md:border-r">
-                                        <span className="text-slate-400 text-sm">Uptime</span>
-                                        <span className="text-white text-sm font-medium mt-1 sm:mt-0">{formatUptime(player.uptime_seconds)}</span>
+                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200 md:border-r">
+                                        <span className="text-gray-500 text-sm">Uptime</span>
+                                        <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{formatUptime(player.uptime_seconds)}</span>
                                     </div>
-                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700">
-                                        <span className="text-slate-400 text-sm">Resolution</span>
-                                        <span className="text-white text-sm font-medium mt-1 sm:mt-0">{player.screen_resolution || '—'}</span>
+                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200">
+                                        <span className="text-gray-500 text-sm">Resolution</span>
+                                        <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{player.screen_resolution || '—'}</span>
                                     </div>
                                 </>
                             ) : (
                                 <>
-                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700 md:border-r">
-                                        <span className="text-slate-400 text-sm">Last Seen</span>
+                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200 md:border-r">
+                                        <span className="text-gray-500 text-sm">Last Seen</span>
                                         <div className="flex items-center gap-2 mt-1 sm:mt-0">
-                                            <span className="text-white text-sm font-medium">{formatRelativeTime(player.last_seen)}</span>
+                                            <span className="text-gray-900 text-sm font-medium">{formatRelativeTime(player.last_seen)}</span>
                                         </div>
                                     </div>
-                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700 md:border-r">
-                                        <span className="text-slate-400 text-sm">Cache</span>
-                                        <span className="text-white text-sm font-medium mt-1 sm:mt-0">{player.cache_asset_count ?? '—'}</span>
+                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200 md:border-r">
+                                        <span className="text-gray-500 text-sm">Cache</span>
+                                        <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{player.cache_asset_count ?? '—'}</span>
                                     </div>
-                                    <div className="py-3 px-5 border-b border-slate-700"></div>
+                                    <div className="py-3 px-5 border-b border-gray-200"></div>
                                 </>
                             )}
 
                             {/* Row 5 — Playlist + Group (both roles) + ODS: Last Seen/Cache */}
                             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700 md:border-b-0 md:border-r">
-                                <span className="text-slate-400 text-sm">Playlist</span>
+                                <span className="text-gray-500 text-sm">Playlist</span>
                                 {isAssigningPlaylist ? (
                                     <select
                                         value={selectedPlaylistId || ''}
                                         onChange={(e) => handleAssignPlaylist(e.target.value || null)}
-                                        className="bg-slate-700 text-white text-sm rounded-md px-2 py-1 border border-slate-600 outline-none mt-1 sm:mt-0"
+                                        className="bg-white text-gray-900 text-sm rounded-md px-2 py-1 border border-gray-300 outline-none mt-1 sm:mt-0"
                                         autoFocus
                                         onBlur={() => setIsAssigningPlaylist(false)}
                                     >
@@ -513,19 +513,19 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                                         onClick={() => setIsAssigningPlaylist(true)}
                                         className="text-sm font-medium mt-1 sm:mt-0 hover:text-blue-400 transition-colors flex items-center gap-1"
                                     >
-                                        <span className={currentPlaylist ? 'text-white' : 'text-slate-500'}>{currentPlaylist?.name || 'None'}</span>
-                                        <span className="material-symbols-outlined text-xs text-slate-500">edit</span>
+                                        <span className={currentPlaylist ? 'text-gray-900' : 'text-gray-400'}>{currentPlaylist?.name || 'None'}</span>
+                                        <span className="material-symbols-outlined text-xs text-gray-400">edit</span>
                                     </button>
                                 )}
                             </div>
 
-                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700 md:border-b-0 md:border-r">
-                                <span className="text-slate-400 text-sm">Group</span>
+                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200 md:border-b-0 md:border-r">
+                                <span className="text-gray-500 text-sm">Group</span>
                                 {isAssigningGroup ? (
                                     <select
                                         value={selectedGroupId || ''}
                                         onChange={(e) => handleAssignGroup(e.target.value || null)}
-                                        className="bg-slate-700 text-white text-sm rounded-md px-2 py-1 border border-slate-600 outline-none mt-1 sm:mt-0"
+                                        className="bg-white text-gray-900 text-sm rounded-md px-2 py-1 border border-gray-300 outline-none mt-1 sm:mt-0"
                                         autoFocus
                                         onBlur={() => setIsAssigningGroup(false)}
                                     >
@@ -539,17 +539,17 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                                         onClick={() => setIsAssigningGroup(true)}
                                         className="text-sm font-medium mt-1 sm:mt-0 hover:text-blue-400 transition-colors flex items-center gap-1"
                                     >
-                                        <span className={currentGroup ? 'text-white' : 'text-slate-500'}>{currentGroup?.name || 'None'}</span>
-                                        <span className="material-symbols-outlined text-xs text-slate-500">edit</span>
+                                        <span className={currentGroup ? 'text-gray-900' : 'text-gray-400'}>{currentGroup?.name || 'None'}</span>
+                                        <span className="material-symbols-outlined text-xs text-gray-400">edit</span>
                                     </button>
                                 )}
                             </div>
 
                             {isODS ? (
                                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5">
-                                    <span className="text-slate-400 text-sm">Last Seen</span>
+                                    <span className="text-gray-500 text-sm">Last Seen</span>
                                     <div className="flex items-center gap-2 mt-1 sm:mt-0">
-                                        <span className="text-white text-sm font-medium">{formatRelativeTime(player.last_seen)}</span>
+                                        <span className="text-gray-900 text-sm font-medium">{formatRelativeTime(player.last_seen)}</span>
                                     </div>
                                 </div>
                             ) : (
@@ -560,10 +560,10 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                 </div>
 
                 {/* Footer Actions */}
-                <div className="flex flex-col-reverse sm:flex-row items-center justify-between p-6 bg-slate-800/50 border-t border-slate-700 rounded-b-xl gap-4">
+                <div className="flex flex-col-reverse sm:flex-row items-center justify-between p-6 bg-gray-50 border-t border-gray-200 rounded-b-xl gap-4">
                     <button
                         onClick={handleDelete}
-                        className="flex items-center justify-center gap-2 px-5 h-10 w-full sm:w-auto rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 transition-all text-sm font-semibold"
+                        className="flex items-center justify-center gap-2 px-5 h-10 w-full sm:w-auto rounded-lg text-red-500 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-200 transition-all text-sm font-semibold"
                     >
                         <span className="material-symbols-outlined text-[20px]">delete</span>
                         <span>Delete Player</span>
@@ -572,14 +572,14 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                         {isPaired && (
                             <button
                                 onClick={handleUnpair}
-                                className="px-5 h-10 w-full sm:w-auto rounded-lg text-amber-400 hover:text-amber-300 border border-amber-500/30 hover:bg-amber-500/10 transition-all text-sm font-medium"
+                                className="px-5 h-10 w-full sm:w-auto rounded-lg text-amber-600 hover:text-amber-700 border border-amber-300 hover:bg-amber-50 transition-all text-sm font-medium"
                             >
                                 Unpair
                             </button>
                         )}
                         <button
                             onClick={onClose}
-                            className="px-5 h-10 w-full sm:w-auto rounded-lg text-slate-300 bg-slate-700 hover:bg-slate-600 border border-transparent transition-all text-sm font-medium shadow-sm"
+                            className="px-5 h-10 w-full sm:w-auto rounded-lg text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-200 transition-all text-sm font-medium shadow-sm"
                         >
                             Close
                         </button>

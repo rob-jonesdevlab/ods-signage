@@ -75,15 +75,20 @@ Custom self-hosted web client at `rdwc.ods-cloud.com` — purpose-built for ODS 
 | UI | Vanilla HTML/CSS/JS + Canvas |
 | Protocol | Protobuf.js (message serialization) |
 | Encryption | libsodium.js (NaCl crypto_secretbox) |
-| Video | FFmpeg WASM (decoder only) |
-| Rendering | HTML5 Canvas / WebGL |
+| Video | WebCodecs API (native H264/VP9/VP8/H265/AV1) |
+| Input | Mouse + keyboard forwarding |
+| Rendering | HTML5 Canvas |
 | Hosting | Static files on ods-relay-server Nginx |
 
 ### Connection Flow
 1. WebSocket → `wss://rdwc.ods-cloud.com/websocket` (Nginx → :21118)
 2. Rendezvous handshake → peer lookup by device ID
-3. NaCl key exchange → encrypted session
-4. Video frames (H264/VP9) → FFmpeg WASM decode → Canvas render
+3. NaCl X25519 key exchange → encrypted session
+4. Video frames → WebCodecs `VideoDecoder` → `VideoFrame` → Canvas
+5. Mouse/keyboard events → serialized back to peer
+6. Exponential backoff reconnect (1s → 16s cap, 5 max)
+
+**Total payload:** ~865KB · `viewer.html` = 50KB
 
 ### Relay Server Reference
 | Item | Value |

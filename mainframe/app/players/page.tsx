@@ -433,12 +433,12 @@ export default function PlayersPage() {
     const selectedGroup = groups.find(g => g.id === contextMenu?.groupId);
 
     return (
-        <div className="min-h-screen">
+        <div className="min-h-screen flex flex-col">
             <Header />
-            <main className="w-full max-w-[1600px] mx-auto p-6 md:p-8 flex gap-6">
-                {/* Sidebar */}
-                <aside className="w-64 flex-shrink-0">
-                    <div className="p-4 rounded-lg border border-gray-200 bg-white shadow-sm sticky top-6">
+            <div className="flex-1 flex overflow-hidden">
+                {/* Groups Sidebar */}
+                <aside className="w-64 flex-shrink-0 border-r border-gray-200 bg-gray-50 overflow-y-auto p-4">
+                    <div className="p-4 rounded-lg border border-gray-200 bg-white shadow-sm sticky top-0">
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="font-semibold text-gray-900">Groups</h3>
                             <button
@@ -465,7 +465,7 @@ export default function PlayersPage() {
                 </aside>
 
                 {/* Main Content */}
-                <div className="flex-1 flex flex-col gap-8">
+                <div className="flex-1 flex flex-col gap-8 p-6 md:p-8 overflow-y-auto">
                     {/* Page Header */}
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                         <div>
@@ -672,7 +672,7 @@ export default function PlayersPage() {
                         )}
                     </div>
                 </div>
-            </main>
+            </div>
 
             {/* Modals */}
             <PairDeviceModal
