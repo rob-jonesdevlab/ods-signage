@@ -13,8 +13,8 @@ export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
 export const metadata: Metadata = {
-    title: 'ODS Digital Signage',
-    description: 'Manage your digital signage players',
+    title: 'ODS Cloud',
+    description: 'Powered by Otter — Digital signage management platform',
 }
 
 export default function RootLayout({
