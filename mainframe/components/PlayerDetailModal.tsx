@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { API_URL } from '@/lib/api';
 import { authenticatedFetch } from '@/lib/auth';
 import { useToast } from '@/hooks/useToast';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface Player {
     id: string;
@@ -29,6 +30,8 @@ interface Player {
     memory_total_mb?: number;
     uptime_seconds?: number;
     screen_resolution?: string;
+    cache_asset_count?: number;
+    cache_last_sync?: string;
 }
 
 interface PlayerGroup {
@@ -52,6 +55,8 @@ interface PlayerDetailModalProps {
 
 export default function PlayerDetailModal({ isOpen, onClose, player, groups, playlists, onPlayerUpdated }: PlayerDetailModalProps) {
     const { showToast } = useToast();
+    const { profile } = useAuth();
+    const isODS = profile?.role === 'odsadmin' || profile?.role === 'odstech';
     const [isEditing, setIsEditing] = useState(false);
     const [editName, setEditName] = useState('');
     const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
@@ -350,72 +355,112 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                         </div>
                     </div>
 
-                    {/* Device Info Grid */}
+                    {/* Device Info Grid — role-based views */}
                     <div className="p-6">
                         <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4 px-2">Device Information</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-0 bg-slate-800/50 rounded-lg border border-slate-700 overflow-hidden">
-                            {/* CPU Serial */}
-                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-4 px-6 border-b border-slate-700 md:border-r">
-                                <span className="text-slate-400 text-sm">CPU Serial</span>
-                                <span className="text-white text-sm font-mono mt-1 sm:mt-0">{player.cpu_serial || '—'}</span>
-                            </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-0 bg-slate-800/50 rounded-lg border border-slate-700 overflow-hidden">
+                            {/* Row 1 — ODS only: CPU Serial, RustDesk ID, Paired At */}
+                            {isODS && (
+                                <>
+                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700 md:border-r">
+                                        <span className="text-slate-400 text-sm">CPU Serial</span>
+                                        <span className="text-white text-sm font-mono mt-1 sm:mt-0 truncate max-w-[140px]" title={player.cpu_serial}>{player.cpu_serial || '—'}</span>
+                                    </div>
+                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700 md:border-r">
+                                        <span className="text-slate-400 text-sm">RustDesk ID</span>
+                                        <span className="text-white text-sm font-mono mt-1 sm:mt-0">{player.rustdesk_id || '—'}</span>
+                                    </div>
+                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700">
+                                        <span className="text-slate-400 text-sm">Paired At</span>
+                                        <span className="text-white text-sm font-medium mt-1 sm:mt-0">{formatDate(player.paired_at)}</span>
+                                    </div>
+                                </>
+                            )}
 
-                            {/* Hostname */}
-                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-4 px-6 border-b border-slate-700">
+                            {/* Row 2 — shared: Hostname, OS Version, IP Address/Created */}
+                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700 md:border-r">
                                 <span className="text-slate-400 text-sm">Hostname</span>
                                 <span className="text-white text-sm font-medium mt-1 sm:mt-0">{player.hostname || '—'}</span>
                             </div>
-
-                            {/* IP Address */}
-                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-4 px-6 border-b border-slate-700 md:border-r">
-                                <span className="text-slate-400 text-sm">IP Address</span>
-                                <span className="text-white text-sm font-mono mt-1 sm:mt-0">{player.ip_address || '—'}</span>
-                            </div>
-
-                            {/* MAC Address */}
-                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-4 px-6 border-b border-slate-700">
-                                <span className="text-slate-400 text-sm">MAC Address</span>
-                                <span className="text-white text-sm font-mono mt-1 sm:mt-0">{player.mac_address || '—'}</span>
-                            </div>
-
-                            {/* OS Version */}
-                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-4 px-6 border-b border-slate-700 md:border-r">
+                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700 md:border-r">
                                 <span className="text-slate-400 text-sm">OS Version</span>
                                 <span className="text-white text-sm font-medium mt-1 sm:mt-0">{player.os_version || '—'}</span>
                             </div>
+                            {isODS ? (
+                                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700">
+                                    <span className="text-slate-400 text-sm">Created</span>
+                                    <span className="text-white text-sm font-medium mt-1 sm:mt-0">{formatDate(player.created_at)}</span>
+                                </div>
+                            ) : (
+                                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700">
+                                    <span className="text-slate-400 text-sm">Created</span>
+                                    <span className="text-white text-sm font-medium mt-1 sm:mt-0">{formatDate(player.created_at)}</span>
+                                </div>
+                            )}
 
-                            {/* RustDesk ID */}
-                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-4 px-6 border-b border-slate-700">
-                                <span className="text-slate-400 text-sm">RustDesk ID</span>
-                                <span className="text-white text-sm font-mono mt-1 sm:mt-0">{player.rustdesk_id || '—'}</span>
+                            {/* Row 3 — ODS: IP, MAC, Disk; User: IP, Uptime, Resolution */}
+                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700 md:border-r">
+                                <span className="text-slate-400 text-sm">IP Address</span>
+                                <span className="text-white text-sm font-mono mt-1 sm:mt-0">{player.ip_address || '—'}</span>
                             </div>
+                            {isODS ? (
+                                <>
+                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700 md:border-r">
+                                        <span className="text-slate-400 text-sm">MAC Address</span>
+                                        <span className="text-white text-sm font-mono mt-1 sm:mt-0">{player.mac_address || '—'}</span>
+                                    </div>
+                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700">
+                                        <span className="text-slate-400 text-sm">Disk Free</span>
+                                        <span className="text-white text-sm font-medium mt-1 sm:mt-0">{formatDiskFree(player.disk_free_mb)}</span>
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700 md:border-r">
+                                        <span className="text-slate-400 text-sm">Uptime</span>
+                                        <span className="text-white text-sm font-medium mt-1 sm:mt-0">{formatUptime(player.uptime_seconds)}</span>
+                                    </div>
+                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700">
+                                        <span className="text-slate-400 text-sm">Resolution</span>
+                                        <span className="text-white text-sm font-medium mt-1 sm:mt-0">{player.screen_resolution || '—'}</span>
+                                    </div>
+                                </>
+                            )}
 
-                            {/* Screen Resolution */}
-                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-4 px-6 border-b border-slate-700 md:border-r">
-                                <span className="text-slate-400 text-sm">Resolution</span>
-                                <span className="text-white text-sm font-medium mt-1 sm:mt-0">{player.screen_resolution || '—'}</span>
-                            </div>
+                            {/* Row 4 — ODS: Memory, Uptime, Resolution; User: Last Seen, Cache, (none) */}
+                            {isODS ? (
+                                <>
+                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700 md:border-r">
+                                        <span className="text-slate-400 text-sm">Memory</span>
+                                        <span className="text-white text-sm font-medium mt-1 sm:mt-0">{formatMemory(player.memory_total_mb)}</span>
+                                    </div>
+                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700 md:border-r">
+                                        <span className="text-slate-400 text-sm">Uptime</span>
+                                        <span className="text-white text-sm font-medium mt-1 sm:mt-0">{formatUptime(player.uptime_seconds)}</span>
+                                    </div>
+                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700">
+                                        <span className="text-slate-400 text-sm">Resolution</span>
+                                        <span className="text-white text-sm font-medium mt-1 sm:mt-0">{player.screen_resolution || '—'}</span>
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700 md:border-r">
+                                        <span className="text-slate-400 text-sm">Last Seen</span>
+                                        <div className="flex items-center gap-2 mt-1 sm:mt-0">
+                                            <span className="text-white text-sm font-medium">{formatRelativeTime(player.last_seen)}</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700 md:border-r">
+                                        <span className="text-slate-400 text-sm">Cache</span>
+                                        <span className="text-white text-sm font-medium mt-1 sm:mt-0">{player.cache_asset_count ?? '—'}</span>
+                                    </div>
+                                    <div className="py-3 px-5 border-b border-slate-700"></div>
+                                </>
+                            )}
 
-                            {/* Disk Free */}
-                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-4 px-6 border-b border-slate-700">
-                                <span className="text-slate-400 text-sm">Disk Free</span>
-                                <span className="text-white text-sm font-medium mt-1 sm:mt-0">{formatDiskFree(player.disk_free_mb)}</span>
-                            </div>
-
-                            {/* Memory */}
-                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-4 px-6 border-b border-slate-700 md:border-r">
-                                <span className="text-slate-400 text-sm">Memory</span>
-                                <span className="text-white text-sm font-medium mt-1 sm:mt-0">{formatMemory(player.memory_total_mb)}</span>
-                            </div>
-
-                            {/* Uptime */}
-                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-4 px-6 border-b border-slate-700">
-                                <span className="text-slate-400 text-sm">Uptime</span>
-                                <span className="text-white text-sm font-medium mt-1 sm:mt-0">{formatUptime(player.uptime_seconds)}</span>
-                            </div>
-
-                            {/* Assigned Playlist */}
-                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-4 px-6 border-b border-slate-700 md:border-r">
+                            {/* Row 5 — Playlist + Group (both roles) + ODS: Last Seen/Cache */}
+                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700 md:border-b-0 md:border-r">
                                 <span className="text-slate-400 text-sm">Playlist</span>
                                 {isAssigningPlaylist ? (
                                     <select
@@ -441,8 +486,7 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                                 )}
                             </div>
 
-                            {/* Assigned Group */}
-                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-4 px-6 border-b border-slate-700">
+                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700 md:border-b-0 md:border-r">
                                 <span className="text-slate-400 text-sm">Group</span>
                                 {isAssigningGroup ? (
                                     <select
@@ -468,22 +512,16 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                                 )}
                             </div>
 
-                            {/* Last Seen */}
-                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-4 px-6 border-b border-slate-700 md:border-b-0 md:border-r">
-                                <span className="text-slate-400 text-sm">Last Seen</span>
-                                <div className="flex items-center gap-2 mt-1 sm:mt-0">
-                                    <span className="text-white text-sm font-medium">{formatRelativeTime(player.last_seen)}</span>
-                                    {player.last_seen && (
-                                        <span className="text-slate-500 text-xs">{formatDate(player.last_seen)}</span>
-                                    )}
+                            {isODS ? (
+                                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5">
+                                    <span className="text-slate-400 text-sm">Last Seen</span>
+                                    <div className="flex items-center gap-2 mt-1 sm:mt-0">
+                                        <span className="text-white text-sm font-medium">{formatRelativeTime(player.last_seen)}</span>
+                                    </div>
                                 </div>
-                            </div>
-
-                            {/* Created */}
-                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-4 px-6">
-                                <span className="text-slate-400 text-sm">Created</span>
-                                <span className="text-white text-sm font-medium mt-1 sm:mt-0">{formatDate(player.created_at)}</span>
-                            </div>
+                            ) : (
+                                <div className="py-3 px-5"></div>
+                            )}
                         </div>
                     </div>
                 </div>
