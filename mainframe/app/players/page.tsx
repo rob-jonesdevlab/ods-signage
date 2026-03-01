@@ -384,9 +384,9 @@ export default function PlayersPage() {
         }
     };
 
-    const formatCacheInfo = (count: number | null, lastSync: string | null) => {
-        if (count === null && !lastSync) return '—';
-        const countStr = count !== null ? `${count} asset${count !== 1 ? 's' : ''}` : '';
+    const formatCacheInfo = (count: number | null | undefined, lastSync: string | null | undefined) => {
+        if (count == null && !lastSync) return '—';
+        const countStr = count != null ? `${count} asset${count !== 1 ? 's' : ''}` : '';
         if (!lastSync) return countStr || '—';
         const ago = Math.round((Date.now() - new Date(lastSync).getTime()) / 60000);
         const agoStr = ago < 1 ? 'just now' : ago < 60 ? `${ago}m ago` : `${Math.round(ago / 60)}h ago`;

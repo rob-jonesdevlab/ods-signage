@@ -14,6 +14,8 @@ interface OrgSettings {
     offline_border_template: number;
     offline_border_size: string;
     offline_border_enabled: boolean;
+    offline_border_custom_colors?: string[];
+    offline_border_custom_animation?: string;
 }
 
 interface SelectOption {
@@ -29,6 +31,15 @@ const BORDER_TEMPLATES = [
     { id: 3, name: 'Catppuccin', colors: ['#f5e0dc', '#fab387', '#eba0ac', '#eba0ac'], animation: 'Conic Rotation' },
     { id: 4, name: 'Monokai Pro', colors: ['#a9dc76', '#fc9867', '#ff6188', '#ff6188'], animation: 'Marching Ants' },
     { id: 5, name: 'Natural & Calm', colors: ['#87a980', '#d2b48c', '#e2725b', '#e2725b'], animation: 'Heartbeat' },
+];
+
+const ANIMATION_STYLES = [
+    'Marching Ants',
+    'Synchronous Blink',
+    'Breathing Glow',
+    'Conic Rotation',
+    'Heartbeat',
+    'Solid (No Animation)',
 ];
 
 const BORDER_SIZE_PRESETS = [
@@ -59,6 +70,8 @@ export default function OrganizationSettingsPage() {
     const [borderTemplate, setBorderTemplate] = useState(0);
     const [borderSize, setBorderSize] = useState('micro');
     const [borderEnabled, setBorderEnabled] = useState(true);
+    const [customColors, setCustomColors] = useState(['#3B82F6', '#F59E0B', '#EF4444', '#DC2626']);
+    const [customAnimation, setCustomAnimation] = useState('Marching Ants');
 
     useEffect(() => {
         fetchAll();
@@ -92,6 +105,12 @@ export default function OrganizationSettingsPage() {
             if (settingsData.offline_border_enabled !== undefined) {
                 setBorderEnabled(settingsData.offline_border_enabled);
             }
+            if (settingsData.offline_border_custom_colors) {
+                setCustomColors(settingsData.offline_border_custom_colors);
+            }
+            if (settingsData.offline_border_custom_animation) {
+                setCustomAnimation(settingsData.offline_border_custom_animation);
+            }
 
             setPlaylists(Array.isArray(playlistsData) ? playlistsData : []);
             setGroups(Array.isArray(groupsData) ? groupsData : []);
@@ -115,6 +134,8 @@ export default function OrganizationSettingsPage() {
                     offline_border_template: borderTemplate,
                     offline_border_size: borderSize,
                     offline_border_enabled: borderEnabled,
+                    offline_border_custom_colors: borderTemplate === 6 ? customColors : undefined,
+                    offline_border_custom_animation: borderTemplate === 6 ? customAnimation : undefined,
                 })
             });
 
@@ -142,7 +163,16 @@ export default function OrganizationSettingsPage() {
     }
 
     const defaultPlaylist = playlists.find(p => p.id === settings?.default_playlist_id);
-    const selectedTemplate = BORDER_TEMPLATES[borderTemplate];
+    const isCustomTemplate = borderTemplate === 6;
+    const selectedTemplate = isCustomTemplate
+        ? { id: 6, name: 'Custom', colors: customColors, animation: customAnimation }
+        : BORDER_TEMPLATES[borderTemplate];
+
+    const handleCustomColorChange = (index: number, color: string) => {
+        const next = [...customColors];
+        next[index] = color;
+        setCustomColors(next);
+    };
 
     return (
         <div className="space-y-8">
@@ -246,8 +276,8 @@ export default function OrganizationSettingsPage() {
                                         type="button"
                                         onClick={() => setBorderTemplate(tmpl.id)}
                                         className={`relative p-4 rounded-lg border-2 text-left transition-all hover:shadow-md ${borderTemplate === tmpl.id
-                                                ? 'border-blue-500 bg-blue-50/50 ring-1 ring-blue-500/20'
-                                                : 'border-gray-200 bg-gray-50 hover:border-gray-300'
+                                            ? 'border-blue-500 bg-blue-50/50 ring-1 ring-blue-500/20'
+                                            : 'border-gray-200 bg-gray-50 hover:border-gray-300'
                                             }`}
                                     >
                                         {borderTemplate === tmpl.id && (
@@ -274,8 +304,87 @@ export default function OrganizationSettingsPage() {
                                         </div>
                                     </button>
                                 ))}
+
+                                {/* Custom Template Card */}
+                                <button
+                                    type="button"
+                                    onClick={() => setBorderTemplate(6)}
+                                    className={`relative p-4 rounded-lg border-2 text-left transition-all hover:shadow-md ${isCustomTemplate
+                                        ? 'border-blue-500 bg-blue-50/50 ring-1 ring-blue-500/20'
+                                        : 'border-gray-200 bg-gray-50 hover:border-gray-300 border-dashed'
+                                        }`}
+                                >
+                                    {isCustomTemplate && (
+                                        <span className="absolute top-2 right-2 material-symbols-outlined text-blue-600 text-[18px]">check_circle</span>
+                                    )}
+                                    <div className="text-sm font-medium text-gray-900 mb-2">Custom</div>
+                                    <div className="flex items-center gap-1.5 mb-2">
+                                        {customColors.map((color, i) => (
+                                            <div key={i} className="flex flex-col items-center gap-0.5">
+                                                <div
+                                                    className="w-7 h-7 rounded-md border border-gray-200/80 shadow-sm"
+                                                    style={{ backgroundColor: color }}
+                                                    title={`Stage ${i + 1}: ${STAGE_LABELS[i]}`}
+                                                />
+                                                <span className="text-[9px] text-gray-400 leading-none">{STAGE_LABELS[i]}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className="flex items-center gap-1.5">
+                                        <span className="material-symbols-outlined text-gray-400 text-[14px]">palette</span>
+                                        <span className="text-xs text-gray-500">Your colors</span>
+                                    </div>
+                                </button>
                             </div>
                         </div>
+
+                        {/* Custom Color Editor (shown when Custom is selected) */}
+                        {isCustomTemplate && (
+                            <div className="bg-gray-50 rounded-lg border border-gray-200 p-5 space-y-5">
+                                <div>
+                                    <h4 className="text-sm font-medium text-gray-700 mb-3">Custom Stage Colors</h4>
+                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                                        {customColors.map((color, i) => (
+                                            <div key={i} className="space-y-1.5">
+                                                <label className="text-xs font-medium text-gray-500">{STAGE_LABELS[i]}</label>
+                                                <div className="flex items-center gap-2">
+                                                    <input
+                                                        type="color"
+                                                        value={color}
+                                                        onChange={(e) => handleCustomColorChange(i, e.target.value)}
+                                                        className="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer p-0.5 bg-white"
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        value={color.toUpperCase()}
+                                                        onChange={(e) => {
+                                                            const v = e.target.value;
+                                                            if (/^#[0-9A-Fa-f]{0,6}$/.test(v)) handleCustomColorChange(i, v);
+                                                        }}
+                                                        maxLength={7}
+                                                        className="w-[5.5rem] px-2.5 py-2 border border-gray-200 rounded-lg text-sm font-mono text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent uppercase"
+                                                        placeholder="#000000"
+                                                    />
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 className="text-sm font-medium text-gray-700 mb-2">Animation Style</h4>
+                                    <p className="text-xs text-gray-400 mb-2">Applied to the final stage (120m+) border.</p>
+                                    <select
+                                        value={customAnimation}
+                                        onChange={(e) => setCustomAnimation(e.target.value)}
+                                        className="w-full max-w-xs px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    >
+                                        {ANIMATION_STYLES.map((anim) => (
+                                            <option key={anim} value={anim}>{anim}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+                        )}
 
                         {/* Border Size Presets */}
                         <div>
@@ -287,8 +396,8 @@ export default function OrganizationSettingsPage() {
                                         type="button"
                                         onClick={() => setBorderSize(preset.key)}
                                         className={`px-4 py-2 rounded-lg border text-sm font-medium transition-all ${borderSize === preset.key
-                                                ? 'border-blue-500 bg-blue-50 text-blue-700 ring-1 ring-blue-500/20'
-                                                : 'border-gray-200 bg-gray-50 text-gray-600 hover:border-gray-300 hover:bg-gray-100'
+                                            ? 'border-blue-500 bg-blue-50 text-blue-700 ring-1 ring-blue-500/20'
+                                            : 'border-gray-200 bg-gray-50 text-gray-600 hover:border-gray-300 hover:bg-gray-100'
                                             }`}
                                     >
                                         {preset.label}
