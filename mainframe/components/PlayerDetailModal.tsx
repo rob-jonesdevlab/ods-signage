@@ -32,6 +32,7 @@ interface Player {
     screen_resolution?: string;
     cache_asset_count?: number;
     cache_last_sync?: string;
+    rustdesk_password?: string;
 }
 
 interface PlayerGroup {
@@ -63,6 +64,7 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
     const [selectedPlaylistId, setSelectedPlaylistId] = useState<string | null>(null);
     const [isAssigningGroup, setIsAssigningGroup] = useState(false);
     const [isAssigningPlaylist, setIsAssigningPlaylist] = useState(false);
+    const [remoteViewerActive, setRemoteViewerActive] = useState(false);
 
     // Sync state when player changes
     useEffect(() => {
@@ -73,6 +75,7 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
             setIsEditing(false);
             setIsAssigningGroup(false);
             setIsAssigningPlaylist(false);
+            setRemoteViewerActive(false);
         }
     }, [player]);
 
@@ -322,19 +325,49 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
 
                 {/* Content Area (Scrollable) */}
                 <div className="flex-1 overflow-y-auto">
-                    {/* Remote Viewer Viewport (Phase C placeholder) */}
+                    {/* Remote Viewer Viewport */}
                     <div className="p-6 pb-0">
                         <div className="relative w-full aspect-video bg-black rounded-lg overflow-hidden shadow-lg border border-slate-700">
-                            {player.rustdesk_id ? (
-                                // RustDesk remote viewer will be embedded here (Phase C)
+                            {player.rustdesk_id && isODS && remoteViewerActive ? (
+                                // Live RustDesk web client iframe
+                                <>
+                                    <iframe
+                                        src={`https://rd.odsfactory.com/?id=${player.rustdesk_id}&password=${encodeURIComponent(player.rustdesk_password || 'p@rTn3R')}&relay=134.199.136.112&key=dwBt7VPSXk9D8li3cBCsdqrIAryWtfC4AD05tpeoxW0%3D`}
+                                        className="w-full h-full border-0"
+                                        allow="clipboard-read; clipboard-write"
+                                        sandbox="allow-scripts allow-same-origin allow-popups"
+                                    />
+                                    {/* Disconnect button overlay */}
+                                    <button
+                                        onClick={() => setRemoteViewerActive(false)}
+                                        className="absolute top-3 right-3 px-3 py-1.5 rounded-lg bg-red-600/80 hover:bg-red-600 text-white text-xs font-medium backdrop-blur-sm transition-colors flex items-center gap-1 z-10"
+                                    >
+                                        <span className="material-symbols-outlined text-sm">close</span>
+                                        Disconnect
+                                    </button>
+                                </>
+                            ) : player.rustdesk_id && isODS ? (
+                                // ODS: Ready to connect
                                 <div className="w-full h-full flex flex-col items-center justify-center bg-slate-800/80">
                                     <span className="material-symbols-outlined text-6xl text-blue-400 mb-3">desktop_windows</span>
                                     <p className="text-white text-lg font-medium">Remote View Available</p>
                                     <p className="text-slate-400 text-sm mt-1">RustDesk ID: <span className="font-mono text-blue-400">{player.rustdesk_id}</span></p>
-                                    <button className="mt-4 px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors flex items-center gap-2">
+                                    <button
+                                        onClick={() => setRemoteViewerActive(true)}
+                                        className="mt-4 px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors flex items-center gap-2 shadow-lg shadow-blue-600/20"
+                                    >
                                         <span className="material-symbols-outlined text-lg">play_circle</span>
                                         Connect Remote Viewer
                                     </button>
+                                </div>
+                            ) : player.rustdesk_id && !isODS ? (
+                                // Non-ODS users: Show remote access indicator (no iframe)
+                                <div className="w-full h-full flex flex-col items-center justify-center bg-slate-800/80">
+                                    <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4 bg-blue-500/20">
+                                        <span className="material-symbols-outlined text-5xl text-blue-400">desktop_windows</span>
+                                    </div>
+                                    <p className="text-white text-lg font-medium">Remote Access Configured</p>
+                                    <p className="text-slate-400 text-sm mt-1">Contact ODS support for remote assistance</p>
                                 </div>
                             ) : (
                                 // No RustDesk ID yet — show status display

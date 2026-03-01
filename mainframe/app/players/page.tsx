@@ -46,6 +46,7 @@ interface Player {
     memory_total_mb?: number;
     uptime_seconds?: number;
     screen_resolution?: string;
+    rustdesk_password?: string;
     device_uuid?: string;
     account_id?: string;
     playlist_id?: string;
