@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { API_URL } from '@/lib/api';
 import { authenticatedFetch } from '@/lib/auth';
 import { useToast } from '@/hooks/useToast';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface OrgSettings {
     id: string;
@@ -55,11 +56,15 @@ const STAGE_LABELS = ['0-30m', '30-60m', '60-120m', '120m+'];
 
 export default function OrganizationSettingsPage() {
     const { showToast } = useToast();
+    const { profile, hasRole } = useAuth();
     const [settings, setSettings] = useState<OrgSettings | null>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [renaming, setRenaming] = useState(false);
     const [playlists, setPlaylists] = useState<SelectOption[]>([]);
     const [groups, setGroups] = useState<SelectOption[]>([]);
+
+    const canRenameOrg = hasRole(['odsadmin', 'system']);
 
     // Editable fields
     const [orgName, setOrgName] = useState('');
@@ -130,7 +135,6 @@ export default function OrganizationSettingsPage() {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    name: orgName,
                     default_group_id: defaultGroupId || null,
                     default_playlist_id: defaultPlaylistId || null,
                     offline_threshold_minutes: offlineThreshold,
@@ -155,6 +159,38 @@ export default function OrganizationSettingsPage() {
             showToast({ type: 'error', title: 'Error', message: 'Failed to save settings' });
         }
         setSaving(false);
+    };
+
+    const handleRename = async () => {
+        const trimmed = orgName.trim();
+        if (!trimmed || trimmed.length < 2) {
+            showToast({ type: 'error', title: 'Error', message: 'Organization name must be at least 2 characters' });
+            return;
+        }
+        if (trimmed === settings?.name) return; // No change
+
+        setRenaming(true);
+        try {
+            const res = await authenticatedFetch(`${API_URL}/api/organizations/rename`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: trimmed })
+            });
+
+            if (res.ok) {
+                const updated = await res.json();
+                setSettings(prev => prev ? { ...prev, name: updated.name } : prev);
+                setOrgName(updated.name);
+                showToast({ type: 'success', title: 'Renamed', message: `Organization renamed to "${updated.name}"` });
+            } else {
+                const err = await res.json();
+                showToast({ type: 'error', title: 'Error', message: err.message || err.error || 'Failed to rename' });
+            }
+        } catch (error) {
+            console.error('Error renaming org:', error);
+            showToast({ type: 'error', title: 'Error', message: 'Failed to rename organization' });
+        }
+        setRenaming(false);
     };
 
     if (loading) {
@@ -187,15 +223,42 @@ export default function OrganizationSettingsPage() {
 
             {/* Organization Name */}
             <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <h3 className="text-base font-semibold text-gray-900 mb-1">Organization Name</h3>
-                <p className="text-sm text-gray-500 mb-4">The display name for your organization across the dashboard.</p>
-                <input
-                    type="text"
-                    value={orgName}
-                    onChange={(e) => setOrgName(e.target.value)}
-                    className="w-full max-w-md px-4 py-2.5 border border-gray-200 rounded-lg text-gray-900 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="My Organization"
-                />
+                <div className="flex items-center gap-2 mb-1">
+                    <h3 className="text-base font-semibold text-gray-900">Organization Name</h3>
+                    {!canRenameOrg && (
+                        <span className="material-symbols-outlined text-gray-400 text-[16px]" title="Only ODS admins can rename">lock</span>
+                    )}
+                </div>
+                <p className="text-sm text-gray-500 mb-4">
+                    {canRenameOrg
+                        ? 'The display name for your organization across the dashboard.'
+                        : 'Contact your ODS administrator to change the organization name.'}
+                </p>
+                <div className="flex items-center gap-3 max-w-md">
+                    <input
+                        type="text"
+                        value={orgName}
+                        onChange={(e) => canRenameOrg && setOrgName(e.target.value)}
+                        readOnly={!canRenameOrg}
+                        className={`flex-1 px-4 py-2.5 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${canRenameOrg ? 'bg-gray-50' : 'bg-gray-100 cursor-not-allowed'
+                            }`}
+                        placeholder="My Organization"
+                    />
+                    {canRenameOrg && orgName.trim() !== settings?.name && (
+                        <button
+                            onClick={handleRename}
+                            disabled={renaming}
+                            className="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50 flex items-center gap-1.5 whitespace-nowrap"
+                        >
+                            {renaming ? (
+                                <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+                            ) : (
+                                <span className="material-symbols-outlined text-[16px]">edit</span>
+                            )}
+                            Rename
+                        </button>
+                    )}
+                </div>
             </div>
 
             {/* Default Player Group */}
