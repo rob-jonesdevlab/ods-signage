@@ -28,6 +28,7 @@ interface Player {
     os_version?: string;
     disk_free_mb?: number;
     memory_total_mb?: number;
+    memory_available_mb?: number;
     uptime_seconds?: number;
     screen_resolution?: string;
     cache_asset_count?: number;
@@ -132,10 +133,15 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
         return `${mb} MB`;
     };
 
-    const formatMemory = (mb?: number) => {
-        if (mb == null) return '—';
-        if (mb > 1024) return `${(mb / 1024).toFixed(1)} GB`;
-        return `${mb} MB`;
+    const formatMemory = (totalMb?: number, availableMb?: number) => {
+        if (totalMb == null) return '—';
+        const totalGb = totalMb / 1024;
+        if (availableMb != null) {
+            const usedMb = totalMb - availableMb;
+            const usedGb = usedMb / 1024;
+            return `${usedGb.toFixed(1)} / ${totalGb.toFixed(1)} GB`;
+        }
+        return totalGb > 1 ? `${totalGb.toFixed(1)} GB` : `${totalMb} MB`;
     };
 
     // Rename player
@@ -465,7 +471,7 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                                 <>
                                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200 md:border-r">
                                         <span className="text-gray-500 text-sm">Memory</span>
-                                        <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{formatMemory(player.memory_total_mb)}</span>
+                                        <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{formatMemory(player.memory_total_mb, player.memory_available_mb)}</span>
                                     </div>
                                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200 md:border-r">
                                         <span className="text-gray-500 text-sm">Uptime</span>
