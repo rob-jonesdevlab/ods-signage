@@ -17,6 +17,7 @@ interface OrgSettings {
     offline_border_enabled: boolean;
     offline_border_custom_colors?: string[];
     offline_border_custom_animation?: string;
+    wallpaper_url: string | null;
 }
 
 interface SelectOption {
@@ -78,6 +79,7 @@ export default function OrganizationSettingsPage() {
     const [borderEnabled, setBorderEnabled] = useState(true);
     const [customColors, setCustomColors] = useState(['#3B82F6', '#F59E0B', '#EF4444', '#DC2626']);
     const [customAnimation, setCustomAnimation] = useState('Marching Ants');
+    const [wallpaperUrl, setWallpaperUrl] = useState('');
 
     useEffect(() => {
         fetchAll();
@@ -118,6 +120,7 @@ export default function OrganizationSettingsPage() {
             if (settingsData.offline_border_custom_animation) {
                 setCustomAnimation(settingsData.offline_border_custom_animation);
             }
+            setWallpaperUrl(settingsData.wallpaper_url || '');
 
             setPlaylists(Array.isArray(playlistsData) ? playlistsData : []);
             setGroups(Array.isArray(groupsData) ? groupsData : []);
@@ -143,6 +146,7 @@ export default function OrganizationSettingsPage() {
                     offline_border_enabled: borderEnabled,
                     offline_border_custom_colors: borderTemplate === 6 ? customColors : undefined,
                     offline_border_custom_animation: borderTemplate === 6 ? customAnimation : undefined,
+                    wallpaper_url: wallpaperUrl || null,
                 })
             });
 
@@ -506,23 +510,49 @@ export default function OrganizationSettingsPage() {
                 )}
             </div>
 
-            {/* ─── Wallpaper (stub) ─── */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6 opacity-60">
-                <div className="flex items-center gap-3 mb-1">
-                    <h3 className="text-base font-semibold text-gray-900">Player Wallpaper</h3>
-                    <span className="px-2 py-0.5 bg-gray-100 text-gray-500 text-xs font-medium rounded-full">Coming Soon</span>
-                </div>
-                <p className="text-sm text-gray-500 mb-4">Upload a custom wallpaper for the player status screen glass card background.</p>
-                <div className="flex items-center gap-4 max-w-md">
-                    <div className="w-20 h-20 rounded-lg bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center">
-                        <span className="material-symbols-outlined text-gray-400 text-[28px]">wallpaper</span>
+            {/* ─── Wallpaper ─── */}
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+                <h3 className="text-base font-semibold text-gray-900 mb-1">Player Wallpaper</h3>
+                <p className="text-sm text-gray-500 mb-4">Set a background wallpaper for the player status screen. Use a direct image URL.</p>
+                <div className="space-y-4 max-w-md">
+                    <div className="flex items-center gap-3">
+                        <input
+                            type="url"
+                            value={wallpaperUrl}
+                            onChange={(e) => setWallpaperUrl(e.target.value)}
+                            className="flex-1 px-4 py-2.5 border border-gray-200 rounded-lg text-gray-900 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                            placeholder="https://example.com/wallpaper.jpg"
+                        />
+                        {wallpaperUrl && (
+                            <button
+                                type="button"
+                                onClick={() => setWallpaperUrl('')}
+                                className="px-3 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-500 hover:text-red-500 hover:border-red-200 transition-colors"
+                                title="Remove wallpaper"
+                            >
+                                <span className="material-symbols-outlined text-[18px]">delete</span>
+                            </button>
+                        )}
                     </div>
-                    <button
-                        disabled
-                        className="px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-400 bg-gray-50 cursor-not-allowed"
-                    >
-                        Upload Wallpaper
-                    </button>
+                    {wallpaperUrl && (
+                        <div className="relative w-full aspect-video bg-slate-900 rounded-lg overflow-hidden border border-gray-200">
+                            <img
+                                src={wallpaperUrl}
+                                alt="Wallpaper preview"
+                                className="w-full h-full object-cover"
+                                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                            />
+                            <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/60 rounded text-[10px] text-slate-300 backdrop-blur-sm">
+                                Wallpaper Preview
+                            </div>
+                        </div>
+                    )}
+                    {!wallpaperUrl && (
+                        <div className="flex items-center gap-3 text-sm text-gray-400">
+                            <span className="material-symbols-outlined text-[20px]">info</span>
+                            No wallpaper set — players will use a clean dark background.
+                        </div>
+                    )}
                 </div>
             </div>
 
