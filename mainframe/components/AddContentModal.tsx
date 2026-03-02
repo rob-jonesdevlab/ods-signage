@@ -1,5 +1,6 @@
 'use client';
 import { API_URL } from '@/lib/api';
+import { authenticatedFetch } from '@/lib/auth';
 
 import { useState, useEffect } from 'react';
 
@@ -32,7 +33,7 @@ export default function AddContentModal({ isOpen, onClose, playlistId, onContent
     // Fetch all content from library
     useEffect(() => {
         if (isOpen) {
-            fetch(`${API_URL}/api/content`)
+            authenticatedFetch(`${API_URL}/api/content`)
                 .then((res) => res.json())
                 .then((data) => setAllContent(data))
                 .catch((err) => console.error('Failed to fetch content:', err));
@@ -63,19 +64,24 @@ export default function AddContentModal({ isOpen, onClose, playlistId, onContent
         setSelectedIds(newSelected);
     };
 
-    // Add selected content to Asset Directory
+    // Add selected content to playlist
     const handleAddContent = async () => {
         if (selectedIds.size === 0) return;
 
         setIsAdding(true);
         try {
-            const response = await fetch(`http://localhost:3001/api/playlists/${playlistId}/assets`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content_ids: Array.from(selectedIds) }),
-            });
+            // POST each content_id individually (server expects single content_id per request)
+            const ids = Array.from(selectedIds);
+            let allOk = true;
+            for (const contentId of ids) {
+                const response = await authenticatedFetch(`${API_URL}/api/playlists/${playlistId}/content`, {
+                    method: 'POST',
+                    body: JSON.stringify({ content_id: contentId, display_order: 0 }),
+                });
+                if (!response.ok) allOk = false;
+            }
 
-            if (response.ok) {
+            if (allOk) {
                 setSelectedIds(new Set());
                 setSearchQuery('');
                 onContentAdded();

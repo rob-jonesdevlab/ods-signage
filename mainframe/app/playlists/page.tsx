@@ -557,7 +557,7 @@ export default function PlaylistsPage() {
                                     />
                                 </div>
                                 <label className="text-sm font-medium text-gray-700 select-none" htmlFor="active-toggle">
-                                    Set as active playlist immediately
+                                    Set as Default Playlist
                                 </label>
                             </div>
                         </div>
