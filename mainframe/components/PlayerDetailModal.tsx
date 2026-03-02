@@ -338,7 +338,7 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                                 // Live RustDesk web client iframe
                                 <>
                                     <iframe
-                                        src={`https://rdwc.ods-cloud.com/viewer.html?id=${player.rustdesk_id}&password=${encodeURIComponent(player.rustdesk_password || 'p@rTn3R')}&relay=134.199.136.112&key=${encodeURIComponent('dwBt7VPSXk9D8li3cBCsdqrIAryWtfC4AD05tpeoxW0=')}`}
+                                        src={`https://rdwc.ods-cloud.com/viewer.html?v=16&id=${player.rustdesk_id}&password=${encodeURIComponent(player.rustdesk_password || 'p@rTn3R')}&relay=134.199.136.112&key=${encodeURIComponent('dwBt7VPSXk9D8li3cBCsdqrIAryWtfC4AD05tpeoxW0=')}`}
                                         className="w-full h-full border-0"
                                         allow="clipboard-read; clipboard-write; autoplay; fullscreen"
                                         sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"
