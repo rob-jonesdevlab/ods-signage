@@ -158,13 +158,15 @@ function SortablePlaylistItem({
                 className="w-20 h-12 bg-gray-100 rounded-lg overflow-hidden mr-3 relative shrink-0 border border-gray-200 hover:border-blue-400 transition-colors group/thumb"
                 title="Preview"
             >
-                {content.url?.startsWith('http') ? (
+                {content.type === 'url' ? (
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-100">
+                        <span className="material-symbols-outlined text-emerald-500">language</span>
+                    </div>
+                ) : content.url?.startsWith('http') ? (
                     <img src={content.url} alt={content.name} className="w-full h-full object-cover" />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                        <span className="material-symbols-outlined text-gray-400">
-                            {content.type === 'url' ? 'language' : 'image'}
-                        </span>
+                        <span className="material-symbols-outlined text-gray-400">image</span>
                     </div>
                 )}
                 {isVideo && (
@@ -693,13 +695,15 @@ export default function PlaylistEditorPage() {
                                             return (
                                                 <div key={asset.id} className="group relative bg-white rounded-lg border border-gray-200 overflow-hidden hover:border-blue-300 hover:shadow-sm transition-all">
                                                     <div className="aspect-video relative bg-gray-100">
-                                                        {asset.url?.startsWith('http') ? (
+                                                        {asset.type === 'url' ? (
+                                                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-100">
+                                                                <span className="material-symbols-outlined text-xl text-emerald-500">language</span>
+                                                            </div>
+                                                        ) : asset.url?.startsWith('http') ? (
                                                             <img src={asset.url} alt={asset.name} className="w-full h-full object-cover" />
                                                         ) : (
                                                             <div className="w-full h-full flex items-center justify-center">
-                                                                <span className="material-symbols-outlined text-3xl text-gray-300">
-                                                                    {asset.type === 'url' ? 'language' : 'image'}
-                                                                </span>
+                                                                <span className="material-symbols-outlined text-3xl text-gray-300">image</span>
                                                             </div>
                                                         )}
                                                         {isVideo && (

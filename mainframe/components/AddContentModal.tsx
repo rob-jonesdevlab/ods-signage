@@ -190,7 +190,12 @@ export default function AddContentModal({ isOpen, onClose, playlistId, onContent
                                         }`}
                                 >
                                     <div className="aspect-video relative bg-gray-100">
-                                        {content.url.startsWith('http') ? (
+                                        {content.type === 'url' ? (
+                                            <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-teal-100 flex flex-col items-center justify-center gap-1">
+                                                <span className="material-symbols-outlined text-2xl text-emerald-500">language</span>
+                                                <span className="text-[9px] text-emerald-600 font-medium">Web URL</span>
+                                            </div>
+                                        ) : content.url.startsWith('http') ? (
                                             <img
                                                 src={content.url}
                                                 alt={content.name}
@@ -237,9 +242,9 @@ export default function AddContentModal({ isOpen, onClose, playlistId, onContent
                                             <span>{content.metadata?.size ? `${(content.metadata.size / 1024 / 1024).toFixed(1)} MB` : 'N/A'}</span>
                                             <span className="flex items-center gap-1">
                                                 <span className="material-symbols-outlined text-[12px]">
-                                                    {content.type === 'video' ? 'videocam' : 'image'}
+                                                    {content.type === 'video' ? 'videocam' : content.type === 'url' ? 'language' : 'image'}
                                                 </span>
-                                                {content.type === 'video' ? 'Video' : 'Image'}
+                                                {content.type === 'video' ? 'Video' : content.type === 'url' ? 'URL' : 'Image'}
                                             </span>
                                         </div>
                                     </div>

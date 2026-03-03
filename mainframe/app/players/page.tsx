@@ -208,9 +208,8 @@ export default function PlayersPage() {
     // Group handlers
     const handleCreateGroup = async (name: string, description: string, location: string) => {
         try {
-            const res = await fetch(`${API_URL}/api/player-groups`, {
+            const res = await authenticatedFetch(`${API_URL}/api/player-groups`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, description, location })
             });
 

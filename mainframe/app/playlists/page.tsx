@@ -11,6 +11,8 @@ import Link from 'next/link';
 import Header from '@/components/Header';
 import EmptyState from '@/components/EmptyState';
 import { useToast } from '@/hooks/useToast';
+import { useAuth } from '@/contexts/AuthContext';
+import { getTeamMembers } from '@/lib/api/team';
 import SearchBar from '@/components/SearchBar';
 import SortDropdown, { SortOption } from '@/components/SortDropdown';
 import ExportButton from '@/components/ExportButton';
@@ -45,6 +47,10 @@ export default function PlaylistsPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [defaultPlaylistId, setDefaultPlaylistId] = useState<string | null>(null);
     const { showToast } = useToast();
+    const { profile } = useAuth();
+
+    // User name lookup for created_by
+    const [userNames, setUserNames] = useState<Record<string, string>>({});
 
     // Template state
     const [templates, setTemplates] = useState<PlaylistTemplate[]>([]);
@@ -82,7 +88,19 @@ export default function PlaylistsPage() {
         fetchPlaylists();
         fetchTemplates();
         fetchDefaultPlaylist();
-    }, []);
+        // Fetch team members for creator name lookup
+        if (profile?.organization_id) {
+            getTeamMembers(profile.organization_id)
+                .then(members => {
+                    const lookup: Record<string, string> = {};
+                    members.forEach((m: any) => {
+                        lookup[m.id] = m.full_name || m.email?.split('@')[0] || 'Unknown';
+                    });
+                    setUserNames(lookup);
+                })
+                .catch(err => console.error('Failed to fetch team for name lookup:', err));
+        }
+    }, [profile?.organization_id]);
 
     const fetchDefaultPlaylist = async () => {
         try {
@@ -455,7 +473,7 @@ export default function PlaylistsPage() {
                                                 </span>
                                             </button>
                                             <span className="px-2 py-1 rounded text-[10px] font-bold bg-gray-100 text-gray-600 border border-gray-200 uppercase tracking-wide">
-                                                {playlist.created_by}
+                                                {userNames[playlist.created_by] || playlist.created_by || 'System'}
                                             </span>
                                         </div>
                                     </div>
