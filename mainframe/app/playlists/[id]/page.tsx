@@ -363,9 +363,21 @@ export default function PlaylistEditorPage() {
     const fetchPlaylistContent = useCallback(() => {
         authenticatedFetch(`${API_URL}/api/playlists/${playlistId}/content`)
             .then(res => res.json())
-            .then(data => {
-                setPlaylistContent(data);
-                setOriginalContent(JSON.parse(JSON.stringify(data)));
+            .then((data: any[]) => {
+                // Flatten nested content(*) join from Supabase
+                const flattened: PlaylistContent[] = data.map((item: any) => ({
+                    id: item.content?.id || item.content_id || item.id,
+                    name: item.content?.name || item.name || '',
+                    type: item.content?.type || item.type || 'image',
+                    url: item.content?.url || item.url || '',
+                    duration: item.duration || item.content?.duration || 10,
+                    metadata: item.content?.metadata || item.metadata || {},
+                    display_order: item.position ?? item.display_order ?? 0,
+                    assignment_id: item.id || '',
+                    transition: item.transition || 'fade',
+                }));
+                setPlaylistContent(flattened);
+                setOriginalContent(JSON.parse(JSON.stringify(flattened)));
                 setHasChanges(false);
             })
             .catch(err => console.error('Failed to fetch playlist content:', err));
@@ -377,7 +389,20 @@ export default function PlaylistEditorPage() {
     const fetchAssetDirectory = useCallback(() => {
         authenticatedFetch(`${API_URL}/api/playlists/${playlistId}/assets`)
             .then(res => res.json())
-            .then(data => setAssetDirectory(data))
+            .then((data: any[]) => {
+                // Flatten nested content(*) join from Supabase
+                const flattened: AssetDirectoryItem[] = data.map((item: any) => ({
+                    id: item.content?.id || item.content_id || item.id,
+                    name: item.content?.name || item.name || '',
+                    type: item.content?.type || item.type || 'image',
+                    url: item.content?.url || item.url || '',
+                    duration: item.content?.duration || item.duration || 10,
+                    metadata: item.content?.metadata || item.metadata || {},
+                    added_at: item.created_at || item.added_at || '',
+                    asset_id: item.content_id || item.asset_id || item.id,
+                }));
+                setAssetDirectory(flattened);
+            })
             .catch(err => console.error('Failed to fetch asset directory:', err));
     }, [playlistId]);
 

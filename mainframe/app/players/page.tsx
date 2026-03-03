@@ -212,6 +212,13 @@ export default function PlayersPage() {
             });
         });
 
+        // Server emits players_update with full player list on register/disconnect
+        newSocket.on('players_update', (allPlayers) => {
+            if (Array.isArray(allPlayers)) {
+                setPlayers(allPlayers);
+            }
+        });
+
         setSocket(newSocket);
 
         return () => {
