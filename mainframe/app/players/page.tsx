@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 import { API_URL } from '@/lib/api';
 import { authenticatedFetch } from '@/lib/auth';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
 import Header from '@/components/Header';
 import { useToast } from '@/hooks/useToast';
@@ -147,6 +147,9 @@ export default function PlayersPage() {
         }
     };
 
+    // Debounce timer for WebSocket-driven refetch
+    const statusRefetchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
     useEffect(() => {
         fetchPlayers();
         fetchGroups();
@@ -164,28 +167,39 @@ export default function PlayersPage() {
         });
 
         newSocket.on('player:status', (data) => {
+            const updatedPlayer = data.player;
 
-            const player = data.player;
-            const wasOnline = players.find(p => p.id === player.id)?.status === 'online';
-            const isNowOnline = player.status === 'online';
+            // In-place update: merge incoming player data into state immediately
+            setPlayers(prev => {
+                const wasOnline = prev.find(p => p.id === updatedPlayer.id)?.status === 'online';
+                const isNowOnline = updatedPlayer.status === 'online';
 
-            if (!wasOnline && isNowOnline) {
-                showToast({
-                    type: 'success',
-                    title: 'Player Online',
-                    message: `${player.name} is now online`,
-                    duration: 5000
-                });
-            } else if (wasOnline && !isNowOnline) {
-                showToast({
-                    type: 'warning',
-                    title: 'Player Offline',
-                    message: `${player.name} has gone offline`,
-                    duration: 5000
-                });
-            }
+                if (!wasOnline && isNowOnline) {
+                    showToast({
+                        type: 'success',
+                        title: 'Player Online',
+                        message: `${updatedPlayer.name} is now online`,
+                        duration: 5000
+                    });
+                } else if (wasOnline && !isNowOnline) {
+                    showToast({
+                        type: 'warning',
+                        title: 'Player Offline',
+                        message: `${updatedPlayer.name} has gone offline`,
+                        duration: 5000
+                    });
+                }
 
-            fetchPlayers();
+                const exists = prev.some(p => p.id === updatedPlayer.id);
+                if (exists) {
+                    return prev.map(p => p.id === updatedPlayer.id ? { ...p, ...updatedPlayer } : p);
+                }
+                return [...prev, updatedPlayer];
+            });
+
+            // Debounced background refetch (at most once per 3 seconds)
+            if (statusRefetchTimer.current) clearTimeout(statusRefetchTimer.current);
+            statusRefetchTimer.current = setTimeout(() => fetchPlayers(), 3000);
         });
 
         // Deploy push acknowledgment (Phase 7 will emit this from server)
@@ -202,6 +216,7 @@ export default function PlayersPage() {
 
         return () => {
             newSocket.close();
+            if (statusRefetchTimer.current) clearTimeout(statusRefetchTimer.current);
         };
     }, []);
 
@@ -285,24 +300,30 @@ export default function PlayersPage() {
 
     const handleBulkAssignGroup = async (groupId: string) => {
         try {
-            const res = await authenticatedFetch(`${API_URL}/api/player-groups/${groupId}/assign-players`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ player_ids: selectedPlayers })
-            });
+            let allOk = true;
+            for (const playerId of selectedPlayers) {
+                const res = await authenticatedFetch(`${API_URL}/api/players/${playerId}`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ group_id: groupId }),
+                });
+                if (!res.ok) allOk = false;
+            }
 
-            if (res.ok) {
+            if (allOk) {
+                const group = groups.find(g => g.id === groupId);
                 showToast({
                     type: 'success',
                     title: 'Players Assigned',
-                    message: `${selectedPlayers.length} player(s) assigned to group`
+                    message: `${selectedPlayers.length} player(s) assigned to ${group?.name || 'group'}`
                 });
-                setSelectedPlayers([]);
-                setSelectAll(false);
-                setShowBulkAssignModal(false);
-                fetchPlayers();
-                fetchGroups();
+            } else {
+                showToast({ type: 'warning', title: 'Partial Success', message: 'Some players could not be assigned' });
             }
+            setSelectedPlayers([]);
+            setSelectAll(false);
+            setShowBulkAssignModal(false);
+            fetchPlayers();
+            fetchGroups();
         } catch (error) {
             showToast({ type: 'error', title: 'Error', message: 'Failed to assign players' });
         }
@@ -350,10 +371,9 @@ export default function PlayersPage() {
         if (!draggedPlayerId) return;
 
         try {
-            const res = await authenticatedFetch(`${API_URL}/api/player-groups/${groupId}/assign-players`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ player_ids: [draggedPlayerId] })
+            const res = await authenticatedFetch(`${API_URL}/api/players/${draggedPlayerId}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ group_id: groupId }),
             });
 
             if (res.ok) {
@@ -366,6 +386,8 @@ export default function PlayersPage() {
                 });
                 fetchPlayers();
                 fetchGroups();
+            } else {
+                showToast({ type: 'error', title: 'Failed', message: 'Could not assign player to group' });
             }
         } catch (error) {
             showToast({ type: 'error', title: 'Error', message: 'Failed to assign player' });

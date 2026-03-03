@@ -105,6 +105,10 @@ function SortablePlaylistItem({
     const [localDuration, setLocalDuration] = useState(content.duration || 10);
     const transitionRef = useRef<HTMLDivElement>(null);
 
+    // Derive a display name: content.name → extract from URL → fallback
+    const displayName = content.name
+        || (content.url ? content.url.split('/').pop()?.split('?')[0] || 'Untitled' : 'Untitled');
+
     // Sync local duration when content prop changes
     useEffect(() => {
         setLocalDuration(content.duration || 10);
@@ -181,7 +185,7 @@ function SortablePlaylistItem({
 
             {/* Content Info */}
             <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-medium text-gray-900 truncate">{content.name}</h3>
+                <h3 className="text-sm font-medium text-gray-900 truncate">{displayName}</h3>
                 <div className="flex items-center gap-2 mt-0.5">
                     <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium uppercase tracking-wide ${content.type === 'video'
                         ? 'text-blue-600 bg-blue-50 border border-blue-200'
@@ -193,6 +197,11 @@ function SortablePlaylistItem({
                     </span>
                     {content.metadata?.dimensions && (
                         <span className="text-[10px] text-gray-400">{content.metadata.dimensions}</span>
+                    )}
+                    {content.type === 'url' && content.url && (
+                        <span className="text-[10px] text-gray-400 truncate max-w-[140px]" title={content.url}>
+                            {content.url.replace(/^https?:\/\//, '').split('/')[0]}
+                        </span>
                     )}
                 </div>
             </div>
@@ -732,7 +741,7 @@ export default function PlaylistEditorPage() {
                                                         </div>
                                                     </div>
                                                     <div className="p-2">
-                                                        <h3 className="text-xs font-medium text-gray-900 truncate">{asset.name}</h3>
+                                                        <h3 className="text-xs font-medium text-gray-900 truncate">{asset.name || asset.url?.split('/').pop()?.split('?')[0] || 'Untitled'}</h3>
                                                         <span className="text-[10px] text-gray-400 capitalize">{asset.type}</span>
                                                     </div>
                                                 </div>
