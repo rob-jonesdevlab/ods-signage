@@ -26,6 +26,7 @@ import DateRangePicker from '@/components/DateRangePicker';
 import FilterDropdown from '@/components/FilterDropdown';
 import BulkActionBar from '@/components/BulkActionBar';
 import { useBulkSelection } from '@/hooks/useBulkSelection';
+import { useConfirm } from '@/hooks/useConfirm';
 
 interface Content {
     id: string;
@@ -67,6 +68,7 @@ export default function ContentLibraryPage() {
     const [uploading, setUploading] = useState(false);
     const [selectedContent, setSelectedContent] = useState<Content | null>(null);
     const [previewMedia, setPreviewMedia] = useState<Content | null>(null);
+    const { confirm, ConfirmDialog } = useConfirm();
     const [showNewFolderModal, setShowNewFolderModal] = useState(false);
     const [showUrlModal, setShowUrlModal] = useState(false);
     const [urlForm, setUrlForm] = useState({ name: '', url: '', duration: 10, isNonStop: false });
@@ -286,7 +288,14 @@ export default function ContentLibraryPage() {
 
     // Delete content
     const deleteContent = async (id: string) => {
-        if (!confirm('Are you sure you want to delete this content?')) return;
+        const confirmed = await confirm({
+            title: 'Delete Content',
+            message: 'Are you sure you want to delete this content? This action cannot be undone.',
+            confirmLabel: 'Delete',
+            variant: 'danger',
+            icon: 'delete',
+        });
+        if (!confirmed) return;
 
         try {
             const res = await authenticatedFetch(`${API_URL}/api/content/${id}`, {
@@ -450,7 +459,13 @@ export default function ContentLibraryPage() {
         const selectedItems = getSelectedItems();
         if (selectedItems.length === 0) return;
 
-        const confirmed = confirm(`Delete ${selectedItems.length} item${selectedItems.length > 1 ? 's' : ''}?`);
+        const confirmed = await confirm({
+            title: 'Bulk Delete',
+            message: `Delete ${selectedItems.length} item${selectedItems.length > 1 ? 's' : ''}? This action cannot be undone.`,
+            confirmLabel: 'Delete All',
+            variant: 'danger',
+            icon: 'delete_sweep',
+        });
         if (!confirmed) return;
 
         try {
@@ -1203,7 +1218,9 @@ export default function ContentLibraryPage() {
                 isOpen={!!previewMedia}
                 onClose={() => setPreviewMedia(null)}
                 media={previewMedia}
+                onDelete={deleteContent}
             />
+            {ConfirmDialog}
         </div>
     );
 }

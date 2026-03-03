@@ -6,6 +6,7 @@ export const dynamic = 'force-dynamic';
 import { API_URL } from '@/lib/api';
 import { authenticatedFetch } from '@/lib/auth';
 import { useToast } from '@/hooks/useToast';
+import { useConfirm } from '@/hooks/useConfirm';
 
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import Header from '@/components/Header';
@@ -44,6 +45,7 @@ interface AuditLog {
 
 export default function OperationsPage() {
     const { showToast } = useToast();
+    const { confirm, ConfirmDialog } = useConfirm();
     const [stats, setStats] = useState<OperationsStats>({
         serverUptime: 99.9,
         databaseLatency: 0,
@@ -195,7 +197,14 @@ export default function OperationsPage() {
     };
 
     const handleDeleteSchedule = async (scheduleId: string) => {
-        if (!confirm('Are you sure you want to delete this scheduled update? This action cannot be undone.')) {
+        const confirmed = await confirm({
+            title: 'Delete Schedule',
+            message: 'Are you sure you want to delete this scheduled update? This action cannot be undone.',
+            confirmLabel: 'Delete',
+            variant: 'danger',
+            icon: 'event_busy',
+        });
+        if (!confirmed) {
             return;
         }
 
@@ -708,6 +717,7 @@ export default function OperationsPage() {
                 onClose={() => setSelectedAuditLog(null)}
                 auditLog={selectedAuditLog}
             />
+            {ConfirmDialog}
         </div>
     );
 }

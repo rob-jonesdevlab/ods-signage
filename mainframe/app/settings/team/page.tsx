@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/useToast';
+import { useConfirm } from '@/hooks/useConfirm';
 import { inviteTeamMemberSchema, InviteTeamMemberData } from '@/lib/validations/team';
 import {
     getTeamMembers,
@@ -43,6 +44,7 @@ interface Invitation {
 export default function TeamSettings() {
     const { user, profile } = useAuth();
     const { showToast } = useToast();
+    const { confirm, ConfirmDialog } = useConfirm();
     const [members, setMembers] = useState<TeamMember[]>([]);
     const [invitations, setInvitations] = useState<Invitation[]>([]);
     const [loading, setLoading] = useState(true);
@@ -179,7 +181,14 @@ export default function TeamSettings() {
 
     const handleRemoveMember = async (userId: string, memberName: string) => {
         if (!profile?.organization_id) return;
-        if (!confirm(`Are you sure you want to remove ${memberName} from the team?`)) return;
+        const confirmed = await confirm({
+            title: 'Remove Team Member',
+            message: `Are you sure you want to remove ${memberName} from the team?`,
+            confirmLabel: 'Remove',
+            variant: 'danger',
+            icon: 'person_remove',
+        });
+        if (!confirmed) return;
 
         try {
             await removeMember(userId);
@@ -232,208 +241,211 @@ export default function TeamSettings() {
     };
 
     return (
-        <div className="space-y-6">
-            {/* Page Header */}
-            <div className="flex items-center justify-between">
-                <div>
-                    <h2 className="text-xl font-bold text-gray-900">Team Members</h2>
-                    <p className="text-sm text-gray-500">Manage your team and invitations</p>
-                </div>
-                {isAdmin && (
-                    <button
-                        onClick={() => setShowInviteModal(true)}
-                        className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-colors flex items-center gap-2 text-white text-sm"
-                    >
-                        <span className="material-symbols-outlined text-[18px]">person_add</span>
-                        Invite Member
-                    </button>
-                )}
-            </div>
-
-            {/* Team Members List */}
-            <SettingsCard title="Team Members" description={`${members.length} member${members.length !== 1 ? 's' : ''}`}>
-                {loading ? (
-                    <p className="text-sm text-gray-500">Loading team members...</p>
-                ) : members.length === 0 ? (
-                    <p className="text-sm text-gray-500">No team members found</p>
-                ) : (
-                    <div className="space-y-3">
-                        {members.map((member) => (
-                            <div
-                                key={member.id}
-                                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200"
-                            >
-                                <div className="flex items-center gap-4">
-                                    {/* Avatar */}
-                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-gray-900 font-semibold">
-                                        {member.full_name?.charAt(0).toUpperCase() || member.email.charAt(0).toUpperCase()}
-                                    </div>
-                                    {/* Info */}
-                                    <div>
-                                        <p className="text-sm font-medium text-gray-900">{member.full_name || 'No Name'}</p>
-                                        <p className="text-xs text-gray-500">{member.email}</p>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-center gap-3">
-                                    {/* Role Badge */}
-                                    <span className={`text-xs px-3 py-1 rounded-full border ${getRoleBadgeColor(member.role)}`}>
-                                        {formatRole(member.role)}
-                                    </span>
-
-                                    {/* Actions (only for admins) */}
-                                    {isAdmin && member.id !== user?.id && (
-                                        <div className="flex items-center gap-2">
-                                            {/* Role Selector */}
-                                            <select
-                                                value={member.role}
-                                                onChange={(e) => handleRoleChange(member.id, e.target.value, member.full_name || member.email)}
-                                                className="px-3 py-1 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                            >
-                                                <option value="standard">Standard</option>
-                                                <option value="supervisor">Supervisor</option>
-                                                <option value="odsmanager">ODS Manager</option>
-                                                <option value="odsadmin">ODS Admin</option>
-                                            </select>
-
-                                            {/* Remove Button */}
-                                            <button
-                                                onClick={() => handleRemoveMember(member.id, member.full_name || member.email)}
-                                                className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                                title="Remove member"
-                                            >
-                                                <span className="material-symbols-outlined text-[18px]">delete</span>
-                                            </button>
-                                        </div>
-                                    )}
-
-                                    {/* Current User Badge */}
-                                    {member.id === user?.id && (
-                                        <span className="text-xs px-3 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-200">
-                                            You
-                                        </span>
-                                    )}
-                                </div>
-                            </div>
-                        ))}
+        <>
+            <div className="space-y-6">
+                {/* Page Header */}
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h2 className="text-xl font-bold text-gray-900">Team Members</h2>
+                        <p className="text-sm text-gray-500">Manage your team and invitations</p>
                     </div>
-                )}
-            </SettingsCard>
+                    {isAdmin && (
+                        <button
+                            onClick={() => setShowInviteModal(true)}
+                            className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-colors flex items-center gap-2 text-white text-sm"
+                        >
+                            <span className="material-symbols-outlined text-[18px]">person_add</span>
+                            Invite Member
+                        </button>
+                    )}
+                </div>
 
-            {/* Pending Invitations */}
-            {isAdmin && invitations.length > 0 && (
-                <SettingsCard
-                    title="Pending Invitations"
-                    description={`${invitations.length} pending invitation${invitations.length !== 1 ? 's' : ''}`}
-                >
-                    <div className="space-y-3">
-                        {invitations.map((invitation) => (
-                            <div
-                                key={invitation.id}
-                                className="flex items-center justify-between p-4 bg-amber-50 rounded-lg border border-amber-200"
-                            >
-                                <div className="flex items-center gap-4">
-                                    <span className="material-symbols-outlined text-[20px] text-amber-500">mail</span>
-                                    <div>
-                                        <p className="text-sm font-medium text-gray-900">{invitation.email}</p>
-                                        <p className="text-xs text-gray-500">
-                                            Invited {new Date(invitation.created_at).toLocaleDateString()} • Expires{' '}
-                                            {new Date(invitation.expires_at).toLocaleDateString()}
-                                        </p>
+                {/* Team Members List */}
+                <SettingsCard title="Team Members" description={`${members.length} member${members.length !== 1 ? 's' : ''}`}>
+                    {loading ? (
+                        <p className="text-sm text-gray-500">Loading team members...</p>
+                    ) : members.length === 0 ? (
+                        <p className="text-sm text-gray-500">No team members found</p>
+                    ) : (
+                        <div className="space-y-3">
+                            {members.map((member) => (
+                                <div
+                                    key={member.id}
+                                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200"
+                                >
+                                    <div className="flex items-center gap-4">
+                                        {/* Avatar */}
+                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-gray-900 font-semibold">
+                                            {member.full_name?.charAt(0).toUpperCase() || member.email.charAt(0).toUpperCase()}
+                                        </div>
+                                        {/* Info */}
+                                        <div>
+                                            <p className="text-sm font-medium text-gray-900">{member.full_name || 'No Name'}</p>
+                                            <p className="text-xs text-gray-500">{member.email}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-3">
+                                        {/* Role Badge */}
+                                        <span className={`text-xs px-3 py-1 rounded-full border ${getRoleBadgeColor(member.role)}`}>
+                                            {formatRole(member.role)}
+                                        </span>
+
+                                        {/* Actions (only for admins) */}
+                                        {isAdmin && member.id !== user?.id && (
+                                            <div className="flex items-center gap-2">
+                                                {/* Role Selector */}
+                                                <select
+                                                    value={member.role}
+                                                    onChange={(e) => handleRoleChange(member.id, e.target.value, member.full_name || member.email)}
+                                                    className="px-3 py-1 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                >
+                                                    <option value="standard">Standard</option>
+                                                    <option value="supervisor">Supervisor</option>
+                                                    <option value="odsmanager">ODS Manager</option>
+                                                    <option value="odsadmin">ODS Admin</option>
+                                                </select>
+
+                                                {/* Remove Button */}
+                                                <button
+                                                    onClick={() => handleRemoveMember(member.id, member.full_name || member.email)}
+                                                    className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                                    title="Remove member"
+                                                >
+                                                    <span className="material-symbols-outlined text-[18px]">delete</span>
+                                                </button>
+                                            </div>
+                                        )}
+
+                                        {/* Current User Badge */}
+                                        {member.id === user?.id && (
+                                            <span className="text-xs px-3 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-200">
+                                                You
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
+                            ))}
+                        </div>
+                    )}
+                </SettingsCard>
 
-                                <div className="flex items-center gap-3">
-                                    <span className={`text-xs px-3 py-1 rounded-full border ${getRoleBadgeColor(invitation.role)}`}>
-                                        {formatRole(invitation.role)}
-                                    </span>
+                {/* Pending Invitations */}
+                {isAdmin && invitations.length > 0 && (
+                    <SettingsCard
+                        title="Pending Invitations"
+                        description={`${invitations.length} pending invitation${invitations.length !== 1 ? 's' : ''}`}
+                    >
+                        <div className="space-y-3">
+                            {invitations.map((invitation) => (
+                                <div
+                                    key={invitation.id}
+                                    className="flex items-center justify-between p-4 bg-amber-50 rounded-lg border border-amber-200"
+                                >
+                                    <div className="flex items-center gap-4">
+                                        <span className="material-symbols-outlined text-[20px] text-amber-500">mail</span>
+                                        <div>
+                                            <p className="text-sm font-medium text-gray-900">{invitation.email}</p>
+                                            <p className="text-xs text-gray-500">
+                                                Invited {new Date(invitation.created_at).toLocaleDateString()} • Expires{' '}
+                                                {new Date(invitation.expires_at).toLocaleDateString()}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-3">
+                                        <span className={`text-xs px-3 py-1 rounded-full border ${getRoleBadgeColor(invitation.role)}`}>
+                                            {formatRole(invitation.role)}
+                                        </span>
+                                        <button
+                                            onClick={() => handleCancelInvitation(invitation.id, invitation.email)}
+                                            className="px-3 py-1 text-sm text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </SettingsCard>
+                )}
+
+                {/* Invite Member Modal */}
+                {showInviteModal && (
+                    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                        <div className="bg-gray-100 rounded-xl border border-gray-200 max-w-md w-full p-6">
+                            <h2 className="text-xl font-bold text-gray-900 mb-4">Invite Team Member</h2>
+
+                            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                                {/* Email */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                                    <input
+                                        type="email"
+                                        {...register('email')}
+                                        className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                                        placeholder="colleague@example.com"
+                                    />
+                                    {errors.email && <p className="mt-1 text-sm text-red-400">{errors.email.message}</p>}
+                                </div>
+
+                                {/* Role */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
+                                    <select
+                                        {...register('role')}
+                                        className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                                    >
+                                        <option value="">Select a role</option>
+                                        <option value="standard">Standard - Basic user access</option>
+                                        <option value="supervisor">Supervisor - Can view and approve content</option>
+                                        <option value="odsmanager">ODS Manager - Can manage content and players</option>
+                                    </select>
+                                    {errors.role && <p className="mt-1 text-sm text-red-400">{errors.role.message}</p>}
+                                </div>
+
+                                {/* Message (Optional) */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Message <span className="text-gray-400">(Optional)</span>
+                                    </label>
+                                    <textarea
+                                        {...register('message')}
+                                        rows={3}
+                                        className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400 resize-none"
+                                        placeholder="Add a personal message to the invitation..."
+                                    />
+                                    {errors.message && <p className="mt-1 text-sm text-red-400">{errors.message.message}</p>}
+                                </div>
+
+                                {/* Actions */}
+                                <div className="flex gap-3 pt-2">
                                     <button
-                                        onClick={() => handleCancelInvitation(invitation.id, invitation.email)}
-                                        className="px-3 py-1 text-sm text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                                        type="button"
+                                        onClick={() => {
+                                            setShowInviteModal(false);
+                                            reset();
+                                        }}
+                                        className="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded-lg font-medium transition-colors text-gray-700 text-sm"
                                     >
                                         Cancel
                                     </button>
+                                    <button
+                                        type="submit"
+                                        disabled={inviting}
+                                        className="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-lg font-medium transition-colors text-white text-sm"
+                                    >
+                                        {inviting ? 'Sending...' : 'Send Invitation'}
+                                    </button>
                                 </div>
-                            </div>
-                        ))}
+                            </form>
+                        </div>
                     </div>
-                </SettingsCard>
-            )}
-
-            {/* Invite Member Modal */}
-            {showInviteModal && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-gray-100 rounded-xl border border-gray-200 max-w-md w-full p-6">
-                        <h2 className="text-xl font-bold text-gray-900 mb-4">Invite Team Member</h2>
-
-                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                            {/* Email */}
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                                <input
-                                    type="email"
-                                    {...register('email')}
-                                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
-                                    placeholder="colleague@example.com"
-                                />
-                                {errors.email && <p className="mt-1 text-sm text-red-400">{errors.email.message}</p>}
-                            </div>
-
-                            {/* Role */}
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
-                                <select
-                                    {...register('role')}
-                                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
-                                >
-                                    <option value="">Select a role</option>
-                                    <option value="standard">Standard - Basic user access</option>
-                                    <option value="supervisor">Supervisor - Can view and approve content</option>
-                                    <option value="odsmanager">ODS Manager - Can manage content and players</option>
-                                </select>
-                                {errors.role && <p className="mt-1 text-sm text-red-400">{errors.role.message}</p>}
-                            </div>
-
-                            {/* Message (Optional) */}
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Message <span className="text-gray-400">(Optional)</span>
-                                </label>
-                                <textarea
-                                    {...register('message')}
-                                    rows={3}
-                                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400 resize-none"
-                                    placeholder="Add a personal message to the invitation..."
-                                />
-                                {errors.message && <p className="mt-1 text-sm text-red-400">{errors.message.message}</p>}
-                            </div>
-
-                            {/* Actions */}
-                            <div className="flex gap-3 pt-2">
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setShowInviteModal(false);
-                                        reset();
-                                    }}
-                                    className="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded-lg font-medium transition-colors text-gray-700 text-sm"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={inviting}
-                                    className="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-lg font-medium transition-colors text-white text-sm"
-                                >
-                                    {inviting ? 'Sending...' : 'Send Invitation'}
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
+                )}
 
 
-        </div>
+            </div>
+            {ConfirmDialog}
+        </>
     );
 }

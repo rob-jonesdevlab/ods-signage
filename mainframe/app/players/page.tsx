@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import Header from '@/components/Header';
 import { useToast } from '@/hooks/useToast';
+import { useConfirm } from '@/hooks/useConfirm';
 import ExportButton from '@/components/ExportButton';
 import DateRangePicker from '@/components/DateRangePicker';
 import FilterDropdown from '@/components/FilterDropdown';
@@ -68,6 +69,7 @@ export default function PlayersPage() {
     const [socket, setSocket] = useState<Socket | null>(null);
     const [connected, setConnected] = useState(false);
     const { showToast } = useToast();
+    const { confirm, ConfirmDialog } = useConfirm();
 
     // Modals
     const [isPairingModalOpen, setIsPairingModalOpen] = useState(false);
@@ -308,7 +310,14 @@ export default function PlayersPage() {
     };
 
     const handleBulkDelete = async () => {
-        if (!confirm(`Are you sure you want to delete ${selectedPlayers.length} player(s)? This action cannot be undone.`)) {
+        const confirmed = await confirm({
+            title: 'Bulk Delete Players',
+            message: `Are you sure you want to delete ${selectedPlayers.length} player(s)? This action cannot be undone.`,
+            confirmLabel: 'Delete All',
+            variant: 'danger',
+            icon: 'delete_sweep',
+        });
+        if (!confirmed) {
             return;
         }
 
@@ -823,6 +832,7 @@ export default function PlayersPage() {
                     fetchGroups();
                 }}
             />
+            {ConfirmDialog}
         </div>
     );
 }

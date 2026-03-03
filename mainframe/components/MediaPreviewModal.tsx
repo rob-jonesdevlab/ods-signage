@@ -1,10 +1,12 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useConfirm } from '@/hooks/useConfirm';
 
 interface MediaPreviewModalProps {
     isOpen: boolean;
     onClose: () => void;
+    onDelete?: (id: string) => void;
     media: {
         id: string;
         name: string;
@@ -22,7 +24,8 @@ interface MediaPreviewModalProps {
     } | null;
 }
 
-export default function MediaPreviewModal({ isOpen, onClose, media }: MediaPreviewModalProps) {
+export default function MediaPreviewModal({ isOpen, onClose, media, onDelete }: MediaPreviewModalProps) {
+    const { confirm, ConfirmDialog } = useConfirm();
     // Close on ESC key
     useEffect(() => {
         const handleEsc = (e: KeyboardEvent) => {
@@ -54,9 +57,16 @@ export default function MediaPreviewModal({ isOpen, onClose, media }: MediaPrevi
         });
     };
 
-    const handleDelete = () => {
-        if (confirm(`Are you sure you want to delete "${media.name}"?`)) {
-            // Delete logic will be handled by parent component
+    const handleDelete = async () => {
+        const confirmed = await confirm({
+            title: 'Delete Media',
+            message: `Are you sure you want to delete "${media.name}"? This action cannot be undone.`,
+            confirmLabel: 'Delete',
+            variant: 'danger',
+            icon: 'delete',
+        });
+        if (confirmed && onDelete) {
+            onDelete(media.id);
             onClose();
         }
     };
@@ -235,6 +245,7 @@ export default function MediaPreviewModal({ isOpen, onClose, media }: MediaPrevi
                     </div>
                 </div>
             </div>
+            {ConfirmDialog}
         </div>
     );
 }

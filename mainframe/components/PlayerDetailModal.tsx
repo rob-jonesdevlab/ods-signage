@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { API_URL } from '@/lib/api';
 import { authenticatedFetch } from '@/lib/auth';
 import { useToast } from '@/hooks/useToast';
+import { useConfirm } from '@/hooks/useConfirm';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface Player {
@@ -57,6 +58,7 @@ interface PlayerDetailModalProps {
 
 export default function PlayerDetailModal({ isOpen, onClose, player, groups, playlists, onPlayerUpdated }: PlayerDetailModalProps) {
     const { showToast } = useToast();
+    const { confirm, ConfirmDialog } = useConfirm();
     const { profile } = useAuth();
     const isODS = profile?.role === 'odsadmin' || profile?.role === 'odstech';
     const [isEditing, setIsEditing] = useState(false);
@@ -214,7 +216,14 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
     // Unpair player
     const handleUnpair = async () => {
         if (!player) return;
-        if (!confirm(`Are you sure you want to unpair "${player.name}"? This will clear the pairing data but keep the player record.`)) return;
+        const confirmed = await confirm({
+            title: 'Unpair Player',
+            message: `Are you sure you want to unpair "${player.name}"? This will clear the pairing data but keep the player record.`,
+            confirmLabel: 'Unpair',
+            variant: 'danger',
+            icon: 'link_off',
+        });
+        if (!confirmed) return;
         try {
             const res = await authenticatedFetch(`${API_URL}/api/players/${player.id}/unpair`, {
                 method: 'POST',
@@ -234,7 +243,14 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
     // Delete player
     const handleDelete = async () => {
         if (!player) return;
-        if (!confirm(`Are you sure you want to permanently delete "${player.name}"? This cannot be undone.`)) return;
+        const confirmed = await confirm({
+            title: 'Delete Player',
+            message: `Are you sure you want to permanently delete "${player.name}"? This cannot be undone.`,
+            confirmLabel: 'Delete',
+            variant: 'danger',
+            icon: 'delete',
+        });
+        if (!confirmed) return;
         try {
             const res = await authenticatedFetch(`${API_URL}/api/players/${player.id}`, {
                 method: 'DELETE',
@@ -599,6 +615,7 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                     </div>
                 </div>
             </div>
+            {ConfirmDialog}
         </div>
     );
 }
