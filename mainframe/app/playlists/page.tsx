@@ -303,18 +303,18 @@ export default function PlaylistsPage() {
     );
 
     return (
-        <div className="min-h-screen">
+        <div className="min-h-screen flex flex-col">
             <Header />
-            {/* Main Content */}
-            <main className="w-full max-w-[1600px] mx-auto p-6 md:p-8 flex gap-6">
-                {/* Sidebar */}
-                <aside className="w-64 flex-shrink-0">
-                    <div className="p-4 rounded-lg border border-gray-200 bg-white shadow-sm sticky top-6">
+            {/* Main Content - Two Column Layout */}
+            <div className="flex-1 flex overflow-hidden">
+                {/* Templates Sidebar */}
+                <aside className="w-64 flex-shrink-0 border-r border-gray-200 bg-gray-50 overflow-y-auto p-4">
+                    <div className="p-4 rounded-lg border border-gray-200 bg-white shadow-sm sticky top-0">
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="font-semibold text-gray-900">Templates</h3>
                             <button
                                 onClick={() => setShowNewTemplateModal(true)}
-                                className="w-8 h-8 rounded-lg bg-blue-600 hover:bg-blue-500 transition-colors flex items-center justify-center shadow-sm"
+                                className="p-1 hover:bg-gray-100 rounded transition-colors"
                                 title="New Template"
                             >
                                 <span className="material-symbols-outlined text-[20px]">add</span>
@@ -330,7 +330,7 @@ export default function PlaylistsPage() {
                 </aside>
 
                 {/* Main Content Area */}
-                <div className="flex-1 flex flex-col gap-8">
+                <div className="flex-1 flex flex-col gap-8 p-6 md:p-8 overflow-y-auto">
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                         <div>
                             <h1 className="text-3xl font-bold tracking-tight text-gray-900">Playlists</h1>
@@ -498,7 +498,7 @@ export default function PlaylistsPage() {
                         </div>
                     )}
                 </div>
-            </main>
+            </div>
 
             {/* New Playlist Modal */}
             {showNewPlaylistModal && (

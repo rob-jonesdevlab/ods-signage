@@ -41,7 +41,7 @@ export default function BulkActionBar({
 
     return (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-slide-up">
-            <div className="bg-slate-800 border border-slate-700 rounded-xl shadow-2xl shadow-black/50 backdrop-blur-sm">
+            <div className="bg-white border border-gray-200 rounded-xl shadow-2xl">
                 <div className="flex items-center gap-4 px-6 py-4">
                     {/* Selection Info */}
                     <div className="flex items-center gap-3">
@@ -49,21 +49,21 @@ export default function BulkActionBar({
                             <div className="w-5 h-5 bg-blue-600 rounded flex items-center justify-center">
                                 <span className="material-symbols-outlined text-white text-[14px] fill-1">check</span>
                             </div>
-                            <span className="text-sm font-medium text-white">
+                            <span className="text-sm font-medium text-gray-900">
                                 {selectedCount} selected
                             </span>
                         </div>
-                        <div className="h-4 w-px bg-slate-700"></div>
+                        <div className="h-4 w-px bg-gray-300"></div>
                         <button
                             onClick={allSelected ? onDeselectAll : onSelectAll}
-                            className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
+                            className="text-sm text-blue-600 hover:text-blue-500 transition-colors"
                         >
                             {allSelected ? 'Deselect all' : `Select all ${totalCount}`}
                         </button>
                     </div>
 
                     {/* Divider */}
-                    <div className="h-8 w-px bg-slate-700"></div>
+                    <div className="h-8 w-px bg-gray-300"></div>
 
                     {/* Actions */}
                     <div className="flex items-center gap-2">
@@ -71,7 +71,7 @@ export default function BulkActionBar({
                         {onMove && (
                             <button
                                 onClick={onMove}
-                                className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-white rounded-lg text-sm transition-all"
+                                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm transition-all border border-gray-200"
                                 title="Move to folder"
                             >
                                 <span className="material-symbols-outlined text-[18px]">drive_file_move</span>
@@ -83,7 +83,7 @@ export default function BulkActionBar({
                         {onAddToPlaylist && (
                             <button
                                 onClick={onAddToPlaylist}
-                                className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-white rounded-lg text-sm transition-all"
+                                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm transition-all border border-gray-200"
                                 title="Add to playlist"
                             >
                                 <span className="material-symbols-outlined text-[18px]">playlist_add</span>
@@ -95,7 +95,7 @@ export default function BulkActionBar({
                         {onExport && (
                             <button
                                 onClick={onExport}
-                                className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-white rounded-lg text-sm transition-all"
+                                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm transition-all border border-gray-200"
                                 title="Export selected"
                             >
                                 <span className="material-symbols-outlined text-[18px]">download</span>
@@ -106,7 +106,7 @@ export default function BulkActionBar({
                         {/* Delete */}
                         <button
                             onClick={onDelete}
-                            className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg text-sm transition-all shadow-lg shadow-red-600/20"
+                            className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg text-sm transition-all shadow-sm"
                             title="Delete selected"
                         >
                             <span className="material-symbols-outlined text-[18px]">delete</span>
@@ -117,7 +117,7 @@ export default function BulkActionBar({
                     {/* Close */}
                     <button
                         onClick={onDeselectAll}
-                        className="ml-2 p-2 text-slate-400 hover:text-white transition-colors"
+                        className="ml-2 p-2 text-gray-400 hover:text-gray-900 transition-colors"
                         title="Deselect all (Esc)"
                     >
                         <span className="material-symbols-outlined text-[20px]">close</span>
@@ -126,10 +126,10 @@ export default function BulkActionBar({
 
                 {/* Hint */}
                 <div className="px-6 pb-3 pt-0">
-                    <p className="text-xs text-slate-500">
-                        <kbd className="px-1.5 py-0.5 bg-slate-700 border border-slate-600 rounded text-[10px]">Shift</kbd>
+                    <p className="text-xs text-gray-500">
+                        <kbd className="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-[10px]">Shift</kbd>
                         {' + Click to select range • '}
-                        <kbd className="px-1.5 py-0.5 bg-slate-700 border border-slate-600 rounded text-[10px]">Esc</kbd>
+                        <kbd className="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-[10px]">Esc</kbd>
                         {' to deselect all'}
                     </p>
                 </div>

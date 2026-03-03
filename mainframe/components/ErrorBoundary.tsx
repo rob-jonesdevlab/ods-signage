@@ -55,23 +55,23 @@ class ErrorBoundary extends Component<Props, State> {
 
             // Default fallback UI
             return (
-                <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
-                    <div className="max-w-md w-full bg-slate-900 rounded-xl border border-slate-800 p-8">
+                <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+                    <div className="max-w-md w-full bg-white rounded-xl border border-gray-200 shadow-lg p-8">
                         <div className="flex items-center gap-3 mb-4">
                             <span className="material-symbols-outlined text-red-500 text-4xl">error</span>
-                            <h1 className="text-2xl font-bold text-white">Something went wrong</h1>
+                            <h1 className="text-2xl font-bold text-gray-900">Something went wrong</h1>
                         </div>
 
-                        <p className="text-slate-400 mb-6">
-                            We encountered an unexpected error. This has been logged and we'll look into it.
+                        <p className="text-gray-600 mb-6">
+                            We encountered an unexpected error. This has been logged and we&apos;ll look into it.
                         </p>
 
                         {process.env.NODE_ENV === 'development' && this.state.error && (
                             <details className="mb-6">
-                                <summary className="text-sm text-slate-500 cursor-pointer hover:text-slate-400 mb-2">
+                                <summary className="text-sm text-gray-500 cursor-pointer hover:text-gray-700 mb-2">
                                     Error Details (Development Only)
                                 </summary>
-                                <div className="bg-slate-950 rounded-lg p-4 text-xs font-mono text-red-400 overflow-auto max-h-48">
+                                <div className="bg-gray-50 rounded-lg p-4 text-xs font-mono text-red-600 overflow-auto max-h-48 border border-gray-200">
                                     <div className="mb-2">
                                         <strong>Error:</strong> {this.state.error.toString()}
                                     </div>
@@ -90,13 +90,13 @@ class ErrorBoundary extends Component<Props, State> {
                         <div className="flex gap-3">
                             <button
                                 onClick={this.handleReset}
-                                className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                                className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors shadow-sm"
                             >
                                 Try Again
                             </button>
                             <button
                                 onClick={() => window.location.href = '/dashboard'}
-                                className="flex-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors"
+                                className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors border border-gray-300"
                             >
                                 Go to Dashboard
                             </button>

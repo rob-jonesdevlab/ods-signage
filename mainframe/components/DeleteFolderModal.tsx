@@ -37,16 +37,16 @@ export default function DeleteFolderModal({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-            <div className="bg-slate-800 rounded-xl shadow-2xl border border-slate-700 w-full max-w-md mx-4 animate-in fade-in zoom-in duration-200">
+            <div className="bg-white rounded-xl shadow-2xl border border-gray-200 w-full max-w-md mx-4">
                 {/* Header */}
-                <div className="flex items-center justify-between p-6 border-b border-slate-700">
-                    <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+                <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                    <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
                         <span className="material-symbols-outlined text-red-500">delete</span>
                         Delete Folder
                     </h2>
                     <button
                         onClick={onClose}
-                        className="text-slate-400 hover:text-white transition-colors"
+                        className="text-gray-400 hover:text-gray-900 transition-colors"
                     >
                         <span className="material-symbols-outlined">close</span>
                     </button>
@@ -55,20 +55,20 @@ export default function DeleteFolderModal({
                 {/* Content */}
                 <div className="p-6">
                     <div className="mb-6">
-                        <p className="text-slate-300 mb-4">
-                            Are you sure you want to delete the folder <span className="font-semibold text-white">"{folderName}"</span>?
+                        <p className="text-gray-600 mb-4">
+                            Are you sure you want to delete the folder <span className="font-semibold text-gray-900">&quot;{folderName}&quot;</span>?
                         </p>
                         {itemCount > 0 && (
-                            <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4">
+                            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
                                 <div className="flex items-start gap-3">
                                     <span className="material-symbols-outlined text-amber-500 text-[20px]">
                                         warning
                                     </span>
                                     <div>
-                                        <p className="text-amber-200 text-sm font-medium mb-1">
+                                        <p className="text-amber-700 text-sm font-medium mb-1">
                                             This folder contains {itemCount} item{itemCount !== 1 ? 's' : ''}
                                         </p>
-                                        <p className="text-amber-300/80 text-xs">
+                                        <p className="text-amber-600 text-xs">
                                             All items in this folder will also be deleted.
                                         </p>
                                     </div>
@@ -82,7 +82,7 @@ export default function DeleteFolderModal({
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg transition-colors"
+                            className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors border border-gray-300"
                             disabled={isDeleting}
                         >
                             Cancel
@@ -90,7 +90,7 @@ export default function DeleteFolderModal({
                         <button
                             onClick={handleDelete}
                             disabled={isDeleting}
-                            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                            className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-sm"
                         >
                             {isDeleting ? (
                                 <>

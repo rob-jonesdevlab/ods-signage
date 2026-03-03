@@ -45,16 +45,16 @@ export default function RenameFolderModal({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-            <div className="bg-slate-800 rounded-xl shadow-2xl border border-slate-700 w-full max-w-md mx-4 animate-in fade-in zoom-in duration-200">
+            <div className="bg-white rounded-xl shadow-2xl border border-gray-200 w-full max-w-md mx-4">
                 {/* Header */}
-                <div className="flex items-center justify-between p-6 border-b border-slate-700">
-                    <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+                <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                    <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
                         <span className="material-symbols-outlined text-blue-500">edit</span>
                         Rename Folder
                     </h2>
                     <button
                         onClick={onClose}
-                        className="text-slate-400 hover:text-white transition-colors"
+                        className="text-gray-400 hover:text-gray-900 transition-colors"
                     >
                         <span className="material-symbols-outlined">close</span>
                     </button>
@@ -63,14 +63,14 @@ export default function RenameFolderModal({
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="p-6">
                     <div className="mb-6">
-                        <label className="block text-sm font-medium text-slate-300 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                             Folder Name
                         </label>
                         <input
                             type="text"
                             value={newName}
                             onChange={(e) => setNewName(e.target.value)}
-                            className="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Enter folder name"
                             autoFocus
                         />
@@ -81,7 +81,7 @@ export default function RenameFolderModal({
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg transition-colors"
+                            className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors border border-gray-300"
                             disabled={isSubmitting}
                         >
                             Cancel
@@ -89,7 +89,7 @@ export default function RenameFolderModal({
                         <button
                             type="submit"
                             disabled={!newName.trim() || newName === currentName || isSubmitting}
-                            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-sm"
                         >
                             {isSubmitting ? (
                                 <>

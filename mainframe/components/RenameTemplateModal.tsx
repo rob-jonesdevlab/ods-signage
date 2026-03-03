@@ -35,12 +35,12 @@ export default function RenameTemplateModal({
 
     return (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="glass-card bg-slate-800/95 backdrop-blur-md rounded-2xl border border-slate-700/50 p-6 w-full max-w-md">
-                <h2 className="text-2xl font-bold text-white mb-6">Rename Template</h2>
+            <div className="bg-white rounded-xl border border-gray-200 shadow-2xl p-6 w-full max-w-md">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">Rename Template</h2>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                             Template Name
                         </label>
                         <input
@@ -48,7 +48,7 @@ export default function RenameTemplateModal({
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             placeholder="Enter template name"
-                            className="w-full px-4 py-2 bg-slate-900/50 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             autoFocus
                             required
                         />
@@ -58,13 +58,13 @@ export default function RenameTemplateModal({
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-medium transition-colors"
+                            className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-medium transition-colors border border-gray-300"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors shadow-lg shadow-blue-500/20"
+                            className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors shadow-sm"
                         >
                             Rename
                         </button>

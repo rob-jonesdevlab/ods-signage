@@ -500,7 +500,7 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                             )}
 
                             {/* Row 5 — Playlist + Group (both roles) + ODS: Last Seen/Cache */}
-                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-slate-700 md:border-b-0 md:border-r">
+                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200 md:border-b-0 md:border-r">
                                 <span className="text-gray-500 text-sm">Playlist</span>
                                 {isAssigningPlaylist ? (
                                     <select
@@ -508,7 +508,7 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                                         onChange={(e) => handleAssignPlaylist(e.target.value || null)}
                                         className="bg-white text-gray-900 text-sm rounded-md px-2 py-1 border border-gray-300 outline-none mt-1 sm:mt-0"
                                         autoFocus
-                                        onBlur={() => setIsAssigningPlaylist(false)}
+                                        onBlur={() => setTimeout(() => setIsAssigningPlaylist(false), 150)}
                                     >
                                         <option value="">None</option>
                                         {playlists.map(p => (
@@ -534,7 +534,7 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                                         onChange={(e) => handleAssignGroup(e.target.value || null)}
                                         className="bg-white text-gray-900 text-sm rounded-md px-2 py-1 border border-gray-300 outline-none mt-1 sm:mt-0"
                                         autoFocus
-                                        onBlur={() => setIsAssigningGroup(false)}
+                                        onBlur={() => setTimeout(() => setIsAssigningGroup(false), 150)}
                                     >
                                         <option value="">None</option>
                                         {groups.map(g => (

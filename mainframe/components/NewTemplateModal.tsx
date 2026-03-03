@@ -28,12 +28,12 @@ export default function NewTemplateModal({ isOpen, onClose, onSubmit }: NewTempl
 
     return (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="glass-card bg-slate-800/95 backdrop-blur-md rounded-2xl border border-slate-700/50 p-6 w-full max-w-md">
-                <h2 className="text-2xl font-bold text-white mb-6">New Template</h2>
+            <div className="bg-white rounded-xl border border-gray-200 shadow-2xl p-6 w-full max-w-md">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">New Template</h2>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                             Template Name *
                         </label>
                         <input
@@ -41,14 +41,14 @@ export default function NewTemplateModal({ isOpen, onClose, onSubmit }: NewTempl
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             placeholder="e.g., Morning Loop"
-                            className="w-full px-4 py-2 bg-slate-900/50 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             autoFocus
                             required
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                             Description
                         </label>
                         <textarea
@@ -56,12 +56,12 @@ export default function NewTemplateModal({ isOpen, onClose, onSubmit }: NewTempl
                             onChange={(e) => setDescription(e.target.value)}
                             placeholder="e.g., Morning content rotation"
                             rows={3}
-                            className="w-full px-4 py-2 bg-slate-900/50 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                            className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                             Duration Per Item (seconds)
                         </label>
                         <input
@@ -70,22 +70,22 @@ export default function NewTemplateModal({ isOpen, onClose, onSubmit }: NewTempl
                             onChange={(e) => setDurationPerItem(parseInt(e.target.value) || 10)}
                             min="1"
                             max="300"
-                            className="w-full px-4 py-2 bg-slate-900/50 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         />
-                        <p className="text-xs text-slate-500 mt-1">How long each content item displays (1-300 seconds)</p>
+                        <p className="text-xs text-gray-500 mt-1">How long each content item displays (1-300 seconds)</p>
                     </div>
 
                     <div className="flex gap-3 pt-4">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-medium transition-colors"
+                            className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-medium transition-colors border border-gray-300"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors shadow-lg shadow-blue-500/20"
+                            className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors shadow-sm"
                         >
                             Create Template
                         </button>

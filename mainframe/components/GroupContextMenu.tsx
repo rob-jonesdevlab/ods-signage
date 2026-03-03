@@ -37,7 +37,7 @@ export default function GroupContextMenu({
     return (
         <div
             ref={menuRef}
-            className="fixed z-50 glass-card py-2 min-w-[180px] shadow-xl"
+            className="fixed z-50 bg-white rounded-lg border border-gray-200 shadow-xl py-2 min-w-[180px]"
             style={{ left: `${position.x}px`, top: `${position.y}px` }}
         >
             <button
@@ -45,9 +45,9 @@ export default function GroupContextMenu({
                     onDeploy();
                     onClose();
                 }}
-                className="w-full px-4 py-2 text-left hover:bg-slate-700 transition-colors flex items-center gap-2"
+                className="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors flex items-center gap-2 text-gray-700"
             >
-                <span className="material-symbols-outlined text-[18px] text-blue-400">publish</span>
+                <span className="material-symbols-outlined text-[18px] text-blue-500">publish</span>
                 <span>Deploy Playlist</span>
             </button>
 
@@ -56,20 +56,20 @@ export default function GroupContextMenu({
                     onRename();
                     onClose();
                 }}
-                className="w-full px-4 py-2 text-left hover:bg-slate-700 transition-colors flex items-center gap-2"
+                className="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors flex items-center gap-2 text-gray-700"
             >
-                <span className="material-symbols-outlined text-[18px]">edit</span>
+                <span className="material-symbols-outlined text-[18px] text-gray-500">edit</span>
                 <span>Rename</span>
             </button>
 
-            <div className="h-px bg-slate-700 my-1" />
+            <div className="h-px bg-gray-200 my-1" />
 
             <button
                 onClick={() => {
                     onDelete();
                     onClose();
                 }}
-                className="w-full px-4 py-2 text-left hover:bg-red-500/20 text-red-400 transition-colors flex items-center gap-2"
+                className="w-full px-4 py-2 text-left hover:bg-red-50 text-red-500 transition-colors flex items-center gap-2"
             >
                 <span className="material-symbols-outlined text-[18px]">delete</span>
                 <span>Delete Group</span>

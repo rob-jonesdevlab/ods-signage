@@ -87,9 +87,9 @@ export default function ExportButton({ data, filename, title, className = '' }: 
                 disabled={isExporting}
                 className={`
                     flex items-center gap-2 px-4 py-2.5 
-                    bg-slate-800 hover:bg-slate-700 
-                    border border-slate-700 rounded-lg 
-                    text-sm text-slate-300 transition-all 
+                    bg-white hover:bg-gray-50 
+                    border border-gray-200 rounded-lg 
+                    text-sm text-gray-700 transition-all 
                     focus:outline-none focus:ring-2 focus:ring-blue-500
                     disabled:opacity-50 disabled:cursor-not-allowed
                 `}
@@ -110,47 +110,47 @@ export default function ExportButton({ data, filename, title, className = '' }: 
 
             {/* Dropdown Menu */}
             {isOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-slate-800 border border-slate-700 rounded-lg shadow-2xl shadow-black/50 z-50 overflow-hidden">
+                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden">
                     <div className="py-1">
                         {/* CSV Option */}
                         <button
                             onClick={() => handleExport('csv')}
-                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-700 transition-colors"
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                         >
-                            <span className="material-symbols-outlined text-[20px] text-green-400">
+                            <span className="material-symbols-outlined text-[20px] text-green-500">
                                 description
                             </span>
                             <div className="flex flex-col items-start">
                                 <span className="font-medium">Export as CSV</span>
-                                <span className="text-xs text-slate-500">Spreadsheet format</span>
+                                <span className="text-xs text-gray-500">Spreadsheet format</span>
                             </div>
                         </button>
 
                         {/* PDF Option */}
                         <button
                             onClick={() => handleExport('pdf')}
-                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-700 transition-colors"
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                         >
-                            <span className="material-symbols-outlined text-[20px] text-red-400">
+                            <span className="material-symbols-outlined text-[20px] text-red-500">
                                 picture_as_pdf
                             </span>
                             <div className="flex flex-col items-start">
                                 <span className="font-medium">Export as PDF</span>
-                                <span className="text-xs text-slate-500">Document format</span>
+                                <span className="text-xs text-gray-500">Document format</span>
                             </div>
                         </button>
 
                         {/* JSON Option */}
                         <button
                             onClick={() => handleExport('json')}
-                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-700 transition-colors"
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                         >
-                            <span className="material-symbols-outlined text-[20px] text-blue-400">
+                            <span className="material-symbols-outlined text-[20px] text-blue-500">
                                 data_object
                             </span>
                             <div className="flex flex-col items-start">
                                 <span className="font-medium">Export as JSON</span>
-                                <span className="text-xs text-slate-500">Developer format</span>
+                                <span className="text-xs text-gray-500">Developer format</span>
                             </div>
                         </button>
                     </div>

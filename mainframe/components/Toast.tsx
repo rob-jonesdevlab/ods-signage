@@ -75,13 +75,13 @@ export default function Toast({ id, type, title, message, duration = 5000, onClo
     return (
         <div
             className={`
-                relative w-[360px] bg-slate-800 border border-slate-700 rounded-lg shadow-2xl overflow-hidden
+                relative w-[360px] bg-white border border-gray-200 rounded-lg shadow-2xl overflow-hidden
                 transition-all duration-200 ease-out
                 ${isExiting ? 'translate-x-[400px] opacity-0' : 'translate-x-0 opacity-100'}
             `}
         >
             {/* Progress Bar */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-slate-700">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gray-100">
                 <div
                     className={`h-full ${colors[type].progress} transition-all duration-50 ease-linear`}
                     style={{ width: `${progress}%` }}
@@ -97,14 +97,14 @@ export default function Toast({ id, type, title, message, duration = 5000, onClo
 
                 {/* Text */}
                 <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-semibold text-white mb-1">{title}</h4>
-                    <p className="text-sm text-slate-300 leading-relaxed">{message}</p>
+                    <h4 className="text-sm font-semibold text-gray-900 mb-1">{title}</h4>
+                    <p className="text-sm text-gray-600 leading-relaxed">{message}</p>
                 </div>
 
                 {/* Close Button */}
                 <button
                     onClick={handleClose}
-                    className="flex-shrink-0 text-slate-400 hover:text-white transition-colors p-1 -mt-1 -mr-1"
+                    className="flex-shrink-0 text-gray-400 hover:text-gray-900 transition-colors p-1 -mt-1 -mr-1"
                 >
                     <span className="material-symbols-outlined text-[20px]">close</span>
                 </button>

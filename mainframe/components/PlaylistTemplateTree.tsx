@@ -45,13 +45,13 @@ export default function PlaylistTemplateTree({
             <button
                 onClick={() => onSelectTemplate(null)}
                 className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${selectedTemplateId === null
-                        ? 'bg-blue-600 text-white'
-                        : 'text-slate-300 hover:bg-slate-700/50'
+                    ? 'bg-blue-500/20 text-blue-500'
+                    : 'text-gray-700 hover:bg-gray-100'
                     }`}
             >
                 <span className="material-symbols-outlined text-[20px]">folder_open</span>
                 <span className="flex-1 text-left text-sm font-medium">All Templates</span>
-                <span className="text-xs text-slate-400">{templates.length}</span>
+                <span className="text-xs text-gray-500">{templates.length}</span>
             </button>
 
             {/* Template List */}
@@ -63,10 +63,10 @@ export default function PlaylistTemplateTree({
                     onMouseEnter={() => setHoveredId(template.id)}
                     onMouseLeave={() => setHoveredId(null)}
                     className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${selectedTemplateId === template.id
-                            ? 'bg-blue-600 text-white'
-                            : hoveredId === template.id
-                                ? 'bg-slate-700/50 text-white'
-                                : 'text-slate-300 hover:bg-slate-700/30'
+                        ? 'bg-blue-500/20 text-blue-500'
+                        : hoveredId === template.id
+                            ? 'bg-gray-100 text-gray-900'
+                            : 'text-gray-700 hover:bg-gray-100'
                         }`}
                 >
                     <span className="material-symbols-outlined text-[20px]">
@@ -75,16 +75,16 @@ export default function PlaylistTemplateTree({
                     <div className="flex-1 text-left min-w-0">
                         <div className="text-sm font-medium truncate">{template.name}</div>
                         {template.description && (
-                            <div className="text-xs text-slate-400 truncate">{template.description}</div>
+                            <div className="text-xs text-gray-500 truncate">{template.description}</div>
                         )}
                     </div>
-                    <span className="text-xs text-slate-400">{template.contentCount || 0}</span>
+                    <span className="text-xs text-gray-500">{template.contentCount || 0}</span>
                 </button>
             ))}
 
             {/* Empty State */}
             {templates.length === 0 && (
-                <div className="px-3 py-8 text-center text-slate-500 text-sm">
+                <div className="px-3 py-8 text-center text-gray-500 text-sm">
                     <span className="material-symbols-outlined text-4xl mb-2 block">folder_off</span>
                     No templates yet
                 </div>

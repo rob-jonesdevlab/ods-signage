@@ -64,16 +64,16 @@ export default function NewFolderModal({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-md mx-4">
+            <div className="bg-white rounded-xl shadow-2xl border border-gray-200 w-full max-w-md mx-4">
                 {/* Header */}
-                <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
-                    <h2 className="text-xl font-bold text-slate-900 dark:text-white">New Folder</h2>
+                <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                    <h2 className="text-xl font-bold text-gray-900">New Folder</h2>
                     <button
                         onClick={handleClose}
                         disabled={isCreating}
-                        className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-50"
+                        className="p-1 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 text-gray-400 hover:text-gray-900"
                     >
-                        <span className="material-symbols-outlined text-slate-500">close</span>
+                        <span className="material-symbols-outlined">close</span>
                     </button>
                 </div>
 
@@ -81,7 +81,7 @@ export default function NewFolderModal({
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
                     {/* Folder Name */}
                     <div>
-                        <label htmlFor="folderName" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        <label htmlFor="folderName" className="block text-sm font-medium text-gray-700 mb-2">
                             Folder Name
                         </label>
                         <input
@@ -91,14 +91,14 @@ export default function NewFolderModal({
                             onChange={(e) => setFolderName(e.target.value)}
                             placeholder="Enter folder name"
                             disabled={isCreating}
-                            className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
                             autoFocus
                         />
                     </div>
 
                     {/* Parent Folder */}
                     <div>
-                        <label htmlFor="parentFolder" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                        <label htmlFor="parentFolder" className="block text-sm font-medium text-gray-700 mb-2">
                             Parent Folder (Optional)
                         </label>
                         <select
@@ -106,7 +106,7 @@ export default function NewFolderModal({
                             value={parentId || ''}
                             onChange={(e) => setParentId(e.target.value || null)}
                             disabled={isCreating}
-                            className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50"
                         >
                             <option value="">Root (No parent)</option>
                             {folders.map((folder) => (
@@ -119,7 +119,7 @@ export default function NewFolderModal({
 
                     {/* Error Message */}
                     {error && (
-                        <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-500 text-sm">
+                        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
                             {error}
                         </div>
                     )}
@@ -130,14 +130,14 @@ export default function NewFolderModal({
                             type="button"
                             onClick={handleClose}
                             disabled={isCreating}
-                            className="flex-1 px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white rounded-lg font-medium transition-colors disabled:opacity-50"
+                            className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-medium transition-colors disabled:opacity-50 border border-gray-300"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={isCreating || !folderName.trim()}
-                            className="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                            className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors disabled:opacity-50 flex items-center justify-center gap-2 shadow-sm"
                         >
                             {isCreating ? (
                                 <>

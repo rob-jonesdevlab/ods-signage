@@ -84,10 +84,10 @@ function GroupNode({
     return (
         <div
             className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 ${isDragOver
-                    ? 'bg-blue-500/20 border-2 border-blue-500 scale-105'
-                    : isSelected
-                        ? 'bg-blue-500/20 text-blue-500 border-2 border-transparent'
-                        : 'hover:bg-slate-800 text-slate-300 border-2 border-transparent'
+                ? 'bg-blue-500/20 border-2 border-blue-500 scale-105'
+                : isSelected
+                    ? 'bg-blue-500/20 text-blue-500 border-2 border-transparent'
+                    : 'hover:bg-gray-100 text-gray-700 border-2 border-transparent'
                 }`}
             onClick={handleClick}
             onContextMenu={handleContextMenu}
@@ -102,12 +102,12 @@ function GroupNode({
             <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium truncate">{group.name}</div>
                 {group.location && (
-                    <div className="text-xs text-slate-500 truncate">{group.location}</div>
+                    <div className="text-xs text-gray-500 truncate">{group.location}</div>
                 )}
             </div>
 
             {group.playerCount > 0 && (
-                <span className="text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
+                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
                     {group.playerCount}
                 </span>
             )}
@@ -129,8 +129,8 @@ export default function PlayerGroupTree({
             {/* All Players option */}
             <div
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors ${selectedGroupId === null
-                        ? 'bg-blue-500/20 text-blue-500'
-                        : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
+                    ? 'bg-blue-500/20 text-blue-500'
+                    : 'hover:bg-gray-100 text-gray-700'
                     }`}
                 onClick={() => onSelectGroup(null)}
             >

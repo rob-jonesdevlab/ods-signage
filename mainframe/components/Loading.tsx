@@ -33,7 +33,7 @@ export function LoadingState({ message = 'Loading...', fullScreen = false }: Loa
         <div className={containerClass}>
             <div className="text-center">
                 <LoadingSpinner size="lg" className="text-blue-500 mx-auto mb-4" />
-                <p className="text-slate-400">{message}</p>
+                <p className="text-gray-500">{message}</p>
             </div>
         </div>
     );
@@ -50,7 +50,7 @@ export function LoadingSkeleton({ count = 1, className = '' }: LoadingSkeletonPr
             {Array.from({ length: count }).map((_, i) => (
                 <div
                     key={i}
-                    className={`animate-pulse bg-slate-700/50 rounded ${className}`}
+                    className={`animate-pulse bg-gray-200 rounded ${className}`}
                 />
             ))}
         </>
