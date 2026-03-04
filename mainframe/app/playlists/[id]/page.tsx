@@ -29,7 +29,7 @@ import { CSS } from '@dnd-kit/utilities';
 import AddContentModal from '../../../components/AddContentModal';
 import PlaylistScheduler, { PlaylistSchedule } from '../../../components/PlaylistScheduler';
 import DeployFromEditorModal from '../../../components/DeployFromEditorModal';
-import ScreenLayoutPicker, { ScreenLayout, LayoutZone } from '../../../components/ScreenLayoutPicker';
+import ScreenLayoutPicker, { ScreenLayout, LayoutZone, buildDualLayout, parseDualLayoutId } from '../../../components/ScreenLayoutPicker';
 
 // ── Types ───────────────────────────────────────────────────
 interface Content {
@@ -479,7 +479,20 @@ export default function PlaylistEditorPage() {
     // Resolve layout when screenLayouts or playlist changes
     useEffect(() => {
         if (playlist?.layout_id && screenLayouts.length > 0) {
-            const layout = screenLayouts.find(l => l.id === playlist.layout_id);
+            let layout: ScreenLayout | undefined = screenLayouts.find(l => l.id === playlist.layout_id);
+
+            // Handle dynamic dual layout IDs (e.g. "dual:single+double_v")
+            if (!layout) {
+                const parsed = parseDualLayoutId(playlist.layout_id);
+                if (parsed) {
+                    const s0 = screenLayouts.find(l => l.id === parsed.screen0Id);
+                    const s1 = screenLayouts.find(l => l.id === parsed.screen1Id);
+                    if (s0 && s1) {
+                        layout = buildDualLayout(s0, s1);
+                    }
+                }
+            }
+
             if (layout) {
                 setCurrentLayout(layout);
                 // Set activeZoneId to first zone if current zone doesn't exist
@@ -537,11 +550,8 @@ export default function PlaylistEditorPage() {
         }
     };
 
-    const handleLayoutChange = async (layoutId: string) => {
-        const layout = screenLayouts.find(l => l.id === layoutId);
-        if (!layout) return;
-
-        // If switching from multi-zone to single, move all content to 'main'
+    const applyLayout = async (layout: ScreenLayout) => {
+        // If switching from multi-zone to single, move all content to first zone
         if (layout.zones.length === 1 && zones.length > 1) {
             setPlaylistContent(items => items.map(item => ({ ...item, zone_id: layout.zones[0].id })));
         }
@@ -564,14 +574,24 @@ export default function PlaylistEditorPage() {
         try {
             await authenticatedFetch(`${API_URL}/api/playlists/${playlistId}`, {
                 method: 'PATCH',
-                body: JSON.stringify({ layout_id: layoutId }),
+                body: JSON.stringify({ layout_id: layout.id }),
             });
-            setPlaylist(prev => prev ? { ...prev, layout_id: layoutId } : null);
+            setPlaylist(prev => prev ? { ...prev, layout_id: layout.id } : null);
             setHasChanges(true);
             showToast({ type: 'success', title: 'Layout Changed', message: `Layout set to "${layout.name}"` });
         } catch (err) {
             console.error('Failed to update layout:', err);
         }
+    };
+
+    const handleLayoutChange = async (layoutId: string) => {
+        const layout = screenLayouts.find(l => l.id === layoutId);
+        if (!layout) return;
+        await applyLayout(layout);
+    };
+
+    const handleDualLayoutChange = async (layout: ScreenLayout) => {
+        await applyLayout(layout);
     };
 
     const handleDurationChange = (contentId: string, duration: number) => {
@@ -1259,6 +1279,7 @@ export default function PlaylistEditorPage() {
                                 layouts={screenLayouts}
                                 selectedId={currentLayout?.id || playlist?.layout_id || 'single'}
                                 onSelect={handleLayoutChange}
+                                onSelectDual={handleDualLayoutChange}
                             />
                         </div>
                     </div>
