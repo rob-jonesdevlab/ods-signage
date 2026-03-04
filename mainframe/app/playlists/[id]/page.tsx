@@ -29,6 +29,7 @@ import { CSS } from '@dnd-kit/utilities';
 import AddContentModal from '../../../components/AddContentModal';
 import PlaylistScheduler, { PlaylistSchedule } from '../../../components/PlaylistScheduler';
 import DeployFromEditorModal from '../../../components/DeployFromEditorModal';
+import ScreenLayoutPicker, { ScreenLayout, LayoutZone } from '../../../components/ScreenLayoutPicker';
 
 // ── Types ───────────────────────────────────────────────────
 interface Content {
@@ -44,6 +45,7 @@ interface PlaylistContent extends Content {
     display_order: number;
     assignment_id: string;
     transition: string;
+    zone_id: string;
 }
 
 interface AssetDirectoryItem extends Content {
@@ -58,6 +60,7 @@ interface Playlist {
     created_by: string;
     created_at: string;
     schedule: PlaylistSchedule | null;
+    layout_id: string;
 }
 
 // ── Transition Options ──────────────────────────────────────
@@ -73,17 +76,23 @@ const TRANSITIONS = [
 function SortablePlaylistItem({
     content,
     index,
+    isSelected,
+    onToggleSelect,
     onRemove,
     onDurationChange,
     onTransitionChange,
     onPreview,
+    onDuplicate,
 }: {
     content: PlaylistContent;
     index: number;
+    isSelected: boolean;
+    onToggleSelect: () => void;
     onRemove: () => void;
     onDurationChange: (duration: number) => void;
     onTransitionChange: (transition: string) => void;
     onPreview: () => void;
+    onDuplicate: () => void;
 }) {
     const {
         attributes,
@@ -146,10 +155,18 @@ function SortablePlaylistItem({
             <div
                 {...attributes}
                 {...listeners}
-                className={`cursor-grab active:cursor-grabbing mr-3 ${isDragging ? 'text-blue-500' : 'text-gray-300 hover:text-gray-500'}`}
+                className={`cursor-grab active:cursor-grabbing mr-2 ${isDragging ? 'text-blue-500' : 'text-gray-300 hover:text-gray-500'}`}
             >
                 <span className="material-symbols-outlined text-[20px]">drag_indicator</span>
             </div>
+
+            {/* Bulk Select Checkbox */}
+            <input
+                type="checkbox"
+                checked={isSelected}
+                onChange={onToggleSelect}
+                className="mr-2 w-3.5 h-3.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+            />
 
             {/* Order Number */}
             <div className={`w-7 text-sm font-bold tabular-nums ${index === 0 ? 'text-blue-600' : 'text-gray-400'}`}>
@@ -206,9 +223,16 @@ function SortablePlaylistItem({
                 </div>
             </div>
 
-            {/* Duration Editor */}
-            <div className="flex items-center gap-1 mr-3">
+            {/* Duration Editor with Stepper */}
+            <div className="flex items-center gap-0.5 mr-3">
                 <span className="material-symbols-outlined text-gray-400 text-[16px]">timer</span>
+                <button
+                    onClick={() => { const d = Math.max(5, localDuration - 5); setLocalDuration(d); onDurationChange(d); }}
+                    className="w-5 h-5 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded transition-colors text-xs"
+                    title="-5s"
+                >
+                    −
+                </button>
                 <input
                     type="number"
                     min={5}
@@ -217,8 +241,15 @@ function SortablePlaylistItem({
                     onChange={e => setLocalDuration(parseInt(e.target.value) || 5)}
                     onBlur={handleDurationBlur}
                     onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
-                    className="w-14 text-sm font-mono text-gray-700 bg-gray-50 border border-gray-200 rounded-md px-2 py-1 text-center focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-12 text-sm font-mono text-gray-700 bg-gray-50 border border-gray-200 rounded-md px-1.5 py-1 text-center focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
+                <button
+                    onClick={() => { const d = Math.min(300, localDuration + 5); setLocalDuration(d); onDurationChange(d); }}
+                    className="w-5 h-5 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded transition-colors text-xs"
+                    title="+5s"
+                >
+                    +
+                </button>
                 <span className="text-xs text-gray-400">s</span>
             </div>
 
@@ -249,6 +280,15 @@ function SortablePlaylistItem({
                     </div>
                 )}
             </div>
+
+            {/* Duplicate Button */}
+            <button
+                onClick={onDuplicate}
+                className="text-gray-300 hover:text-blue-500 p-1.5 rounded-lg hover:bg-blue-50 transition-colors opacity-0 group-hover:opacity-100"
+                title="Duplicate"
+            >
+                <span className="material-symbols-outlined text-[18px]">content_copy</span>
+            </button>
 
             {/* Delete Button */}
             <button
@@ -345,17 +385,44 @@ export default function PlaylistEditorPage() {
     const [schedule, setSchedule] = useState<PlaylistSchedule | null>(null);
     const [sidebarTab, setSidebarTab] = useState<'assets' | 'schedule'>('assets');
     const [showDeploy, setShowDeploy] = useState(false);
+    const [screenLayouts, setScreenLayouts] = useState<ScreenLayout[]>([]);
+    const [currentLayout, setCurrentLayout] = useState<ScreenLayout | null>(null);
+    const [showLayoutPicker, setShowLayoutPicker] = useState(false);
+    const [activeZoneId, setActiveZoneId] = useState<string>('main');
+
+    // Phase 2: enhancements state
+    const [assetSearch, setAssetSearch] = useState('');
+    const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+    const [isEditingName, setIsEditingName] = useState(false);
+    const [editingName, setEditingName] = useState('');
+    const [defaultTransition, setDefaultTransition] = useState('fade');
 
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
         useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
     );
 
+    // Fetch screen layouts
+    useEffect(() => {
+        authenticatedFetch(`${API_URL}/api/screen-layouts`)
+            .then(res => res.json())
+            .then(data => setScreenLayouts(data || []))
+            .catch(err => console.error('Failed to fetch screen layouts:', err));
+    }, []);
+
     // Fetch playlist details
     useEffect(() => {
         authenticatedFetch(`${API_URL}/api/playlists/${playlistId}`)
             .then(res => res.json())
-            .then(data => { setPlaylist(data); setSchedule(data.schedule || null); })
+            .then(data => {
+                setPlaylist(data);
+                setSchedule(data.schedule || null);
+                // Set current layout from playlist
+                if (data.layout_id && screenLayouts.length > 0) {
+                    const layout = screenLayouts.find((l: ScreenLayout) => l.id === data.layout_id);
+                    if (layout) setCurrentLayout(layout);
+                }
+            })
             .catch(err => console.error('Failed to fetch playlist:', err));
     }, [playlistId]);
 
@@ -375,6 +442,7 @@ export default function PlaylistEditorPage() {
                     display_order: item.position ?? item.display_order ?? 0,
                     assignment_id: item.id || '',
                     transition: item.transition || 'fade',
+                    zone_id: item.zone_id || 'main',
                 }));
                 setPlaylistContent(flattened);
                 setOriginalContent(JSON.parse(JSON.stringify(flattened)));
@@ -408,6 +476,36 @@ export default function PlaylistEditorPage() {
 
     useEffect(() => { fetchAssetDirectory(); }, [fetchAssetDirectory]);
 
+    // Resolve layout when screenLayouts or playlist changes
+    useEffect(() => {
+        if (playlist?.layout_id && screenLayouts.length > 0) {
+            const layout = screenLayouts.find(l => l.id === playlist.layout_id);
+            if (layout) {
+                setCurrentLayout(layout);
+                // Set activeZoneId to first zone if current zone doesn't exist
+                if (!layout.zones.find(z => z.id === activeZoneId)) {
+                    setActiveZoneId(layout.zones[0]?.id || 'main');
+                }
+            }
+        }
+    }, [playlist?.layout_id, screenLayouts]);
+
+    // Group content by zone
+    const zones = currentLayout?.zones || [{ id: 'main', label: '1', x: 0, y: 0, w: 100, h: 100 }];
+    const contentByZone: Record<string, PlaylistContent[]> = {};
+    zones.forEach(z => { contentByZone[z.id] = []; });
+    playlistContent.forEach(item => {
+        const zid = item.zone_id || 'main';
+        if (contentByZone[zid]) {
+            contentByZone[zid].push(item);
+        } else {
+            // Fallback: if zone doesn't exist, put in first zone
+            const fallback = zones[0]?.id || 'main';
+            if (!contentByZone[fallback]) contentByZone[fallback] = [];
+            contentByZone[fallback].push(item);
+        }
+    });
+
     // Computed
     const totalDuration = playlistContent.reduce((sum, item) => sum + (item.duration || 10), 0);
     const formatDuration = (seconds: number) => {
@@ -423,15 +521,56 @@ export default function PlaylistEditorPage() {
     };
 
     // Handlers
-    const handleDragEnd = (event: DragEndEvent) => {
+    const handleDragEnd = (zoneId: string) => (event: DragEndEvent) => {
         const { active, over } = event;
         if (over && active.id !== over.id) {
             setPlaylistContent(items => {
-                const oldIndex = items.findIndex(item => item.id === active.id);
-                const newIndex = items.findIndex(item => item.id === over.id);
-                return arrayMove(items, oldIndex, newIndex).map((item, i) => ({ ...item, display_order: i }));
+                // Only reorder items within this zone
+                const zoneItems = items.filter(i => (i.zone_id || 'main') === zoneId);
+                const otherItems = items.filter(i => (i.zone_id || 'main') !== zoneId);
+                const oldIndex = zoneItems.findIndex(item => item.id === active.id);
+                const newIndex = zoneItems.findIndex(item => item.id === over.id);
+                const reordered = arrayMove(zoneItems, oldIndex, newIndex).map((item, i) => ({ ...item, display_order: i }));
+                return [...otherItems, ...reordered];
             });
             setHasChanges(true);
+        }
+    };
+
+    const handleLayoutChange = async (layoutId: string) => {
+        const layout = screenLayouts.find(l => l.id === layoutId);
+        if (!layout) return;
+
+        // If switching from multi-zone to single, move all content to 'main'
+        if (layout.zones.length === 1 && zones.length > 1) {
+            setPlaylistContent(items => items.map(item => ({ ...item, zone_id: layout.zones[0].id })));
+        }
+        // If switching to a layout with different zones, reassign orphaned content to first zone
+        if (layout.zones.length > 1) {
+            const newZoneIds = layout.zones.map(z => z.id);
+            setPlaylistContent(items => items.map(item => {
+                if (!newZoneIds.includes(item.zone_id || 'main')) {
+                    return { ...item, zone_id: layout.zones[0].id };
+                }
+                return item;
+            }));
+        }
+
+        setCurrentLayout(layout);
+        setShowLayoutPicker(false);
+        setActiveZoneId(layout.zones[0]?.id || 'main');
+
+        // Save layout change
+        try {
+            await authenticatedFetch(`${API_URL}/api/playlists/${playlistId}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ layout_id: layoutId }),
+            });
+            setPlaylist(prev => prev ? { ...prev, layout_id: layoutId } : null);
+            setHasChanges(true);
+            showToast({ type: 'success', title: 'Layout Changed', message: `Layout set to "${layout.name}"` });
+        } catch (err) {
+            console.error('Failed to update layout:', err);
         }
     };
 
@@ -449,16 +588,23 @@ export default function PlaylistEditorPage() {
         setHasChanges(true);
     };
 
-    const handleAddAssetToPlaylist = async (asset: AssetDirectoryItem) => {
+    const handleAddAssetToPlaylist = async (asset: AssetDirectoryItem, zoneId?: string) => {
+        const targetZone = zoneId || activeZoneId || zones[0]?.id || 'main';
+        const zoneItems = contentByZone[targetZone] || [];
         try {
             const response = await authenticatedFetch(`${API_URL}/api/playlists/${playlistId}/content`, {
                 method: 'POST',
-                body: JSON.stringify({ content_id: asset.id, display_order: playlistContent.length }),
+                body: JSON.stringify({
+                    content_id: asset.id,
+                    display_order: zoneItems.length,
+                    zone_id: targetZone,
+                }),
             });
             if (response.ok) {
                 fetchPlaylistContent();
                 fetchAssetDirectory();
-                showToast({ type: 'success', title: 'Added', message: `"${asset.name}" added to playlist` });
+                const zoneName = zones.find(z => z.id === targetZone)?.label || '1';
+                showToast({ type: 'success', title: 'Added', message: `"${asset.name}" added to Zone ${zoneName}` });
             }
         } catch (err) {
             console.error('Failed to add asset:', err);
@@ -489,22 +635,33 @@ export default function PlaylistEditorPage() {
     const handleSave = async () => {
         setIsSaving(true);
         try {
-            // Save order + per-item changes (duration, transition)
-            await authenticatedFetch(`${API_URL}/api/playlists/${playlistId}/content/reorder`, {
-                method: 'PUT',
-                body: JSON.stringify({
-                    items: playlistContent.map((item, index) => ({
+            // Save order + per-item changes (duration, transition, zone_id)
+            // Rebuild positions per-zone to ensure ordering is correct
+            const reorderedItems: { content_id: string; position: number; duration: number; transition: string; zone_id: string }[] = [];
+            zones.forEach(zone => {
+                const zoneItems = contentByZone[zone.id] || [];
+                zoneItems.forEach((item, index) => {
+                    reorderedItems.push({
                         content_id: item.id,
                         position: index,
                         duration: item.duration,
                         transition: item.transition || 'fade',
-                    })),
-                }),
+                        zone_id: zone.id,
+                    });
+                });
             });
-            // Save schedule
+
+            await authenticatedFetch(`${API_URL}/api/playlists/${playlistId}/content/reorder`, {
+                method: 'PUT',
+                body: JSON.stringify({ items: reorderedItems }),
+            });
+            // Save schedule + layout
             await authenticatedFetch(`${API_URL}/api/playlists/${playlistId}`, {
                 method: 'PATCH',
-                body: JSON.stringify({ schedule }),
+                body: JSON.stringify({
+                    schedule,
+                    layout_id: currentLayout?.id || 'single',
+                }),
             });
             setHasChanges(false);
             setOriginalContent(JSON.parse(JSON.stringify(playlistContent)));
@@ -522,13 +679,129 @@ export default function PlaylistEditorPage() {
         setHasChanges(false);
     };
 
-    // Filter assets
+    // Filter assets (with search)
     const filteredAssets = assetDirectory.filter(asset => {
         const isAssigned = playlistContent.some(item => item.id === asset.id);
         if (filterType === 'assigned') return isAssigned;
         if (filterType === 'unassigned') return !isAssigned;
         return true;
+    }).filter(asset => {
+        if (!assetSearch.trim()) return true;
+        const q = assetSearch.toLowerCase();
+        return (asset.name?.toLowerCase().includes(q) || asset.type?.toLowerCase().includes(q));
     });
+
+    // Phase 2: Bulk selection handlers
+    const toggleItemSelect = (id: string) => {
+        setSelectedItems(prev => {
+            const next = new Set(prev);
+            if (next.has(id)) next.delete(id);
+            else next.add(id);
+            return next;
+        });
+    };
+
+    const handleBulkRemove = async () => {
+        if (selectedItems.size === 0) return;
+        const toRemove = Array.from(selectedItems);
+        for (const id of toRemove) {
+            try {
+                await authenticatedFetch(`${API_URL}/api/playlists/${playlistId}/content/${id}`, { method: 'DELETE' });
+            } catch (err) {
+                console.error('Failed to remove:', err);
+            }
+        }
+        setPlaylistContent(prev => prev.filter(item => !selectedItems.has(item.id)));
+        setSelectedItems(new Set());
+        setHasChanges(true);
+        showToast({ type: 'success', title: 'Removed', message: `${toRemove.length} item${toRemove.length > 1 ? 's' : ''} removed` });
+    };
+
+    const handleDuplicateItem = async (content: PlaylistContent) => {
+        const targetZone = content.zone_id || activeZoneId || 'main';
+        try {
+            const response = await authenticatedFetch(`${API_URL}/api/playlists/${playlistId}/content`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    content_id: content.id,
+                    display_order: playlistContent.length,
+                    zone_id: targetZone,
+                }),
+            });
+            if (response.ok) {
+                fetchPlaylistContent();
+                showToast({ type: 'success', title: 'Duplicated', message: `"${content.name}" duplicated` });
+            }
+        } catch (err) {
+            console.error('Failed to duplicate:', err);
+        }
+    };
+
+    const handleRename = async () => {
+        if (!editingName.trim() || editingName === playlist?.name) {
+            setIsEditingName(false);
+            return;
+        }
+        try {
+            const response = await authenticatedFetch(`${API_URL}/api/playlists/${playlistId}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ name: editingName }),
+            });
+            if (response.ok) {
+                setPlaylist(prev => prev ? { ...prev, name: editingName } : null);
+                showToast({ type: 'success', title: 'Renamed', message: `Playlist renamed to "${editingName}"` });
+            }
+        } catch (err) {
+            console.error('Failed to rename:', err);
+        }
+        setIsEditingName(false);
+    };
+
+    const handleSetGlobalTransition = (t: string) => {
+        setDefaultTransition(t);
+        setPlaylistContent(prev => prev.map(item => ({ ...item, transition: t })));
+        setHasChanges(true);
+        const label = TRANSITIONS.find(tr => tr.value === t)?.label || t;
+        showToast({ type: 'success', title: 'Transition Updated', message: `All items set to "${label}"` });
+    };
+
+    // Phase 2: Keyboard shortcuts
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            // Avoid shortcuts when typing in inputs
+            const tag = (e.target as HTMLElement).tagName;
+            if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+
+            // Ctrl/Cmd + S = Save
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                if (hasChanges) handleSave();
+            }
+            // Delete/Backspace = Remove selected items
+            if ((e.key === 'Delete' || e.key === 'Backspace') && selectedItems.size > 0) {
+                e.preventDefault();
+                handleBulkRemove();
+            }
+            // Escape = Clear selection or close modals
+            if (e.key === 'Escape') {
+                if (selectedItems.size > 0) {
+                    setSelectedItems(new Set());
+                } else if (showLayoutPicker) {
+                    setShowLayoutPicker(false);
+                } else if (previewContent) {
+                    setPreviewContent(null);
+                }
+            }
+            // Ctrl/Cmd + A = Select all in active zone
+            if ((e.ctrlKey || e.metaKey) && e.key === 'a' && playlistContent.length > 0) {
+                e.preventDefault();
+                const zoneItems = contentByZone[activeZoneId] || playlistContent;
+                setSelectedItems(new Set(zoneItems.map(i => i.id)));
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [hasChanges, selectedItems, showLayoutPicker, previewContent, activeZoneId, contentByZone, playlistContent]);
 
     if (!playlist) {
         return (
@@ -554,7 +827,25 @@ export default function PlaylistEditorPage() {
                         </button>
                         <div>
                             <div className="flex items-center gap-2">
-                                <h1 className="text-xl font-bold text-gray-900">{playlist.name}</h1>
+                                {isEditingName ? (
+                                    <input
+                                        type="text"
+                                        value={editingName}
+                                        onChange={e => setEditingName(e.target.value)}
+                                        onBlur={handleRename}
+                                        onKeyDown={e => { if (e.key === 'Enter') handleRename(); if (e.key === 'Escape') setIsEditingName(false); }}
+                                        className="text-xl font-bold text-gray-900 bg-transparent border-b-2 border-blue-500 outline-none px-0 py-0"
+                                        autoFocus
+                                    />
+                                ) : (
+                                    <h1
+                                        className="text-xl font-bold text-gray-900 cursor-pointer hover:text-blue-600 transition-colors"
+                                        onClick={() => { setEditingName(playlist.name); setIsEditingName(true); }}
+                                        title="Click to rename"
+                                    >
+                                        {playlist.name}
+                                    </h1>
+                                )}
                                 {hasChanges && (
                                     <span className="flex items-center gap-1 text-xs text-amber-600 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">
                                         <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
@@ -562,13 +853,27 @@ export default function PlaylistEditorPage() {
                                     </span>
                                 )}
                             </div>
-                            {playlist.description && (
-                                <p className="text-sm text-gray-500 mt-0.5">{playlist.description}</p>
-                            )}
+                            <div className="flex items-center gap-2 mt-0.5">
+                                {playlist.description && (
+                                    <p className="text-sm text-gray-500">{playlist.description}</p>
+                                )}
+                                {/* Layout indicator */}
+                                <button
+                                    onClick={() => setShowLayoutPicker(true)}
+                                    className="flex items-center gap-1.5 px-2 py-0.5 text-xs text-gray-500 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors border border-gray-200"
+                                    title="Change screen layout"
+                                >
+                                    <span className="material-symbols-outlined text-[12px]">dashboard</span>
+                                    {currentLayout?.name || 'Single'}
+                                    {zones.length > 1 && (
+                                        <span className="text-blue-600 font-medium">{zones.length} zones</span>
+                                    )}
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
-                        {/* Stats */}
+                        {/* Stats + Global Transition */}
                         <div className="flex items-center gap-4 mr-4 text-sm text-gray-500">
                             <span className="flex items-center gap-1.5">
                                 <span className="material-symbols-outlined text-[16px]">layers</span>
@@ -578,6 +883,17 @@ export default function PlaylistEditorPage() {
                                 <span className="material-symbols-outlined text-[16px]">schedule</span>
                                 {formatDuration(totalDuration)}
                             </span>
+                            {/* Global Transition */}
+                            <select
+                                value={defaultTransition}
+                                onChange={e => handleSetGlobalTransition(e.target.value)}
+                                className="text-xs bg-gray-100 border border-gray-200 rounded-md px-2 py-1 text-gray-600 hover:bg-gray-200 cursor-pointer"
+                                title="Set transition for all items"
+                            >
+                                {TRANSITIONS.map(t => (
+                                    <option key={t.value} value={t.value}>{t.label}</option>
+                                ))}
+                            </select>
                         </div>
                         {/* Actions */}
                         {hasChanges && (
@@ -609,66 +925,152 @@ export default function PlaylistEditorPage() {
                 </div>
             </div>
 
-            {/* Timeline Bar */}
+            {/* Bulk Actions Bar */}
+            {selectedItems.size > 0 && (
+                <div className="bg-blue-50 border-b border-blue-200 px-6 py-2">
+                    <div className="max-w-[1600px] mx-auto flex items-center justify-between">
+                        <span className="text-sm font-medium text-blue-700">
+                            {selectedItems.size} item{selectedItems.size > 1 ? 's' : ''} selected
+                        </span>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => setSelectedItems(new Set())}
+                                className="px-3 py-1 text-xs text-gray-600 hover:text-gray-900 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors"
+                            >
+                                Deselect All
+                            </button>
+                            <button
+                                onClick={handleBulkRemove}
+                                className="px-3 py-1 text-xs text-red-600 hover:text-white bg-red-50 hover:bg-red-600 border border-red-200 rounded-md transition-colors flex items-center gap-1"
+                            >
+                                <span className="material-symbols-outlined text-[14px]">delete</span>
+                                Remove Selected
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Timeline Bar — per zone */}
             {playlistContent.length > 0 && (
                 <div className="bg-white border-b border-gray-200 px-6 py-3">
-                    <div className="max-w-[1600px] mx-auto">
-                        <div className="flex items-center gap-3">
-                            <span className="text-xs text-gray-400 font-mono shrink-0">00:00</span>
-                            <div className="flex-1">
-                                <TimelineBar items={playlistContent} totalDuration={totalDuration} />
-                            </div>
-                            <span className="text-xs text-gray-400 font-mono shrink-0">{formatDuration(totalDuration)}</span>
-                        </div>
+                    <div className="max-w-[1600px] mx-auto space-y-1">
+                        {zones.map(zone => {
+                            const zoneItems = contentByZone[zone.id] || [];
+                            if (zoneItems.length === 0) return null;
+                            const zoneDuration = zoneItems.reduce((s, i) => s + (i.duration || 10), 0);
+                            return (
+                                <div key={zone.id} className="flex items-center gap-3">
+                                    {zones.length > 1 && (
+                                        <span className="text-[10px] text-gray-400 font-medium w-6 shrink-0">Z{zone.label}</span>
+                                    )}
+                                    <span className="text-xs text-gray-400 font-mono shrink-0">00:00</span>
+                                    <div className="flex-1">
+                                        <TimelineBar items={zoneItems} totalDuration={zoneDuration} />
+                                    </div>
+                                    <span className="text-xs text-gray-400 font-mono shrink-0">{formatDuration(zoneDuration)}</span>
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
             )}
 
             {/* Main Content */}
             <main className="flex-1 flex overflow-hidden bg-gray-50">
-                {/* Left: Playlist Content */}
+                {/* Left: Per-Zone Content Panels */}
                 <section className="flex-1 flex flex-col min-w-0">
                     <div className="flex-1 overflow-y-auto p-6">
-                        <div className="max-w-3xl mx-auto">
-                            {playlistContent.length === 0 ? (
-                                <div className="h-96 border-2 border-dashed border-gray-300 hover:border-blue-400 bg-white rounded-xl transition-all flex flex-col items-center justify-center gap-4 group">
-                                    <div className="w-16 h-16 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center group-hover:scale-110 transition-transform">
-                                        <span className="material-symbols-outlined text-3xl text-gray-400 group-hover:text-blue-500 transition-colors">
-                                            playlist_add
-                                        </span>
-                                    </div>
-                                    <div className="text-center space-y-1">
-                                        <h3 className="text-lg font-semibold text-gray-900">No content yet</h3>
-                                        <p className="text-sm text-gray-500">Add items from the asset library or upload new content</p>
-                                    </div>
-                                    <button
-                                        onClick={() => setShowAddModal(true)}
-                                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors flex items-center gap-2"
-                                    >
-                                        <span className="material-symbols-outlined text-[16px]">add</span>
-                                        Add Content
-                                    </button>
+                        {playlistContent.length === 0 ? (
+                            <div className="max-w-3xl mx-auto h-96 border-2 border-dashed border-gray-300 hover:border-blue-400 bg-white rounded-xl transition-all flex flex-col items-center justify-center gap-4 group">
+                                <div className="w-16 h-16 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <span className="material-symbols-outlined text-3xl text-gray-400 group-hover:text-blue-500 transition-colors">
+                                        playlist_add
+                                    </span>
                                 </div>
-                            ) : (
-                                <div className="space-y-2">
-                                    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-                                        <SortableContext items={playlistContent.map(c => c.id)} strategy={verticalListSortingStrategy}>
-                                            {playlistContent.map((content, index) => (
-                                                <SortablePlaylistItem
-                                                    key={content.id}
-                                                    content={content}
-                                                    index={index}
-                                                    onRemove={() => handleRemoveContent(content)}
-                                                    onDurationChange={d => handleDurationChange(content.id, d)}
-                                                    onTransitionChange={t => handleTransitionChange(content.id, t)}
-                                                    onPreview={() => setPreviewContent(content)}
-                                                />
-                                            ))}
-                                        </SortableContext>
-                                    </DndContext>
+                                <div className="text-center space-y-1">
+                                    <h3 className="text-lg font-semibold text-gray-900">No content yet</h3>
+                                    <p className="text-sm text-gray-500">Add items from the asset library or upload new content</p>
                                 </div>
-                            )}
-                        </div>
+                                <button
+                                    onClick={() => setShowAddModal(true)}
+                                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors flex items-center gap-2"
+                                >
+                                    <span className="material-symbols-outlined text-[16px]">add</span>
+                                    Add Content
+                                </button>
+                            </div>
+                        ) : (
+                            <div className={`${zones.length > 1 ? 'flex gap-4' : 'max-w-3xl mx-auto'}`}>
+                                {zones.map(zone => {
+                                    const zoneItems = contentByZone[zone.id] || [];
+                                    const zoneDuration = zoneItems.reduce((s, i) => s + (i.duration || 10), 0);
+                                    return (
+                                        <div
+                                            key={zone.id}
+                                            className={`${zones.length > 1 ? 'flex-1 min-w-0' : 'w-full'}`}
+                                        >
+                                            {/* Zone Header (only show for multi-zone) */}
+                                            {zones.length > 1 && (
+                                                <div
+                                                    className={`flex items-center justify-between mb-3 pb-2 border-b-2 cursor-pointer transition-colors ${activeZoneId === zone.id
+                                                        ? 'border-blue-400'
+                                                        : 'border-gray-200 hover:border-gray-300'
+                                                        }`}
+                                                    onClick={() => setActiveZoneId(zone.id)}
+                                                >
+                                                    <div className="flex items-center gap-2">
+                                                        <span className={`w-6 h-6 rounded-md flex items-center justify-center text-xs font-bold ${activeZoneId === zone.id
+                                                            ? 'bg-blue-500 text-white'
+                                                            : 'bg-gray-200 text-gray-600'
+                                                            }`}>
+                                                            {zone.label}
+                                                        </span>
+                                                        <span className="text-sm font-medium text-gray-700">
+                                                            Zone {zone.label}
+                                                        </span>
+                                                        <span className="text-xs text-gray-400">
+                                                            {zoneItems.length} item{zoneItems.length !== 1 ? 's' : ''}
+                                                        </span>
+                                                    </div>
+                                                    <span className="text-xs text-gray-400 font-mono">
+                                                        {formatDuration(zoneDuration)}
+                                                    </span>
+                                                </div>
+                                            )}
+
+                                            {/* Zone Content List */}
+                                            <div className="space-y-2">
+                                                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd(zone.id)}>
+                                                    <SortableContext items={zoneItems.map(c => c.id)} strategy={verticalListSortingStrategy}>
+                                                        {zoneItems.map((content, index) => (
+                                                            <SortablePlaylistItem
+                                                                key={content.id}
+                                                                content={content}
+                                                                index={index}
+                                                                isSelected={selectedItems.has(content.id)}
+                                                                onToggleSelect={() => toggleItemSelect(content.id)}
+                                                                onRemove={() => handleRemoveContent(content)}
+                                                                onDurationChange={d => handleDurationChange(content.id, d)}
+                                                                onTransitionChange={t => handleTransitionChange(content.id, t)}
+                                                                onPreview={() => setPreviewContent(content)}
+                                                                onDuplicate={() => handleDuplicateItem(content)}
+                                                            />
+                                                        ))}
+                                                    </SortableContext>
+                                                </DndContext>
+
+                                                {zoneItems.length === 0 && zones.length > 1 && (
+                                                    <div className="h-24 border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center">
+                                                        <p className="text-xs text-gray-400">Drop assets here or click + in the sidebar</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
                 </section>
 
@@ -698,7 +1100,27 @@ export default function PlaylistEditorPage() {
                     {sidebarTab === 'assets' ? (
                         <>
                             {/* Filter Tabs */}
-                            <div className="p-4 border-b border-gray-200 shrink-0">
+                            <div className="p-4 border-b border-gray-200 shrink-0 space-y-3">
+                                {/* Asset Search */}
+                                <div className="relative">
+                                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-[16px] text-gray-400">search</span>
+                                    <input
+                                        type="text"
+                                        placeholder="Search assets..."
+                                        value={assetSearch}
+                                        onChange={e => setAssetSearch(e.target.value)}
+                                        className="w-full pl-8 pr-3 py-2 text-sm bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400"
+                                    />
+                                    {assetSearch && (
+                                        <button
+                                            onClick={() => setAssetSearch('')}
+                                            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                        >
+                                            <span className="material-symbols-outlined text-[14px]">close</span>
+                                        </button>
+                                    )}
+                                </div>
+                                {/* Filter Tabs */}
                                 <div className="flex bg-gray-100 p-0.5 rounded-lg">
                                     {(['all', 'assigned', 'unassigned'] as const).map(type => (
                                         <button
@@ -814,6 +1236,34 @@ export default function PlaylistEditorPage() {
                 playlistName={playlist?.name || 'Playlist'}
                 onClose={() => setShowDeploy(false)}
             />
+
+            {/* Layout Picker Modal */}
+            {showLayoutPicker && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowLayoutPicker(false)} />
+                    <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
+                        <div className="flex items-center justify-between p-5 border-b border-gray-200">
+                            <div>
+                                <h2 className="text-lg font-bold text-gray-900">Screen Layout</h2>
+                                <p className="text-sm text-gray-500 mt-0.5">Choose how content is arranged on screen</p>
+                            </div>
+                            <button
+                                onClick={() => setShowLayoutPicker(false)}
+                                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                            >
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+                        <div className="p-5">
+                            <ScreenLayoutPicker
+                                layouts={screenLayouts}
+                                selectedId={currentLayout?.id || playlist?.layout_id || 'single'}
+                                onSelect={handleLayoutChange}
+                            />
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

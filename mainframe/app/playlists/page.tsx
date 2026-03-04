@@ -24,6 +24,7 @@ import TemplateContextMenu from '@/components/TemplateContextMenu';
 import RenameTemplateModal from '@/components/RenameTemplateModal';
 import DeleteTemplateModal from '@/components/DeleteTemplateModal';
 import CreatePlaylistFromTemplateModal from '@/components/CreatePlaylistFromTemplateModal';
+import ScreenLayoutPicker, { ScreenLayout } from '@/components/ScreenLayoutPicker';
 
 interface Playlist {
     id: string;
@@ -61,6 +62,8 @@ export default function PlaylistsPage() {
     const [showCreatePlaylistModal, setShowCreatePlaylistModal] = useState(false);
     const [contextMenu, setContextMenu] = useState<{ templateId: string; x: number; y: number } | null>(null);
     const [selectedTemplate, setSelectedTemplate] = useState<PlaylistTemplate | null>(null);
+    const [screenLayouts, setScreenLayouts] = useState<ScreenLayout[]>([]);
+    const [newPlaylistLayoutId, setNewPlaylistLayoutId] = useState('single');
 
     // Sort options for playlists
     const sortOptions: SortOption[] = [
@@ -88,6 +91,11 @@ export default function PlaylistsPage() {
         fetchPlaylists();
         fetchTemplates();
         fetchDefaultPlaylist();
+        // Fetch screen layouts
+        authenticatedFetch(`${API_URL}/api/screen-layouts`)
+            .then(res => res.json())
+            .then(data => setScreenLayouts(data || []))
+            .catch(err => console.error('Failed to fetch screen layouts:', err));
         // Fetch team members for creator name lookup
         if (profile?.organization_id) {
             getTeamMembers(profile.organization_id)
@@ -164,6 +172,7 @@ export default function PlaylistsPage() {
                 body: JSON.stringify({
                     name: newPlaylistName,
                     description: newPlaylistDescription,
+                    layout_id: newPlaylistLayoutId,
                     created_by: 'System'
                 })
             });
@@ -172,6 +181,7 @@ export default function PlaylistsPage() {
                 setShowNewPlaylistModal(false);
                 setNewPlaylistName('');
                 setNewPlaylistDescription('');
+                setNewPlaylistLayoutId('single');
                 setSetAsActive(true);
                 fetchPlaylists();
                 showToast({
@@ -578,6 +588,19 @@ export default function PlaylistsPage() {
                                     Set as Default Playlist
                                 </label>
                             </div>
+
+                            {/* Screen Layout Picker */}
+                            {screenLayouts.length > 0 && (
+                                <div className="space-y-1.5">
+                                    <label className="block text-sm font-medium text-gray-700">Screen Layout</label>
+                                    <ScreenLayoutPicker
+                                        layouts={screenLayouts}
+                                        selectedId={newPlaylistLayoutId}
+                                        onSelect={setNewPlaylistLayoutId}
+                                        compact
+                                    />
+                                </div>
+                            )}
                         </div>
                         <div className="mt-8 flex items-center justify-end gap-3">
                             <button
