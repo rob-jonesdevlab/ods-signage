@@ -1121,6 +1121,28 @@ export default function PlaylistEditorPage() {
                         <>
                             {/* Filter Tabs */}
                             <div className="p-4 border-b border-gray-200 shrink-0 space-y-3">
+                                {/* Zone Selector (multi-zone only) */}
+                                {zones.length > 1 && (
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-xs text-gray-500 font-medium shrink-0">Add to:</span>
+                                        <div className="flex gap-1 flex-1">
+                                            {zones.map(zone => (
+                                                <button
+                                                    key={zone.id}
+                                                    onClick={() => setActiveZoneId(zone.id)}
+                                                    className={`flex-1 flex items-center justify-center gap-1 px-2 py-1.5 text-xs font-medium rounded-md transition-all ${activeZoneId === zone.id
+                                                            ? 'bg-blue-600 text-white shadow-sm'
+                                                            : 'bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-700'
+                                                        }`}
+                                                >
+                                                    <span className={`w-4 h-4 rounded flex items-center justify-center text-[10px] font-bold ${activeZoneId === zone.id ? 'bg-white/20' : 'bg-gray-300 text-white'
+                                                        }`}>{zone.label}</span>
+                                                    Zone {zone.label}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                                 {/* Asset Search */}
                                 <div className="relative">
                                     <span className="absolute left-2.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-[16px] text-gray-400">search</span>
@@ -1166,8 +1188,10 @@ export default function PlaylistEditorPage() {
                                 ) : (
                                     <div className="grid grid-cols-2 gap-2">
                                         {filteredAssets.map(asset => {
-                                            const isAssigned = playlistContent.some(item => item.id === asset.id);
+                                            const isAssignedToActiveZone = (contentByZone[activeZoneId] || []).some(item => item.id === asset.id);
+                                            const isAssignedToAnyZone = playlistContent.some(item => item.id === asset.id);
                                             const isVideo = asset.type === 'video' || asset.url?.includes('.mp4');
+                                            const activeZoneLabel = zones.find(z => z.id === activeZoneId)?.label || '1';
                                             return (
                                                 <div key={asset.id} className="group relative bg-white rounded-lg border border-gray-200 overflow-hidden hover:border-blue-300 hover:shadow-sm transition-all">
                                                     <div className="aspect-video relative bg-gray-100">
@@ -1193,19 +1217,32 @@ export default function PlaylistEditorPage() {
                                                             </span>
                                                         )}
                                                         <div className="absolute top-1 right-1">
-                                                            {!isAssigned ? (
+                                                            {!isAssignedToActiveZone ? (
                                                                 <button
                                                                     onClick={() => handleAddAssetToPlaylist(asset)}
                                                                     className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-md opacity-0 group-hover:opacity-100 transition-all hover:scale-110"
+                                                                    title={zones.length > 1 ? `Add to Zone ${activeZoneLabel}` : 'Add to playlist'}
                                                                 >
                                                                     <span className="material-symbols-outlined text-[14px]">add</span>
                                                                 </button>
                                                             ) : (
-                                                                <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-md">
+                                                                <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-md"
+                                                                    title={zones.length > 1 ? `In Zone ${activeZoneLabel}` : 'In playlist'}
+                                                                >
                                                                     <span className="material-symbols-outlined text-[14px]">check</span>
                                                                 </div>
                                                             )}
                                                         </div>
+                                                        {/* Show zone badges if asset is in other zones */}
+                                                        {zones.length > 1 && isAssignedToAnyZone && !isAssignedToActiveZone && (
+                                                            <div className="absolute bottom-1 left-1 flex gap-0.5">
+                                                                {zones.filter(z => (contentByZone[z.id] || []).some(item => item.id === asset.id)).map(z => (
+                                                                    <span key={z.id} className="w-4 h-4 bg-gray-800/70 text-white text-[9px] rounded flex items-center justify-center font-bold">
+                                                                        {z.label}
+                                                                    </span>
+                                                                ))}
+                                                            </div>
+                                                        )}
                                                     </div>
                                                     <div className="p-2">
                                                         <h3 className="text-xs font-medium text-gray-900 truncate">{asset.name || asset.url?.split('/').pop()?.split('?')[0] || 'Untitled'}</h3>
