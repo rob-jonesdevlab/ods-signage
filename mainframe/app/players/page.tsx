@@ -4,7 +4,8 @@
 export const dynamic = 'force-dynamic';
 
 import { API_URL } from '@/lib/api';
-import { authenticatedFetch } from '@/lib/auth';
+import { authenticatedFetch, isODSStaff } from '@/lib/auth';
+import { useAuth } from '@/contexts/AuthContext';
 
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
@@ -70,6 +71,8 @@ export default function PlayersPage() {
     const [connected, setConnected] = useState(false);
     const { showToast } = useToast();
     const { confirm, ConfirmDialog } = useConfirm();
+    const { profile } = useAuth();
+    const isStaff = isODSStaff(profile);
 
     // Modals
     const [isPairingModalOpen, setIsPairingModalOpen] = useState(false);
@@ -404,8 +407,11 @@ export default function PlayersPage() {
         }
     };
 
-    // Filter players based on selected group, search, status, and date range
+    // Filter players based on selected group, search, status, date range, and role
     const filteredPlayers = players.filter((player) => {
+        // Hide unpaired devices from non-ODS staff
+        if (!isStaff && !player.paired_at) return false;
+
         // Group filter
         if (selectedGroupId && player.group_id !== selectedGroupId) return false;
 
@@ -612,9 +618,11 @@ export default function PlayersPage() {
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Page
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Pairing
-                                            </th>
+                                            {isStaff && (
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Pairing
+                                                </th>
+                                            )}
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Name
                                             </th>
@@ -668,24 +676,26 @@ export default function PlayersPage() {
                                                         );
                                                     })()}
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    {player.paired_at ? (
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="material-symbols-outlined text-emerald-600 text-lg">check_circle</span>
-                                                            <span className="text-sm text-emerald-600 font-medium">Paired</span>
-                                                        </div>
-                                                    ) : player.pairing_code ? (
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="material-symbols-outlined text-amber-500 text-lg animate-pulse">pending</span>
-                                                            <span className="text-sm text-amber-600 font-medium font-mono">{player.pairing_code}</span>
-                                                        </div>
-                                                    ) : (
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="material-symbols-outlined text-gray-400 text-lg">radio_button_unchecked</span>
-                                                            <span className="text-sm text-gray-500">Not initiated</span>
-                                                        </div>
-                                                    )}
-                                                </td>
+                                                {isStaff && (
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        {player.paired_at ? (
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="material-symbols-outlined text-emerald-600 text-lg">check_circle</span>
+                                                                <span className="text-sm text-emerald-600 font-medium">Paired</span>
+                                                            </div>
+                                                        ) : player.pairing_code ? (
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="material-symbols-outlined text-amber-500 text-lg animate-pulse">pending</span>
+                                                                <span className="text-sm text-amber-600 font-medium font-mono">{player.pairing_code}</span>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="material-symbols-outlined text-gray-400 text-lg">radio_button_unchecked</span>
+                                                                <span className="text-sm text-gray-500">Not initiated</span>
+                                                            </div>
+                                                        )}
+                                                    </td>
+                                                )}
                                                 <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
                                                     {player.name}
                                                 </td>
