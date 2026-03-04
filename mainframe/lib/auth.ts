@@ -201,9 +201,14 @@ export async function authenticatedFetch(url: string, options: RequestInit = {})
 }
 
 /**
+ * Minimal type for role-checking functions — works with both User and UserProfile
+ */
+type HasRole = { role: UserRole; view_as?: ViewAsContext } | null;
+
+/**
  * Check if user has a specific role
  */
-export function hasRole(user: User | null, ...roles: UserRole[]): boolean {
+export function hasRole(user: HasRole, ...roles: UserRole[]): boolean {
     if (!user) return false;
     const effectiveRole = user.view_as?.original_role || user.role;
     // System role bypasses all checks
@@ -214,28 +219,28 @@ export function hasRole(user: User | null, ...roles: UserRole[]): boolean {
 /**
  * Check if user is ODS staff (ODSAdmin or ODSTech)
  */
-export function isODSStaff(user: User | null): boolean {
+export function isODSStaff(user: HasRole): boolean {
     return hasRole(user, 'odsadmin', 'odstech');
 }
 
 /**
  * Check if user is customer (Owner, Manager, Viewer, Integrations)
  */
-export function isCustomer(user: User | null): boolean {
+export function isCustomer(user: HasRole): boolean {
     return hasRole(user, 'owner', 'manager', 'viewer', 'integrations');
 }
 
 /**
  * Check if user has write access (Owner, Manager, ODSAdmin)
  */
-export function hasWriteAccess(user: User | null): boolean {
+export function hasWriteAccess(user: HasRole): boolean {
     return hasRole(user, 'owner', 'manager', 'odsadmin');
 }
 
 /**
  * Check if user is Owner or ODSAdmin
  */
-export function isOwner(user: User | null): boolean {
+export function isOwner(user: HasRole): boolean {
     return hasRole(user, 'owner', 'odsadmin');
 }
 
