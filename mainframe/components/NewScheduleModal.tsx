@@ -2,6 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { XMarkIcon, CalendarIcon } from '@heroicons/react/24/outline';
+import { API_URL } from '@/lib/api';
+import { authenticatedFetch } from '@/lib/auth';
+
+interface Player {
+    id: string;
+    name: string;
+    status: 'online' | 'offline';
+    os_version?: string;
+}
 
 interface NewScheduleModalProps {
     isOpen: boolean;
@@ -16,6 +25,7 @@ export interface ScheduleFormData {
     targets: string[];
     scheduleDate: string;
     scheduleTime: string;
+    firmware_version?: string;
     recurrence: {
         enabled: boolean;
         frequency?: 'daily' | 'weekly' | 'monthly';
@@ -51,6 +61,20 @@ export default function NewScheduleModal({ isOpen, onClose, onSubmit, initialDat
     });
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [players, setPlayers] = useState<Player[]>([]);
+    const [loadingPlayers, setLoadingPlayers] = useState(false);
+
+    // Fetch real player list when modal opens
+    useEffect(() => {
+        if (isOpen) {
+            setLoadingPlayers(true);
+            authenticatedFetch(`${API_URL}/api/players`)
+                .then(res => res.json())
+                .then((data: Player[]) => setPlayers(data))
+                .catch(() => setPlayers([]))
+                .finally(() => setLoadingPlayers(false));
+        }
+    }, [isOpen]);
 
     // Populate form with initialData when editing
     useEffect(() => {
@@ -64,6 +88,7 @@ export default function NewScheduleModal({ isOpen, onClose, onSubmit, initialDat
                 targets: [],
                 scheduleDate: '',
                 scheduleTime: '',
+                firmware_version: '',
                 recurrence: { enabled: false },
                 notifications: { emailOnCompletion: false, alertOnFailure: true },
             });
@@ -184,29 +209,78 @@ export default function NewScheduleModal({ isOpen, onClose, onSubmit, initialDat
                         </select>
                     </div>
 
-                    {/* Target Devices */}
+                    {/* Target Devices — wired to real player data */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                             Target Devices <span className="text-red-500">*</span>
                         </label>
-                        <div className="space-y-2">
-                            {['All Players', 'Retail Locations', 'Lobby Screens', 'Break Room TVs'].map(target => (
-                                <label key={target} className="flex items-center gap-2 cursor-pointer">
+                        {loadingPlayers ? (
+                            <div className="space-y-2">
+                                {[1, 2, 3].map(i => (
+                                    <div key={i} className="h-8 bg-gray-100 rounded animate-pulse" />
+                                ))}
+                            </div>
+                        ) : players.length === 0 ? (
+                            <p className="text-sm text-gray-500 py-4">No players found. Pair a device first.</p>
+                        ) : (
+                            <div className="space-y-2 max-h-48 overflow-y-auto border border-gray-200 rounded-lg p-3">
+                                {/* Select All */}
+                                <label className="flex items-center gap-2 cursor-pointer pb-2 border-b border-gray-100">
                                     <input
                                         type="checkbox"
-                                        checked={formData.targets.includes(target)}
-                                        onChange={() => handleTargetToggle(target)}
+                                        checked={formData.targets.length === players.length && players.length > 0}
+                                        onChange={() => {
+                                            if (formData.targets.length === players.length) {
+                                                setFormData(prev => ({ ...prev, targets: [] }));
+                                            } else {
+                                                setFormData(prev => ({ ...prev, targets: players.map(p => p.id) }));
+                                            }
+                                        }}
                                         className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                                     />
-                                    <span className="text-sm text-gray-700">{target}</span>
+                                    <span className="text-sm font-medium text-gray-700">Select All ({players.length})</span>
                                 </label>
-                            ))}
-                        </div>
+                                {players.map(player => (
+                                    <label key={player.id} className="flex items-center gap-2 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            checked={formData.targets.includes(player.id)}
+                                            onChange={() => handleTargetToggle(player.id)}
+                                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                        />
+                                        <span className={`inline-block w-2 h-2 rounded-full ${player.status === 'online' ? 'bg-emerald-500' : 'bg-gray-300'
+                                            }`} />
+                                        <span className="text-sm text-gray-700">{player.name}</span>
+                                        {player.os_version && (
+                                            <span className="text-[10px] text-gray-400 ml-auto">{player.os_version}</span>
+                                        )}
+                                    </label>
+                                ))}
+                            </div>
+                        )}
                         {formData.targets.length > 0 && (
-                            <p className="mt-2 text-sm text-gray-500">{formData.targets.length} target(s) selected</p>
+                            <p className="mt-2 text-sm text-gray-500">{formData.targets.length} device(s) selected</p>
                         )}
                         {errors.targets && <p className="mt-1 text-sm text-red-500">{errors.targets}</p>}
                     </div>
+
+                    {/* Firmware Version — only shown for firmware type */}
+                    {formData.type === 'firmware' && (
+                        <div>
+                            <label htmlFor="firmware_version" className="block text-sm font-medium text-gray-700 mb-2">
+                                Target Version <span className="text-xs text-gray-400">(optional)</span>
+                            </label>
+                            <input
+                                id="firmware_version"
+                                type="text"
+                                value={formData.firmware_version || ''}
+                                onChange={e => setFormData({ ...formData, firmware_version: e.target.value })}
+                                placeholder="e.g., 10.6.0"
+                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                            />
+                            <p className="mt-1 text-xs text-gray-400">Leave blank to pull latest from git.</p>
+                        </div>
+                    )}
 
                     {/* Schedule Time */}
                     <div className="grid grid-cols-2 gap-4">

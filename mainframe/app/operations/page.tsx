@@ -73,6 +73,7 @@ export default function OperationsPage() {
     // Scheduled updates state
     const [scheduledUpdates, setScheduledUpdates] = useState<any[]>([]);
     const [showCalendar, setShowCalendar] = useState(false);
+    const [pushingUpdate, setPushingUpdate] = useState(false);
 
     const fetchOperationsData = useCallback(async () => {
         try {
@@ -166,6 +167,7 @@ export default function OperationsPage() {
                     targets: scheduleData.targets,
                     scheduleDate: scheduleData.scheduleDate,
                     scheduleTime: scheduleData.scheduleTime,
+                    firmware_version: scheduleData.firmware_version || null,
                     recurrence: scheduleData.recurrence.enabled ? scheduleData.recurrence : null,
                     notifications: scheduleData.notifications
                 }),
@@ -226,6 +228,35 @@ export default function OperationsPage() {
         }
     };
 
+    const handlePushUpdateNow = async () => {
+        const confirmed = await confirm({
+            title: 'Push Update to All Online Players',
+            message: 'This will trigger an OTA system update on all currently connected players. Players will pull the latest code from git, redeploy scripts, and restart services. Continue?',
+            confirmLabel: 'Push Update',
+            variant: 'danger',
+            icon: 'system_update',
+        });
+        if (!confirmed) return;
+
+        setPushingUpdate(true);
+        try {
+            const response = await authenticatedFetch(`${API_URL}/api/fleet-updates/push-all`, {
+                method: 'POST',
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || 'Push failed');
+            showToast({
+                type: 'success',
+                title: 'Update Pushed',
+                message: `Triggered ${data.triggered || 0} player(s). ${data.skipped || 0} offline.`
+            });
+            await fetchOperationsData();
+        } catch (error: any) {
+            showToast({ type: 'error', title: 'Push Failed', message: error.message });
+        } finally {
+            setPushingUpdate(false);
+        }
+    };
 
 
 
@@ -307,6 +338,23 @@ export default function OperationsPage() {
                         >
                             <span className="material-symbols-outlined text-[18px]">refresh</span>
                             Refresh Data
+                        </button>
+                        <button
+                            onClick={handlePushUpdateNow}
+                            disabled={pushingUpdate}
+                            className="flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-sm font-medium transition-colors shadow-md shadow-amber-500/20 disabled:opacity-50"
+                        >
+                            {pushingUpdate ? (
+                                <>
+                                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                    Pushing...
+                                </>
+                            ) : (
+                                <>
+                                    <span className="material-symbols-outlined text-[18px]">system_update</span>
+                                    Push Update Now
+                                </>
+                            )}
                         </button>
                         <button
                             onClick={() => setIsScheduleModalOpen(true)}
