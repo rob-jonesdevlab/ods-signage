@@ -1,0 +1,226 @@
+# v11-0-0-DUO: Google Drive OTA Update System
+
+Replace the git-pull-based OTA pipeline with a Google Drive staging system. Updates are stored in versioned folders within the shared `staged_updates` directory. ODS operators assign target versions to devices via the dashboard, and devices download update files directly through the Archaeopteryx API (which proxies from Google Drive). No SSH keys, no git credentials, no repo clones on devices.
+
+## Current Architecture (Being Replaced)
+
+```mermaid
+sequenceDiagram
+    participant D as Dashboard
+    participant S as Server (Archaeopteryx)
+    participant P as Player (Atlas)
+    participant G as GitHub
+
+    D->>S: POST /api/fleet-updates/push-all
+    S->>P: Socket.IO: deploy_system_update
+    P->>G: git pull origin main
+    P->>P: cp scripts → /usr/local/bin/
+    P->>P: systemctl restart
+    P->>S: Socket.IO: update_status (complete)
+```
+
+## Proposed Architecture (v11-0-0-DUO)
+
+```mermaid
+sequenceDiagram
+    participant D as Dashboard
+    participant S as Server (Archaeopteryx)
+    participant P as Player (Atlas)
+    participant GD as Google Drive
+
+    D->>S: GET /api/staged-updates/versions
+    S->>GD: List folders in staged_updates/
+    GD-->>S: [v11-0-0-DUO, v10-5-1-PATCH, ...]
+    S-->>D: Available versions
+
+    D->>S: POST /api/staged-updates/assign
+    Note over S: Sets target_version on player(s)
+
+    D->>S: POST /api/fleet-updates/push-all
+    S->>P: Socket.IO: deploy_system_update {target_version}
+
+    P->>S: GET /api/staged-updates/manifest/{version}
+    S->>GD: List files in staged_updates/{version}/
+    GD-->>S: [manifest.json, scripts/..., config/...]
+    S-->>P: File list + checksums
+
+    P->>S: GET /api/staged-updates/download/{version}/{filename}
+    S->>GD: Download file stream
+    GD-->>S: File bytes
+    S-->>P: File bytes
+
+    P->>P: Verify checksums → apply → restart
+    P->>S: Socket.IO: update_status {complete, new_version}
+```
+
+### Google Drive Folder Structure
+
+```
+ODS_Content_Storage/                    (ROOT_FOLDER_ID: existing)
+  staged_updates/                       (STAGED_UPDATES_FOLDER_ID: 1RJDnpMnoUNCHP0H8Sw6B2g1hprmGGC2g)
+    v11-0-0-DUO/
+      manifest.json                     ← file list + sha256 checksums
+      scripts/
+        ods-system-update.sh
+        ods-display-config.sh
+        ...
+      config/
+        chromium-policy.json
+        ...
+      services/
+        ods-player-ATLAS.service
+        ...
+    v10-5-1-PATCH/
+      manifest.json
+      scripts/
+        ...
+```
+
+> [!IMPORTANT]
+> ### `manifest.json` Format (Per Version Folder)
+> Each version folder **must** include a `manifest.json` at the root. This file is created manually when staging an update and lists every file in the version with its relative path and SHA-256 checksum. The server serves this to devices so they can verify downloads.
+>
+> ```json
+> {
+>   "version": "v11-0-0-DUO",
+>   "created": "2026-03-06T08:00:00Z",
+>   "files": [
+>     { "path": "scripts/ods-system-update.sh", "sha256": "abc123..." },
+>     { "path": "config/chromium-policy.json", "sha256": "def456..." }
+>   ]
+> }
+> ```
+
+---
+
+## Proposed Changes
+
+### Server (Archaeopteryx)
+
+#### [MODIFY] [google-drive.js](file:///Users/robert.leejones/Documents/GitHub/ods-server-archaeopteryx/google-drive.js)
+
+Add two functions for the staged updates system:
+
+- `listStagedVersions()` — Lists subfolder names under the `staged_updates` folder (each folder name = a version). Returns `[{ name, id, modifiedTime }]`.
+- `listStagedVersionFiles(versionFolderId)` — Recursively lists all files within a version folder. Returns `[{ name, id, path, mimeType, size }]`.
+
+Both use the existing [getDriveClient()](file:///Users/robert.leejones/Documents/GitHub/ods-server-archaeopteryx/google-drive.js#34-59) auth.
+
+#### [NEW] [routes/staged-updates.js](file:///Users/robert.leejones/Documents/GitHub/ods-server-archaeopteryx/routes/staged-updates.js)
+
+New route file with these endpoints:
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| `GET` | `/api/staged-updates/versions` | JWT (read) | List all available staged versions |
+| `GET` | `/api/staged-updates/manifest/:version` | Public (device) | Get `manifest.json` for a specific version |
+| `GET` | `/api/staged-updates/download/:version/*` | Public (device) | Stream a specific file from a version folder |
+| `POST` | `/api/staged-updates/assign` | JWT (write, ODS roles) | Set `target_version` on one or more players |
+| `GET` | `/api/staged-updates/fleet-status` | JWT (read) | Version distribution across the fleet |
+
+The `manifest` and [download](file:///Users/robert.leejones/Documents/GitHub/ods-server-archaeopteryx/google-drive.js#210-238) endpoints are **public** (authenticated by `device_uuid` query param, same pattern as [device-config.js](file:///Users/robert.leejones/Documents/GitHub/ods-server-archaeopteryx/routes/device-config.js)) so player devices can fetch updates without a user JWT.
+
+#### [MODIFY] [routes/fleet-updates.js](file:///Users/robert.leejones/Documents/GitHub/ods-server-archaeopteryx/routes/fleet-updates.js)
+
+- Modify the `deploy_system_update` Socket.IO payload to include `target_version` from the player's DB record when available.
+- The existing push-all and push-single logic stays the same — it just sends the version the player should update to.
+
+#### [MODIFY] [routes/device-config.js](file:///Users/robert.leejones/Documents/GitHub/ods-server-archaeopteryx/routes/device-config.js)
+
+- Add `target_version` to the [buildConfig()](file:///Users/robert.leejones/Documents/GitHub/ods-server-archaeopteryx/routes/device-config.js#19-220) response so players can detect pending updates during normal config polling (in addition to Socket.IO push).
+
+#### [MODIFY] [database.js](file:///Users/robert.leejones/Documents/GitHub/ods-server-archaeopteryx/database.js)
+
+- No code changes needed — [updatePlayer(id, { target_version: 'v11-0-0-DUO' })](file:///Users/robert.leejones/Documents/GitHub/ods-server-archaeopteryx/database.js#182-188) already works with the generic update method. The Supabase column just needs to exist.
+
+#### Supabase Migration
+
+Add `target_version` column to the `players` table:
+
+```sql
+ALTER TABLE players ADD COLUMN IF NOT EXISTS target_version TEXT DEFAULT NULL;
+```
+
+---
+
+### Player (Atlas)
+
+#### [MODIFY] [scripts/ods-system-update.sh](file:///Users/robert.leejones/Documents/GitHub/ods-player-atlas/scripts/ods-system-update.sh)
+
+**Full rewrite.** Replace the git-based pipeline with:
+
+1. **Phase 1 — Manifest**: Fetch `manifest.json` from `$SERVER_URL/api/staged-updates/manifest/$TARGET_VERSION?device_uuid=$UUID`
+2. **Phase 2 — Download**: Download each file from the manifest to a staging directory (`/tmp/ods-update/`), verify SHA-256 checksums
+3. **Phase 3 — Apply**: Copy files to their deployment locations (`scripts/` → `/usr/local/bin/`, `services/` → `/etc/systemd/system/`, `config/` → `$ODS/config/`)
+4. **Phase 4 — Finalize**: Write new version to `$ODS/VERSION`, `systemctl daemon-reload`, restart services, report `complete`
+5. **Cleanup**: Remove `/tmp/ods-update/`
+
+The script still reports status phases via `POST localhost:8080/api/system/update-status`.
+
+> [!CAUTION]
+> The target version comes from either the Socket.IO push payload or a `$1` argument. If the version is missing, the script exits with an error instead of silently running.
+
+#### [MODIFY] [player/cloud-sync.js](file:///Users/robert.leejones/Documents/GitHub/ods-player-atlas/player/cloud-sync.js)
+
+- Extract `target_version` from the `deploy_system_update` payload and pass it as `$1` to `ods-system-update.sh`
+- Add a config-poll check: if `target_version` from the config response differs from the current `VERSION` file, auto-trigger the update (covers cases where the device was offline when the push was sent)
+
+---
+
+### Dashboard (Amigo)
+
+#### [MODIFY] [operations/page.tsx](file:///Users/robert.leejones/Documents/GitHub/ods-cloud-amigo/mainframe/app/operations/page.tsx)
+
+Add a **"Version Management"** section between the status cards and the scheduled updates section. This shows:
+
+1. **Available Versions** — Fetched from `GET /api/staged-updates/versions`. Displays version name, timestamp, and file count.
+2. **Fleet Version Distribution** — Bar/chip breakdown showing how many devices are on each version (from `GET /api/staged-updates/fleet-status`).
+3. **Assign Version** — Dropdown + device selector to assign a target version to selected devices. Calls `POST /api/staged-updates/assign`.
+
+The existing "Push Update Now" button remains, but now it pushes the *assigned target versions* rather than a blind git pull.
+
+> [!NOTE]
+> For the initial implementation, version assignment is per-device. Group-level assignment (e.g., "all dev devices") can be added as a follow-up using the existing player groups system.
+
+---
+
+## Verification Plan
+
+### Automated Tests
+
+**Existing tests** (run to verify no regressions):
+
+```bash
+cd /Users/robert.leejones/Documents/GitHub/ods-server-archaeopteryx && npm test
+```
+
+This runs the existing Jest test suite (`tests/database.test.js`, `tests/auth.test.js`, `tests/scheduler.test.js`) via `jest --detectOpenHandles --forceExit`.
+
+**New test — staged-updates route validation** (bash sanity check):
+
+After deploying the server changes, validate the new endpoints:
+
+```bash
+# List staged versions (should return the v11-0-0-DUO folder if staged)
+curl -s https://api.ods-cloud.com/api/staged-updates/versions \
+  -H "Authorization: Bearer $JWT" | jq .
+
+# Fetch manifest for a specific version
+curl -s "https://api.ods-cloud.com/api/staged-updates/manifest/v11-0-0-DUO?device_uuid=$UUID" | jq .
+```
+
+### Manual Verification
+
+> [!IMPORTANT]
+> The following manual tests require a live dev device and a deployed server.
+
+1. **Stage a test version**: Upload a versioned folder to `staged_updates/` in Google Drive containing a `manifest.json` and at least two updated files (e.g., a script + a config file).
+2. **List versions in dashboard**: Navigate to the Operations page and confirm the staged version appears.
+3. **Assign version to dev device**: Use the Version Management section to assign the staged version to a dev device.
+4. **Trigger update**: Click "Push Update Now" and observe:
+   - Device receives the push via Socket.IO
+   - Device downloads manifest + files from the server API
+   - Device applies files to correct locations
+   - Device reports `complete` status
+   - Dashboard shows updated `os_version` for that device
+5. **Verify cleanup**: SSH into the dev device and confirm `/tmp/ods-update/` has been cleaned up and the `VERSION` file reflects the new version.

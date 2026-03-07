@@ -23,12 +23,13 @@
 | **6** | **🔥 ODS Cloud v10 Alignment** | **🟡 In Progress** |
 | 7 | **ODS Server v10 Enhancements** *(NEW)* | 🟡 In Progress |
 | 8 | **Supabase Schema & RLS Updates** *(NEW)* | ✅ Complete |
-| 9 | Advanced Playlist Builder | ⬜ Not started |
-| 10 | Analytics Dashboard | ⬜ Not started |
-| 11 | Network Monitoring | ⬜ Not started |
-| 12-14 | Operations, Content Tools, Enterprise | ⬜ Not started |
-| 15 | End-to-End Integration & QA | ⬜ Not started |
-| 16 | **Notifications** *(NEW)* | ⬜ Not started |
+| 9 | **Stitch Designed Playlist Editor** | ⬜ Not started |
+| 10 | Advanced Playlist Builder | ⬜ Not started |
+| 11 | Analytics Dashboard | ⬜ Not started |
+| 12 | Network Monitoring | ⬜ Not started |
+| 13 | Operations, Content Tools, Enterprise | ⬜ Not started |
+| 14 | End-to-End Integration & QA | ⬜ Not started |
+| 15 | **Notifications** *(NEW)* | ⬜ Not started |
 | 17 | **Shelly Plug US Integration** *(NEW)* | ⬜ Not started |
 | 18 | **Mobile App** *(NEW)* | ⬜ Not started |
 

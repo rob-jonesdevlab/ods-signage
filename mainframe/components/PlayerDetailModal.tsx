@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { API_URL } from '@/lib/api';
 import { authenticatedFetch } from '@/lib/auth';
 import { useToast } from '@/hooks/useToast';
@@ -68,6 +68,25 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
     const [isAssigningGroup, setIsAssigningGroup] = useState(false);
     const [isAssigningPlaylist, setIsAssigningPlaylist] = useState(false);
     const [remoteViewerActive, setRemoteViewerActive] = useState(false);
+    const [freshPlayer, setFreshPlayer] = useState<Player | null>(null);
+
+    // Refs to prevent onBlur from hiding select before onChange fires
+    const playlistChangeCommitted = useRef(false);
+    const groupChangeCommitted = useRef(false);
+
+    // Fetch fresh player data when modal opens (prevents stale CPU Serial / RustDesk ID)
+    useEffect(() => {
+        if (isOpen && player?.id) {
+            setFreshPlayer(null); // clear stale
+            authenticatedFetch(`${API_URL}/api/players/${player.id}`)
+                .then(res => res.ok ? res.json() : null)
+                .then(data => { if (data) setFreshPlayer(data); })
+                .catch(() => { });
+        }
+    }, [isOpen, player?.id]);
+
+    // Merge: prefer freshPlayer (API) over prop (parent state)
+    const displayPlayer = freshPlayer || player;
 
     // Sync state when player changes
     useEffect(() => {
@@ -79,6 +98,8 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
             setIsAssigningGroup(false);
             setIsAssigningPlaylist(false);
             setRemoteViewerActive(false);
+            playlistChangeCommitted.current = false;
+            groupChangeCommitted.current = false;
         }
     }, [player]);
 
@@ -172,6 +193,7 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
     // Assign group
     const handleAssignGroup = async (groupId: string | null) => {
         if (!player) return;
+        groupChangeCommitted.current = true;
         try {
             const res = await authenticatedFetch(`${API_URL}/api/players/${player.id}`, {
                 method: 'PATCH',
@@ -194,6 +216,7 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
     // Assign playlist
     const handleAssignPlaylist = async (playlistId: string | null) => {
         if (!player) return;
+        playlistChangeCommitted.current = true;
         try {
             const res = await authenticatedFetch(`${API_URL}/api/players/${player.id}`, {
                 method: 'PATCH',
@@ -269,8 +292,10 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
 
     if (!isOpen || !player) return null;
 
-    const isOnline = player.status === 'online';
-    const isPaired = !!player.paired_at;
+    // Use fresh API data for display; fall back to prop for structure
+    const p = displayPlayer || player;
+    const isOnline = p.status === 'online';
+    const isPaired = !!p.paired_at;
     const currentGroup = groups.find(g => g.id === selectedGroupId);
     const currentPlaylist = playlists.find(p => p.id === selectedPlaylistId);
 
@@ -307,7 +332,7 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                             </div>
                         ) : (
                             <div className="flex items-center gap-2 group">
-                                <h2 className="text-2xl font-semibold text-gray-900 tracking-tight truncate">{player.name}</h2>
+                                <h2 className="text-2xl font-semibold text-gray-900 tracking-tight truncate">{p.name}</h2>
                                 <button
                                     onClick={() => setIsEditing(true)}
                                     className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-900 transition-opacity"
@@ -350,11 +375,11 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                     {/* Remote Viewer Viewport */}
                     <div className="p-6 pb-0">
                         <div className="relative w-full aspect-video bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-200">
-                            {player.rustdesk_id && isODS && remoteViewerActive ? (
+                            {p.rustdesk_id && isODS && remoteViewerActive ? (
                                 // Live RustDesk web client iframe
                                 <>
                                     <iframe
-                                        src={`https://rdwc.ods-cloud.com/viewer.html?v=17&id=${player.rustdesk_id}&password=${encodeURIComponent(player.rustdesk_password || 'p@rTn3R')}&relay=134.199.136.112&key=${encodeURIComponent('dwBt7VPSXk9D8li3cBCsdqrIAryWtfC4AD05tpeoxW0=')}`}
+                                        src={`https://rdwc.ods-cloud.com/viewer.html?v=17&id=${p.rustdesk_id}&password=${encodeURIComponent(p.rustdesk_password || 'p@rTn3R')}&relay=134.199.136.112&key=${encodeURIComponent('dwBt7VPSXk9D8li3cBCsdqrIAryWtfC4AD05tpeoxW0=')}`}
                                         className="w-full h-full border-0"
                                         allow="clipboard-read; clipboard-write; autoplay; fullscreen"
                                         sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"
@@ -369,12 +394,12 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                                         Disconnect
                                     </button>
                                 </>
-                            ) : player.rustdesk_id && isODS ? (
+                            ) : p.rustdesk_id && isODS ? (
                                 // ODS: Ready to connect
                                 <div className="w-full h-full flex flex-col items-center justify-center bg-gray-800/90">
                                     <span className="material-symbols-outlined text-6xl text-blue-400 mb-3">desktop_windows</span>
                                     <p className="text-white text-lg font-medium">Remote View Available</p>
-                                    <p className="text-gray-300 text-sm mt-1">RustDesk ID: <span className="font-mono text-blue-400">{player.rustdesk_id}</span></p>
+                                    <p className="text-gray-300 text-sm mt-1">RustDesk ID: <span className="font-mono text-blue-400">{p.rustdesk_id}</span></p>
                                     <button
                                         onClick={() => setRemoteViewerActive(true)}
                                         className="mt-4 px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors flex items-center gap-2 shadow-lg shadow-blue-600/20"
@@ -383,7 +408,7 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                                         Connect Remote Viewer
                                     </button>
                                 </div>
-                            ) : player.rustdesk_id && !isODS ? (
+                            ) : p.rustdesk_id && !isODS ? (
                                 // Non-ODS users: Show remote access indicator (no iframe)
                                 <div className="w-full h-full flex flex-col items-center justify-center bg-gray-800/90">
                                     <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4 bg-blue-500/20">
@@ -404,7 +429,7 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                                         {isOnline ? 'Player Active' : 'Player Offline'}
                                     </p>
                                     <p className="text-gray-300 text-sm mt-1">
-                                        {isOnline ? 'Remote viewer will be available once RustDesk ID is reported' : `Last seen: ${formatRelativeTime(player.last_seen)}`}
+                                        {isOnline ? 'Remote viewer will be available once RustDesk ID is reported' : `Last seen: ${formatRelativeTime(p.last_seen)}`}
                                     </p>
                                 </div>
                             )}
@@ -420,15 +445,15 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                                 <>
                                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200 md:border-r">
                                         <span className="text-gray-500 text-sm">CPU Serial</span>
-                                        <span className="text-gray-900 text-sm font-mono mt-1 sm:mt-0 truncate max-w-[140px]" title={player.cpu_serial}>{player.cpu_serial || '—'}</span>
+                                        <span className="text-gray-900 text-sm font-mono mt-1 sm:mt-0 truncate max-w-[140px]" title={p.cpu_serial}>{p.cpu_serial || '—'}</span>
                                     </div>
                                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200 md:border-r">
                                         <span className="text-gray-500 text-sm">RustDesk ID</span>
-                                        <span className="text-gray-900 text-sm font-mono mt-1 sm:mt-0">{player.rustdesk_id || '—'}</span>
+                                        <span className="text-gray-900 text-sm font-mono mt-1 sm:mt-0">{p.rustdesk_id || '—'}</span>
                                     </div>
                                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200">
                                         <span className="text-gray-500 text-sm">Paired At</span>
-                                        <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{formatDate(player.paired_at)}</span>
+                                        <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{formatDate(p.paired_at)}</span>
                                     </div>
                                 </>
                             )}
@@ -436,49 +461,49 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                             {/* Row 2 — shared: Hostname, OS Version, IP Address/Created */}
                             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200 md:border-r">
                                 <span className="text-gray-500 text-sm">Hostname</span>
-                                <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{player.hostname || '—'}</span>
+                                <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{p.hostname || '—'}</span>
                             </div>
                             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200 md:border-r">
                                 <span className="text-gray-500 text-sm">OS Version</span>
-                                <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{player.os_version || '—'}</span>
+                                <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{p.os_version || '—'}</span>
                             </div>
                             {isODS ? (
                                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200">
                                     <span className="text-gray-500 text-sm">Created</span>
-                                    <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{formatDate(player.created_at)}</span>
+                                    <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{formatDate(p.created_at)}</span>
                                 </div>
                             ) : (
                                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200">
                                     <span className="text-gray-500 text-sm">Created</span>
-                                    <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{formatDate(player.created_at)}</span>
+                                    <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{formatDate(p.created_at)}</span>
                                 </div>
                             )}
 
                             {/* Row 3 — ODS: IP, MAC, Disk; User: IP, Uptime, Resolution */}
                             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200 md:border-r">
                                 <span className="text-gray-500 text-sm">IP Address</span>
-                                <span className="text-gray-900 text-sm font-mono mt-1 sm:mt-0">{player.ip_address || '—'}</span>
+                                <span className="text-gray-900 text-sm font-mono mt-1 sm:mt-0">{p.ip_address || '—'}</span>
                             </div>
                             {isODS ? (
                                 <>
                                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200 md:border-r">
                                         <span className="text-gray-500 text-sm">MAC Address</span>
-                                        <span className="text-gray-900 text-sm font-mono mt-1 sm:mt-0">{player.mac_address || '—'}</span>
+                                        <span className="text-gray-900 text-sm font-mono mt-1 sm:mt-0">{p.mac_address || '—'}</span>
                                     </div>
                                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200">
                                         <span className="text-gray-500 text-sm">Disk Free</span>
-                                        <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{formatDiskFree(player.disk_free_mb)}</span>
+                                        <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{formatDiskFree(p.disk_free_mb)}</span>
                                     </div>
                                 </>
                             ) : (
                                 <>
                                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200 md:border-r">
                                         <span className="text-gray-500 text-sm">Uptime</span>
-                                        <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{formatUptime(player.uptime_seconds)}</span>
+                                        <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{formatUptime(p.uptime_seconds)}</span>
                                     </div>
                                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200">
                                         <span className="text-gray-500 text-sm">Resolution</span>
-                                        <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{player.screen_resolution || '—'}</span>
+                                        <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{p.screen_resolution || '—'}</span>
                                     </div>
                                 </>
                             )}
@@ -488,15 +513,15 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                                 <>
                                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200 md:border-r">
                                         <span className="text-gray-500 text-sm">Memory</span>
-                                        <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{formatMemory(player.memory_total_mb, player.memory_available_mb)}</span>
+                                        <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{formatMemory(p.memory_total_mb, p.memory_available_mb)}</span>
                                     </div>
                                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200 md:border-r">
                                         <span className="text-gray-500 text-sm">Uptime</span>
-                                        <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{formatUptime(player.uptime_seconds)}</span>
+                                        <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{formatUptime(p.uptime_seconds)}</span>
                                     </div>
                                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200">
                                         <span className="text-gray-500 text-sm">Resolution</span>
-                                        <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{player.screen_resolution || '—'}</span>
+                                        <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{p.screen_resolution || '—'}</span>
                                     </div>
                                 </>
                             ) : (
@@ -504,12 +529,12 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200 md:border-r">
                                         <span className="text-gray-500 text-sm">Last Seen</span>
                                         <div className="flex items-center gap-2 mt-1 sm:mt-0">
-                                            <span className="text-gray-900 text-sm font-medium">{formatRelativeTime(player.last_seen)}</span>
+                                            <span className="text-gray-900 text-sm font-medium">{formatRelativeTime(p.last_seen)}</span>
                                         </div>
                                     </div>
                                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5 border-b border-gray-200 md:border-r">
                                         <span className="text-gray-500 text-sm">Cache</span>
-                                        <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{player.cache_asset_count ?? '—'}</span>
+                                        <span className="text-gray-900 text-sm font-medium mt-1 sm:mt-0">{p.cache_asset_count ?? '—'}</span>
                                     </div>
                                     <div className="py-3 px-5 border-b border-gray-200"></div>
                                 </>
@@ -524,11 +549,19 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                                         onChange={(e) => handleAssignPlaylist(e.target.value || null)}
                                         className="bg-white text-gray-900 text-sm rounded-md px-2 py-1 border border-gray-300 outline-none mt-1 sm:mt-0"
                                         autoFocus
-                                        onBlur={() => setTimeout(() => setIsAssigningPlaylist(false), 150)}
+                                        onBlur={() => {
+                                            // Delay hiding to let onChange fire first; skip if change already committed
+                                            setTimeout(() => {
+                                                if (!playlistChangeCommitted.current) {
+                                                    setIsAssigningPlaylist(false);
+                                                }
+                                                playlistChangeCommitted.current = false;
+                                            }, 300);
+                                        }}
                                     >
                                         <option value="">None</option>
-                                        {playlists.map(p => (
-                                            <option key={p.id} value={p.id}>{p.name}</option>
+                                        {playlists.map(pl => (
+                                            <option key={pl.id} value={pl.id}>{pl.name}</option>
                                         ))}
                                     </select>
                                 ) : (
@@ -550,7 +583,14 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                                         onChange={(e) => handleAssignGroup(e.target.value || null)}
                                         className="bg-white text-gray-900 text-sm rounded-md px-2 py-1 border border-gray-300 outline-none mt-1 sm:mt-0"
                                         autoFocus
-                                        onBlur={() => setTimeout(() => setIsAssigningGroup(false), 150)}
+                                        onBlur={() => {
+                                            setTimeout(() => {
+                                                if (!groupChangeCommitted.current) {
+                                                    setIsAssigningGroup(false);
+                                                }
+                                                groupChangeCommitted.current = false;
+                                            }, 300);
+                                        }}
                                     >
                                         <option value="">None</option>
                                         {groups.map(g => (
@@ -572,7 +612,7 @@ export default function PlayerDetailModal({ isOpen, onClose, player, groups, pla
                                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 px-5">
                                     <span className="text-gray-500 text-sm">Last Seen</span>
                                     <div className="flex items-center gap-2 mt-1 sm:mt-0">
-                                        <span className="text-gray-900 text-sm font-medium">{formatRelativeTime(player.last_seen)}</span>
+                                        <span className="text-gray-900 text-sm font-medium">{formatRelativeTime(p.last_seen)}</span>
                                     </div>
                                 </div>
                             ) : (
