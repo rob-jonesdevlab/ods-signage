@@ -20,13 +20,15 @@
 | 4H | Device Config API | ✅ Complete |
 | 4I | **Player OS v10 Hardening** | ✅ Complete |
 | **5** | **Build v10-0-1-MANAGER P:0** | **✅ Complete (1.8G golden + 4.5G clone)** |
-| **6** | **🔥 ODS Cloud v10 Alignment** | **🟡 In Progress** |
-| 7 | **ODS Server v10 Enhancements** *(NEW)* | 🟡 In Progress |
+| **6** | **🔥 ODS Cloud v10 Alignment** | ✅ Complete |
+| 7 | **ODS Server v10 Enhancements** *(NEW)* | ✅ Complete |
 | 8 | **Supabase Schema & RLS Updates** *(NEW)* | ✅ Complete |
-| 9 | **Stitch Designed Playlist Editor** | ⬜ Not started |
-| 10 | Advanced Playlist Builder | ⬜ Not started |
-| 11 | Analytics Dashboard | ⬜ Not started |
-| 12 | Network Monitoring | ⬜ Not started |
+| 9 | **Build v11-0-0-DUO P:0** | ⬜ Not started |
+| 10 | **Fleet OTA Update System** *(NEW)* | ⬜ Not started |  **(see @file:///Users/robert.leejones/Documents/GitHub/ods-cloud-amigo/kbase/artifacts/implementation_plan.md.resolved)**
+| 11 | **Stitch Designed Advanced Playlist Builder/Editor** | ⬜ Not started |
+| 12 |  **Stitch Designed Advanced Operations Update Scheduler** | ⬜ Not started |
+| 13 | Analytics Dashboard | ⬜ Not started |
+| 14 | Network Monitoring | ⬜ Not started |
 | 13 | Operations, Content Tools, Enterprise | ⬜ Not started |
 | 14 | End-to-End Integration & QA | ⬜ Not started |
 | 15 | **Notifications** *(NEW)* | ⬜ Not started |
